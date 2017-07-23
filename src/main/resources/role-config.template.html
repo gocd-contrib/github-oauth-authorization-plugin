@@ -1,0 +1,35 @@
+<!--
+  ~ Copyright 2017 ThoughtWorks, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="form_item_block">
+    <label ng-class="{'is-invalid-label': GOINPUTNAME[Organizations].$error.server}">GitHub organizations <small>(Enter comma-separated)</small>:</label>
+    <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Organizations].$error.server}" ng-model="Organizations" ng-required="true" rows="5"></textarea>
+    <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Organizations].$error.server}" ng-show="GOINPUTNAME[Organizations].$error.server">{{GOINPUTNAME[Organizations].$error.server}}</span>
+</div>
+
+<div class="form_item_block">
+    <label ng-class="{'is-invalid-label': GOINPUTNAME[Teams].$error.server}">GitHub teams <small>(Enter in <strong>OrganizationName: TeamA, TeamB...TeamN</strong> format)</small>:</label>
+    <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Teams].$error.server}" ng-model="Teams" ng-required="true" rows="5"></textarea>
+    <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Teams].$error.server}" ng-show="GOINPUTNAME[Teams].$error.server">{{GOINPUTNAME[Teams].$error.server}}</span>
+</div>
+
+<div class="form_item_block">
+    <label ng-class="{'is-invalid-label': GOINPUTNAME[Users].$error.server}">GitHub users <small>(Enter comma-separated)</small>:</label>
+    <textarea ng-class="{'is-invalid-input': GOINPUTNAME[Users].$error.server}" type="text"
+              ng-model="Users" ng-required="true" rows="5"></textarea>
+    <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[Users].$error.server}" ng-show="GOINPUTNAME[Users].$error.server">{{GOINPUTNAME[Users].$error.server}}</span>
+</div>
+
