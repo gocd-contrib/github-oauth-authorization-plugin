@@ -16,28 +16,24 @@
 
 package cd.go.authorization.github.executors;
 
-import cd.go.authorization.github.GitHubProvider;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
-import cd.go.authorization.github.providermanager.GitHubProviderManager;
+import cd.go.authorization.github.models.AuthConfig;
+import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.GetAuthorizationServerUrlRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import okhttp3.HttpUrl;
 
 import java.util.Collections;
 
+import static cd.go.authorization.github.GitHubPlugin.LOG;
 import static cd.go.authorization.github.utils.Util.GSON;
 
 public class GetAuthorizationServerUrlRequestExecutor implements RequestExecutor {
     private final GetAuthorizationServerUrlRequest request;
-    private final GitHubProviderManager providerManager;
 
     public GetAuthorizationServerUrlRequestExecutor(GetAuthorizationServerUrlRequest request) {
-        this(request, GitHubProviderManager.getInstance());
-    }
-
-    GetAuthorizationServerUrlRequestExecutor(GetAuthorizationServerUrlRequest request, GitHubProviderManager providerManager) {
         this.request = request;
-        this.providerManager = providerManager;
     }
 
     public GoPluginApiResponse execute() throws Exception {
@@ -45,7 +41,22 @@ public class GetAuthorizationServerUrlRequestExecutor implements RequestExecutor
             throw new NoAuthorizationConfigurationException("[Authorization Server Url] No authorization configuration found.");
         }
 
-        final GitHubProvider provider = providerManager.getGitHubProvider(request.authConfigs().get(0));
-        return DefaultGoPluginApiResponse.success(GSON.toJson(Collections.singletonMap("authorization_server_url", provider.authorizationServerUrl(request.callbackUrl()))));
+        LOG.debug("[Get Authorization Server URL] Getting authorization server url from auth config.");
+
+        final AuthConfig authConfig = request.authConfigs().get(0);
+        final GitHubConfiguration gitHubConfiguration = authConfig.gitHubConfiguration();
+
+        String authorizationServerUrl = HttpUrl.parse(gitHubConfiguration.apiUrl())
+                .newBuilder()
+                .addPathSegment("login")
+                .addPathSegment("oauth")
+                .addPathSegment("authorize")
+                .addQueryParameter("client_id", gitHubConfiguration.clientId())
+                .addQueryParameter("redirect_uri", request.callbackUrl())
+                .addQueryParameter("scope", gitHubConfiguration.scope())
+                .build().toString();
+
+
+        return DefaultGoPluginApiResponse.success(GSON.toJson(Collections.singletonMap("authorization_server_url", authorizationServerUrl)));
     }
 }

@@ -41,8 +41,8 @@ public class RoleConfigValidateRequestExecutor implements RequestExecutor {
 
         try {
             request.gitHubRoleConfiguration().teams();
-        } catch (Exception e) {
-            validationResult.addError("Teams", "Invalid format. It should be in <organization>:<team-1>,<team-2> format.");
+        } catch (RuntimeException e) {
+            validationResult.addError("Teams", e.getMessage());
         }
 
         return DefaultGoPluginApiResponse.success(validationResult.toJSON());

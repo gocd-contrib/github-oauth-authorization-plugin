@@ -24,10 +24,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import static cd.go.authorization.github.utils.Util.GSON;
 import static cd.go.authorization.github.utils.Util.listFromCommaSeparatedString;
+import static cd.go.authorization.github.utils.Util.toLowerCase;
 
 public class GitHubConfiguration implements Validatable {
 
@@ -40,11 +40,6 @@ public class GitHubConfiguration implements Validatable {
     @SerializedName("ClientSecret")
     @ProfileField(key = "ClientSecret", required = true, secure = true)
     private String clientSecret;
-
-    @Expose
-    @SerializedName("PersonalAccessToken")
-    @ProfileField(key = "PersonalAccessToken", required = true, secure = true)
-    private String personalAccessToken;
 
     @Expose
     @SerializedName("AuthenticateWith")
@@ -65,25 +60,16 @@ public class GitHubConfiguration implements Validatable {
     public GitHubConfiguration() {
     }
 
-    public GitHubConfiguration(String clientId, String clientSecret, String personalAccessToken) {
-        this(clientId, clientSecret, personalAccessToken, AuthenticateWith.GITHUB, null, null);
+    public GitHubConfiguration(String clientId, String clientSecret) {
+        this(clientId, clientSecret, AuthenticateWith.GITHUB, null, null);
     }
 
-    public GitHubConfiguration(String clientId, String clientSecret, String personalAccessToken, AuthenticateWith authenticateWith, String gitHubEnterpriseUrl, String allowedOrganizations) {
+    public GitHubConfiguration(String clientId, String clientSecret, AuthenticateWith authenticateWith, String gitHubEnterpriseUrl, String allowedOrganizations) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
-        this.personalAccessToken = personalAccessToken;
         this.authenticateWith = authenticateWith;
         this.gitHubEnterpriseUrl = gitHubEnterpriseUrl;
         this.allowedOrganizations = allowedOrganizations;
-    }
-
-    public Properties oauthConfiguration() {
-        Properties properties = new Properties();
-        properties.put("api.github.com.consumer_key", clientId);
-        properties.put("api.github.com.consumer_secret", clientSecret);
-        properties.put("api.github.com.custom_permissions", authenticateWith.permission());
-        return properties;
     }
 
     public String clientId() {
@@ -98,10 +84,6 @@ public class GitHubConfiguration implements Validatable {
         return GSON.toJson(this);
     }
 
-    public String personalAccessToken() {
-        return personalAccessToken;
-    }
-
     public AuthenticateWith authenticateWith() {
         return authenticateWith;
     }
@@ -110,12 +92,20 @@ public class GitHubConfiguration implements Validatable {
         return gitHubEnterpriseUrl;
     }
 
+    public String apiUrl() {
+        return authenticateWith == AuthenticateWith.GITHUB ? "https://github.com" : gitHubEnterpriseUrl;
+    }
+
+    public String scope() {
+        return "user:email, read:org";
+    }
+
     public static GitHubConfiguration fromJSON(String json) {
         return GSON.fromJson(json, GitHubConfiguration.class);
     }
 
-    public List<String> allowedOrganizations() {
-        return listFromCommaSeparatedString(allowedOrganizations);
+    public List<String> organizationsAllowed() {
+        return listFromCommaSeparatedString(toLowerCase(allowedOrganizations));
     }
 
     public Map<String, String> toProperties() {
@@ -132,8 +122,6 @@ public class GitHubConfiguration implements Validatable {
 
         if (clientId != null ? !clientId.equals(that.clientId) : that.clientId != null) return false;
         if (clientSecret != null ? !clientSecret.equals(that.clientSecret) : that.clientSecret != null) return false;
-        if (personalAccessToken != null ? !personalAccessToken.equals(that.personalAccessToken) : that.personalAccessToken != null)
-            return false;
         if (authenticateWith != that.authenticateWith) return false;
         if (gitHubEnterpriseUrl != null ? !gitHubEnterpriseUrl.equals(that.gitHubEnterpriseUrl) : that.gitHubEnterpriseUrl != null)
             return false;
@@ -144,7 +132,6 @@ public class GitHubConfiguration implements Validatable {
     public int hashCode() {
         int result = clientId != null ? clientId.hashCode() : 0;
         result = 31 * result + (clientSecret != null ? clientSecret.hashCode() : 0);
-        result = 31 * result + (personalAccessToken != null ? personalAccessToken.hashCode() : 0);
         result = 31 * result + (authenticateWith != null ? authenticateWith.hashCode() : 0);
         result = 31 * result + (gitHubEnterpriseUrl != null ? gitHubEnterpriseUrl.hashCode() : 0);
         result = 31 * result + (allowedOrganizations != null ? allowedOrganizations.hashCode() : 0);

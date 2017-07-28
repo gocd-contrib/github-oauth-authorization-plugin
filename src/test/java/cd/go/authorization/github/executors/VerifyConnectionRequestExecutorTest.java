@@ -16,9 +16,8 @@
 
 package cd.go.authorization.github.executors;
 
-import cd.go.authorization.github.GitHubProvider;
 import cd.go.authorization.github.models.GitHubConfiguration;
-import cd.go.authorization.github.providermanager.GitHubProviderManager;
+import cd.go.authorization.github.GitHubClientBuilder;
 import cd.go.authorization.github.requests.VerifyConnectionRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Before;
@@ -28,23 +27,18 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class VerifyConnectionRequestExecutorTest {
     private VerifyConnectionRequest request;
-    private GitHubProviderManager providerManager;
-    private GitHubProvider provider;
+    private GitHubClientBuilder providerManager;
     private VerifyConnectionRequestExecutor executor;
 
     @Before
     public void setup() throws Exception {
         request = mock(VerifyConnectionRequest.class);
-        providerManager = mock(GitHubProviderManager.class);
-        provider = mock(GitHubProvider.class);
-
-        when(providerManager.getTemporaryGitHubProvider(any(GitHubConfiguration.class))).thenReturn(provider);
+        providerManager = mock(GitHubClientBuilder.class);
 
         executor = new VerifyConnectionRequestExecutor(request, providerManager);
     }
@@ -59,10 +53,6 @@ public class VerifyConnectionRequestExecutorTest {
                 "  \"message\": \"Validation failed for the given Auth Config\",\n" +
                 "  \"errors\": [\n" +
                 "    {\n" +
-                "      \"key\": \"PersonalAccessToken\",\n" +
-                "      \"message\": \"PersonalAccessToken must not be blank.\"\n" +
-                "    },\n" +
-                "    {\n" +
                 "      \"key\": \"ClientId\",\n" +
                 "      \"message\": \"ClientId must not be blank.\"\n" +
                 "    },\n" +
@@ -76,11 +66,6 @@ public class VerifyConnectionRequestExecutorTest {
 
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), JSONCompareMode.NON_EXTENSIBLE);
-    }
-
-    @Test
-    public void shouldReturnFailureResponseIfVerifyConnectionFails() throws Exception {
-        //TODO: ?
     }
 
     @Test

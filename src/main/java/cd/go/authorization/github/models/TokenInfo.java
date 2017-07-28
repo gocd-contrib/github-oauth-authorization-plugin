@@ -18,25 +18,14 @@ package cd.go.authorization.github.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.brickred.socialauth.Permission;
-import org.brickred.socialauth.util.AccessGrant;
 
 import static cd.go.authorization.github.utils.Util.GSON;
 
 public class TokenInfo {
 
     @Expose
-    @SerializedName("provider_id")
-    private String providerId;
-
-    @Expose
     @SerializedName("access_token")
     private String accessToken;
-
-    @Expose
-    @SerializedName("secret")
-    private String secret;
-
     @Expose
     @SerializedName("token_type")
     private String tokenType;
@@ -45,31 +34,13 @@ public class TokenInfo {
     @SerializedName("scope")
     private String scope;
 
-    @Expose
-    @SerializedName("id_token")
-    private String idToken;
-
-    private TokenInfo() {
+    public TokenInfo() {
     }
 
-    public TokenInfo(AccessGrant accessGrant) {
-        this(
-                accessGrant.getProviderId(),
-                accessGrant.getKey(),
-                accessGrant.getSecret(),
-                attribute(accessGrant, "token_type"),
-                accessGrant.getPermission().getScope(),
-                attribute(accessGrant, "id_token")
-        );
-    }
-
-    protected TokenInfo(String providerId, String accessToken, String secret, String tokenType, String scope, String idToken) {
-        this.providerId = providerId;
+    public TokenInfo(String accessToken, String tokenType, String scope) {
         this.accessToken = accessToken;
-        this.secret = secret;
         this.tokenType = tokenType;
         this.scope = scope;
-        this.idToken = idToken;
     }
 
     public String accessToken() {
@@ -85,25 +56,11 @@ public class TokenInfo {
         return scope;
     }
 
-    public String idToken() {
-        return idToken;
-    }
-
     public String toJSON() {
         return GSON.toJson(this);
     }
 
-    public AccessGrant toAccessGrant() {
-        final AccessGrant accessGrant = new AccessGrant(accessToken, secret);
-        accessGrant.setProviderId(providerId);
-        accessGrant.setPermission(new Permission(scope));
-        accessGrant.setAttribute("id_token", idToken);
-        accessGrant.setAttribute("token_type", tokenType);
-        return accessGrant;
-    }
-
-    private static String attribute(AccessGrant accessGrant, String attributeName) {
-        final Object attribute = accessGrant.getAttribute(attributeName);
-        return attribute != null ? attribute.toString() : null;
+    public static TokenInfo fromJSON(String json) {
+        return GSON.fromJson(json, TokenInfo.class);
     }
 }

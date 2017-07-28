@@ -16,36 +16,39 @@
 
 package cd.go.authorization.github;
 
-import cd.go.authorization.github.exceptions.AuthenticationException;
 import cd.go.authorization.github.models.AuthConfig;
-import cd.go.authorization.github.models.TokenInfo;
 import cd.go.authorization.github.models.User;
-import cd.go.authorization.github.providermanager.GitHubProviderManager;
+import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GitHub;
 
+import java.io.IOException;
 import java.util.List;
 
+import static cd.go.authorization.github.GitHubPlugin.LOG;
 import static java.text.MessageFormat.format;
 
 public class GitHubAuthenticator {
-    private final GitHubProviderManager gitHubProviderManager;
+    private final MembershipChecker membershipChecker;
 
     public GitHubAuthenticator() {
-        this(GitHubProviderManager.getInstance());
+        this(new MembershipChecker());
     }
 
-    GitHubAuthenticator(GitHubProviderManager gitHubProviderManager) {
-        this.gitHubProviderManager = gitHubProviderManager;
+    GitHubAuthenticator(MembershipChecker membershipChecker) {
+        this.membershipChecker = membershipChecker;
     }
 
-    public User authenticate(TokenInfo tokenInfo, AuthConfig authConfig) {
-        final GitHubProvider provider = gitHubProviderManager.getGitHubProvider(authConfig);
-        final User user = provider.userFromTokenInfo(tokenInfo);
-        final List<String> allowedOrganizations = authConfig.gitHubConfiguration().allowedOrganizations();
+    public User authenticate(GitHub gitHub, AuthConfig authConfig) throws IOException {
+        final GHMyself myself = gitHub.getMyself();
+        final User user = new User(myself.getLogin(), myself.getName(), myself.getEmail());
+        final List<String> allowedOrganizations = authConfig.gitHubConfiguration().organizationsAllowed();
 
-        if (allowedOrganizations.isEmpty() || provider.isAMemberOfAtLeastOneOrganization(user, allowedOrganizations)) {
+        if (allowedOrganizations.isEmpty() || membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, allowedOrganizations)) {
+            LOG.info(format("[Authenticate] User `{0}` authenticated successfully.", user.username()));
             return user;
         }
 
-        throw new AuthenticationException(format("[Authenticate] User {0} is not belongs to organizations {1}", user.username(), allowedOrganizations));
+        return null;
     }
+
 }

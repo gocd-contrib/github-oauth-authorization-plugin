@@ -16,10 +16,9 @@
 
 package cd.go.authorization.github.executors;
 
-import cd.go.authorization.github.GitHubProvider;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
-import cd.go.authorization.github.providermanager.GitHubProviderManager;
 import cd.go.authorization.github.models.AuthConfig;
+import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.GetAuthorizationServerUrlRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
@@ -45,12 +44,6 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
     private GetAuthorizationServerUrlRequest request;
     @Mock
     private AuthConfig authConfig;
-    @Mock
-    private GitHubConfiguration gitHubConfiguration;
-    @Mock
-    private GitHubProvider provider;
-    @Mock
-    private GitHubProviderManager providerManager;
 
     private GetAuthorizationServerUrlRequestExecutor executor;
 
@@ -58,7 +51,7 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
     public void setUp() throws Exception {
         initMocks(this);
 
-        executor = new GetAuthorizationServerUrlRequestExecutor(request, providerManager);
+        executor = new GetAuthorizationServerUrlRequestExecutor(request);
     }
 
     @Test
@@ -72,15 +65,47 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
     }
 
     @Test
-    public void shouldReturnAuthorizationServerUrl() throws Exception {
+    public void shouldReturnAuthorizationServerUrlForGitHub() throws Exception {
+        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret",
+                AuthenticateWith.GITHUB, null, "example-1");
+
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
         when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
-        when(providerManager.getGitHubProvider(authConfig)).thenReturn(provider);
-        when(provider.authorizationServerUrl(request.callbackUrl())).thenReturn("https://authorization-server-url");
+        when(request.callbackUrl()).thenReturn("call-back-url");
 
         final GoPluginApiResponse response = executor.execute();
 
         assertThat(response.responseCode(), is(200));
-        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"https://authorization-server-url\"}"));
+        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"https://github.com/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser:email,%20read:org\"}"));
+    }
+
+    @Test
+    public void shouldReturnAuthorizationServerUrlWithTrailingSlash() throws Exception {
+        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret",
+                AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url/", "example-1");
+
+        when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
+        when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+        when(request.callbackUrl()).thenReturn("call-back-url");
+
+        final GoPluginApiResponse response = executor.execute();
+
+        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"http://enterprise.url/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser:email,%20read:org\"}"));
+    }
+
+    @Test
+    public void shouldReturnAuthorizationServerUrlForGitHubEnterprise() throws Exception {
+        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret",
+                AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url", "example-1");
+
+        when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
+        when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+        when(request.callbackUrl()).thenReturn("call-back-url");
+
+        final GoPluginApiResponse response = executor.execute();
+
+        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"http://enterprise.url/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser:email,%20read:org\"}"));
     }
 }

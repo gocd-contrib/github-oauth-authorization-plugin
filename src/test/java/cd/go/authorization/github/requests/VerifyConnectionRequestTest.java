@@ -61,7 +61,7 @@ public class VerifyConnectionRequestTest {
         assertThat(gitHubConfiguration.clientSecret(), is("client-secret"));
         assertThat(gitHubConfiguration.authenticateWith(), is(AuthenticateWith.GITHUB_ENTERPRISE));
         assertThat(gitHubConfiguration.gitHubEnterpriseUrl(), is("my-enterprise-url"));
-        assertThat(gitHubConfiguration.allowedOrganizations(), contains("Foo", "Bar"));
+        assertThat(gitHubConfiguration.organizationsAllowed(), contains("foo", "bar"));
     }
 
 }

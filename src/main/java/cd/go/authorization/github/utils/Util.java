@@ -76,7 +76,11 @@ public class Util {
         if (isBlank(str)) {
             return Collections.emptyList();
         }
-        return Arrays.asList(str.split("\\s*,\\s*"));
+        return Arrays.asList(str.trim().split("\\s*,\\s*"));
+    }
+
+    public static String toLowerCase(String str) {
+        return isBlank(str) ? str : str.toLowerCase();
     }
 
     public static boolean isBlank(final CharSequence cs) {

@@ -18,6 +18,7 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.GitHubAuthenticator;
 import cd.go.authorization.github.GitHubAuthorizer;
+import cd.go.authorization.github.GitHubClientBuilder;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.*;
 import cd.go.authorization.github.requests.UserAuthenticationRequest;
@@ -26,41 +27,45 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mock;
+import org.kohsuke.github.GitHub;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UserAuthenticationRequestExecutorTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-    @Mock
     private UserAuthenticationRequest request;
-    @Mock
     private AuthConfig authConfig;
-    @Mock
     private GitHubConfiguration gitHubConfiguration;
-    @Mock
-    private GitHubAuthenticator authenticator;
-    @Mock
     private GitHubAuthorizer authorizer;
 
     private UserAuthenticationRequestExecutor executor;
+    private GitHubClientBuilder gitHubClientBuilder;
+    private GitHub gitHub;
+    private GitHubAuthenticator authenticator;
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        request = mock(UserAuthenticationRequest.class);
+        authConfig = mock(AuthConfig.class);
+        gitHubConfiguration = mock(GitHubConfiguration.class);
+        authorizer = mock(GitHubAuthorizer.class);
+        authenticator = mock(GitHubAuthenticator.class);
+        gitHubClientBuilder = mock(GitHubClientBuilder.class);
+        gitHub = mock(GitHub.class);
 
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
+        when(gitHubClientBuilder.build("access-token", authConfig)).thenReturn(gitHub);
 
-        executor = new UserAuthenticationRequestExecutor(request, authenticator, authorizer);
+        executor = new UserAuthenticationRequestExecutor(request, gitHubClientBuilder, authenticator, authorizer);
     }
 
     @Test
@@ -75,11 +80,13 @@ public class UserAuthenticationRequestExecutorTest {
 
     @Test
     public void shouldAuthenticateUser() throws Exception {
-        final StubbedTokenInfo tokenInfo = new StubbedTokenInfo("github", "access-token", "token", "secret", "profile", "id-token");
+        final User user = new User("bford", "Bob", "bford@example.com");
+        final TokenInfo tokenInfo = new TokenInfo("access-token", "token-type", "user:email,org:read");
 
         when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
         when(request.tokenInfo()).thenReturn(tokenInfo);
-        when(authenticator.authenticate(tokenInfo, authConfig)).thenReturn(new User("bford", "Bob", "email"));
+        when(authenticator.authenticate(gitHub, authConfig)).thenReturn(user);
+        when(authorizer.authorize(any(User.class), eq(gitHub), anyList())).thenReturn(Collections.emptyList());
 
         final GoPluginApiResponse response = executor.execute();
 
@@ -88,7 +95,7 @@ public class UserAuthenticationRequestExecutorTest {
                 "  \"user\": {\n" +
                 "    \"username\": \"bford\",\n" +
                 "    \"display_name\": \"Bob\",\n" +
-                "    \"email\": \"email\"\n" +
+                "    \"email\": \"bford@example.com\"\n" +
                 "  }\n" +
                 "}";
 
@@ -96,17 +103,18 @@ public class UserAuthenticationRequestExecutorTest {
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
     }
 
+
     @Test
     public void shouldAuthorizeUser() throws Exception {
-        final StubbedTokenInfo tokenInfo = new StubbedTokenInfo("github", "access-token", "token", "secret", "profile", "id-token");
-        final User user = new User("bford", "Bob", "email");
+        final TokenInfo tokenInfo = new TokenInfo("access-token", "token-type", "user:email,org:read");
+        final User user = new User("bford", "Bob", "bford@example.com");
         final Role role = mock(Role.class);
 
         when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
         when(request.roles()).thenReturn(Collections.singletonList(role));
         when(request.tokenInfo()).thenReturn(tokenInfo);
-        when(authenticator.authenticate(tokenInfo, authConfig)).thenReturn(user);
-        when(authorizer.authorize(user, authConfig, Collections.singletonList(role))).thenReturn(Collections.singletonList("admin"));
+        when(authenticator.authenticate(gitHub, authConfig)).thenReturn(user);
+        when(authorizer.authorize(user, gitHub, request.roles())).thenReturn(Collections.singletonList("admin"));
 
         final GoPluginApiResponse response = executor.execute();
 
@@ -115,17 +123,11 @@ public class UserAuthenticationRequestExecutorTest {
                 "  \"user\": {\n" +
                 "    \"username\": \"bford\",\n" +
                 "    \"display_name\": \"Bob\",\n" +
-                "    \"email\": \"email\"\n" +
+                "    \"email\": \"bford@example.com\"\n" +
                 "  }\n" +
                 "}";
 
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
-    }
-
-    private class StubbedTokenInfo extends TokenInfo {
-        public StubbedTokenInfo(String providerId, String accessToken, String secret, String tokenType, String scope, String idToken) {
-            super(providerId, accessToken, secret, tokenType, scope, idToken);
-        }
     }
 }

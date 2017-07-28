@@ -52,8 +52,8 @@ public class RoleConfigValidateRequestTest {
         final RoleConfigValidateRequest request = RoleConfigValidateRequest.from(apiRequest);
         final GitHubRoleConfiguration gitHubRoleConfiguration = request.gitHubRoleConfiguration();
 
-        assertThat(gitHubRoleConfiguration.organizations(), contains("Org1", "Org2", "Org3"));
-        assertThat(gitHubRoleConfiguration.teams(), hasEntry("Org4", asList("team-1", "team-2")));
+        assertThat(gitHubRoleConfiguration.organizations(), contains("org1", "org2", "org3"));
+        assertThat(gitHubRoleConfiguration.teams(), hasEntry("org4", asList("team-1", "team-2")));
         assertThat(gitHubRoleConfiguration.users(), contains("bob", "alice"));
     }
 }
