@@ -40,7 +40,7 @@ public class GitHubConfigurationTest {
 
         assertThat(gitHubConfiguration.clientId(), is("client-id"));
         assertThat(gitHubConfiguration.clientSecret(), is("client-secret"));
-        assertThat(gitHubConfiguration.allowedOrganizations(), contains("example-1", "example-2"));
+        assertThat(gitHubConfiguration.organizationsAllowed(), contains("example-1", "example-2"));
         assertThat(gitHubConfiguration.gitHubEnterpriseUrl(), is("https://enterprise.url"));
         assertThat(gitHubConfiguration.authenticateWith(), is(AuthenticateWith.GITHUB_ENTERPRISE));
     }
@@ -48,14 +48,13 @@ public class GitHubConfigurationTest {
     @Test
     public void shouldSerializeToJSON() throws Exception {
         GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret",
-                "token", AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url", "example-1");
+                AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url", "example-1");
 
         String expectedJSON = "{\n" +
                 "  \"ClientId\": \"client-id\",\n" +
                 "  \"ClientSecret\": \"client-secret\",\n" +
                 "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
                 "  \"GitHubEnterpriseUrl\": \"http://enterprise.url\",\n" +
-                "  \"PersonalAccessToken\": \"token\",\n" +
                 "  \"AllowedOrganizations\": \"example-1\"\n" +
                 "}";
 
@@ -65,7 +64,7 @@ public class GitHubConfigurationTest {
 
     @Test
     public void shouldConvertConfigurationToProperties() throws Exception {
-        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", "token", AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url", "example-1");
+        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url", "example-1");
 
         final Map<String, String> properties = gitHubConfiguration.toProperties();
 
@@ -73,7 +72,6 @@ public class GitHubConfigurationTest {
         assertThat(properties, hasEntry("ClientSecret", "client-secret"));
         assertThat(properties, hasEntry("AllowedOrganizations", "example-1"));
         assertThat(properties, hasEntry("AuthenticateWith", "GitHubEnterprise"));
-        assertThat(properties, hasEntry("PersonalAccessToken", "token"));
         assertThat(properties, hasEntry("GitHubEnterpriseUrl", "http://enterprise.url"));
     }
 }

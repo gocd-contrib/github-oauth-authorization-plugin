@@ -18,12 +18,14 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.GitHubAuthenticator;
 import cd.go.authorization.github.GitHubAuthorizer;
+import cd.go.authorization.github.GitHubClientBuilder;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.User;
 import cd.go.authorization.github.requests.UserAuthenticationRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.kohsuke.github.GitHub;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,19 +35,20 @@ import static com.thoughtworks.go.plugin.api.response.DefaultGoApiResponse.SUCCE
 
 public class UserAuthenticationRequestExecutor implements RequestExecutor {
     private final UserAuthenticationRequest request;
+    private final GitHubClientBuilder providerManager;
     private final GitHubAuthenticator gitHubAuthenticator;
     private final GitHubAuthorizer gitHubAuthorizer;
 
     public UserAuthenticationRequestExecutor(UserAuthenticationRequest request) {
-        this(request, new GitHubAuthenticator(), new GitHubAuthorizer());
+        this(request, new GitHubClientBuilder(), new GitHubAuthenticator(), new GitHubAuthorizer());
     }
 
-    UserAuthenticationRequestExecutor(UserAuthenticationRequest request, GitHubAuthenticator gitHubAuthenticator, GitHubAuthorizer gitHubAuthorizer) {
+    UserAuthenticationRequestExecutor(UserAuthenticationRequest request, GitHubClientBuilder providerManager, GitHubAuthenticator gitHubAuthenticator, GitHubAuthorizer gitHubAuthorizer) {
         this.request = request;
+        this.providerManager = providerManager;
         this.gitHubAuthenticator = gitHubAuthenticator;
         this.gitHubAuthorizer = gitHubAuthorizer;
     }
-
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
@@ -54,12 +57,13 @@ public class UserAuthenticationRequestExecutor implements RequestExecutor {
         }
 
         final AuthConfig authConfig = request.authConfigs().get(0);
-        final User user = gitHubAuthenticator.authenticate(request.tokenInfo(), authConfig);
+        final GitHub gitHub = providerManager.build(request.tokenInfo().accessToken(), authConfig);
+        final User user = gitHubAuthenticator.authenticate(gitHub, authConfig);
 
         Map<String, Object> userMap = new HashMap<>();
         if (user != null) {
             userMap.put("user", user);
-            userMap.put("roles", gitHubAuthorizer.authorize(user, authConfig, request.roles()));
+            userMap.put("roles", gitHubAuthorizer.authorize(user, gitHub, request.roles()));
         }
 
         DefaultGoPluginApiResponse response = new DefaultGoPluginApiResponse(SUCCESS_RESPONSE_CODE, GSON.toJson(userMap));

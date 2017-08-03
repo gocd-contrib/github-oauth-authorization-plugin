@@ -16,50 +16,56 @@
 
 package cd.go.authorization.github;
 
-import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.Role;
 import cd.go.authorization.github.models.User;
-import cd.go.authorization.github.providermanager.GitHubProviderManager;
+import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cd.go.authorization.github.GitHubPlugin.LOG;
+import static java.text.MessageFormat.format;
+
 public class GitHubAuthorizer {
-    private final GitHubProviderManager providerManager;
+    private final MembershipChecker membershipChecker;
 
     public GitHubAuthorizer() {
-        this(GitHubProviderManager.getInstance());
+        this(new MembershipChecker());
     }
 
-    GitHubAuthorizer(GitHubProviderManager providerManager) {
-        this.providerManager = providerManager;
+    public GitHubAuthorizer(MembershipChecker membershipChecker) {
+        this.membershipChecker = membershipChecker;
     }
 
-
-    public List<String> authorize(User user, AuthConfig authConfig, List<Role> roles) throws IOException {
+    public List<String> authorize(User user, GitHub gitHub, List<Role> roles) throws IOException {
         final List<String> assignedRoles = new ArrayList<>();
 
         if (roles.isEmpty()) {
             return assignedRoles;
         }
 
-        final GitHubProvider provider = providerManager.getGitHubProvider(authConfig);
+        LOG.debug(format("[Authorize] Authorizing user {0}", user.username()));
 
         for (Role role : roles) {
             final List<String> allowedUsers = role.roleConfiguration().users();
-            if (!allowedUsers.isEmpty() && allowedUsers.contains(user.username())) {
+            if (!allowedUsers.isEmpty() && allowedUsers.contains(user.username().toLowerCase())) {
+                LOG.info(format("[Authorize] Assigning role `{0}` to user `{1}`. As user belongs to allowed users list.", role.name(), user.username()));
                 assignedRoles.add(role.name());
             }
 
-            if (provider.isAMemberOfAtLeastOneOrganization(user, role.roleConfiguration().organizations())) {
+            if (membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, role.roleConfiguration().organizations())) {
+                LOG.debug(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one organization.", role.name(), user.username()));
                 assignedRoles.add(role.name());
             }
 
-            if (provider.isAMemberOfAtLeastOneTeamOfOrganization(user, role.roleConfiguration().teams())) {
+            if (membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(gitHub, role.roleConfiguration().teams())) {
+                LOG.debug(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one team of the organization.", role.name(), user.username()));
                 assignedRoles.add(role.name());
             }
         }
+
+        LOG.debug(format("[Authorize] User `{0}` is authorized with `{1}` role(s).", user.username(), assignedRoles));
 
         return assignedRoles;
     }

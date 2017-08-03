@@ -8,7 +8,7 @@ Documentation for installation is available [here](INSTALL.md)
 
 # Capabilities
 
-* The plugin is implemented using `GoCD plugin authorization endpoint`. Hence, it supports `authentication`, `authorization` and `user search`.
+* The plugin is implemented using `GoCD plugin authorization endpoint`. Hence, it supports `authentication` and `authorization`.
 
 ## Building the code base
 

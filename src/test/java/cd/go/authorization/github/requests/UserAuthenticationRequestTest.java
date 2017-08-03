@@ -50,8 +50,7 @@ public class UserAuthenticationRequestTest {
                 "  \"credentials\": {\n" +
                 "    \"access_token\": \"access-token\",\n" +
                 "    \"token_type\": \"token\",\n" +
-                "    \"scope\": \"profile\",\n" +
-                "    \"id_token\": \"id-token\"\n" +
+                "    \"scope\": \"profile\"\n" +
                 "  },\n" +
                 "  \"auth_configs\": [\n" +
                 "    {\n" +
@@ -95,23 +94,21 @@ public class UserAuthenticationRequestTest {
         assertThat(role.name(), is("admin"));
         assertThat(role.authConfigId(), is("github-config"));
         assertThat(role.roleConfiguration().users(), contains("bob", "alice"));
-        assertThat(role.roleConfiguration().organizations(), contains("OrganizationFoo", "OrganizationBar"));
-        assertThat(role.roleConfiguration().teams(), hasEntry("OrganizationFoo", asList("TeamX", "TeamY")));
-        assertThat(role.roleConfiguration().teams(), hasEntry("OrganizationBar", asList("TeamA", "TeamB")));
+        assertThat(role.roleConfiguration().organizations(), contains("organizationfoo", "organizationbar"));
+        assertThat(role.roleConfiguration().teams(), hasEntry("organizationfoo", asList("teamx", "teamy")));
+        assertThat(role.roleConfiguration().teams(), hasEntry("organizationbar", asList("teama", "teamb")));
     }
 
     private void assertTokenInfo(TokenInfo tokenInfo) {
         assertThat(tokenInfo.accessToken(), is("access-token"));
         assertThat(tokenInfo.tokenType(), is("token"));
         assertThat(tokenInfo.scope(), is("profile"));
-        assertThat(tokenInfo.idToken(), is("id-token"));
     }
 
     private void assertAuthConfig(AuthConfig authConfig) {
         assertThat(authConfig.getId(), is("github-config"));
         assertThat(authConfig.gitHubConfiguration().clientId(), is("client-id"));
         assertThat(authConfig.gitHubConfiguration().clientSecret(), is("client-secret"));
-        assertThat(authConfig.gitHubConfiguration().personalAccessToken(), is("personal-access-token"));
-        assertThat(authConfig.gitHubConfiguration().allowedOrganizations(), contains("org1","org2"));
+        assertThat(authConfig.gitHubConfiguration().organizationsAllowed(), contains("org1","org2"));
     }
 }

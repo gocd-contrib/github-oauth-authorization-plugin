@@ -18,7 +18,6 @@ package cd.go.authorization.github.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.brickred.socialauth.Profile;
 
 public class User {
     @Expose
@@ -37,10 +36,6 @@ public class User {
         this.username = username;
         this.displayName = displayName;
         this.emailId = emailId == null ? null : emailId.toLowerCase().trim();
-    }
-
-    public User(Profile userProfile) {
-        this(userProfile.getDisplayName(), userProfile.getFullName(), userProfile.getEmail());
     }
 
     public String username() {

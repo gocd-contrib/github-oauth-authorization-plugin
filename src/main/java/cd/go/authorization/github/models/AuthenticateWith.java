@@ -20,17 +20,7 @@ import com.google.gson.annotations.SerializedName;
 
 public enum AuthenticateWith {
     @SerializedName("GitHub")
-    GITHUB("user:email"),
+    GITHUB,
     @SerializedName("GitHubEnterprise")
-    GITHUB_ENTERPRISE("user:email, read:org");
-
-    private final String permission;
-
-    AuthenticateWith(String permission) {
-        this.permission = permission;
-    }
-
-    public String permission() {
-        return permission;
-    }
+    GITHUB_ENTERPRISE
 }

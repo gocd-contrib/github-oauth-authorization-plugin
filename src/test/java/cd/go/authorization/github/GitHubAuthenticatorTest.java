@@ -16,85 +16,91 @@
 
 package cd.go.authorization.github;
 
-import cd.go.authorization.github.exceptions.AuthenticationException;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.GitHubConfiguration;
-import cd.go.authorization.github.models.TokenInfo;
 import cd.go.authorization.github.models.User;
-import cd.go.authorization.github.providermanager.GitHubProviderManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GitHub;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GitHubAuthenticatorTest {
 
-    private GitHubProviderManager providerManager;
-    private GitHubProvider provider;
+    private GitHub gitHub;
     private GitHubAuthenticator authenticator;
+    private MembershipChecker membershipChecker;
+    private AuthConfig authConfig;
+    private GitHubConfiguration gitHubConfiguration;
 
     @Before
     public void setUp() throws Exception {
-        providerManager = mock(GitHubProviderManager.class);
-        provider = mock(GitHubProvider.class);
+        gitHub = mock(GitHub.class);
+        membershipChecker = mock(MembershipChecker.class);
+        authConfig = mock(AuthConfig.class);
+        gitHubConfiguration = mock(GitHubConfiguration.class);
 
-        when(providerManager.getGitHubProvider(any(AuthConfig.class))).thenReturn(provider);
+        when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
 
-        authenticator = new GitHubAuthenticator(providerManager);
+        authenticator = new GitHubAuthenticator(membershipChecker);
     }
 
     @Test
-    public void authenticate_shouldAuthenticateUserUsingTokenInfoAndAuthConfig() throws Exception {
-        final TokenInfo tokenInfo = mock(TokenInfo.class);
-        final AuthConfig authConfig = mock(AuthConfig.class);
-        final User bob = new User("bob", "B. Ford", "bob@example.com");
-        final GitHubConfiguration gitHubConfiguration = mock(GitHubConfiguration.class);
+    public void shouldAuthenticateUser() throws Exception {
+        final GHMyself myself = mockUser("bford", "Bob");
 
-        when(provider.userFromTokenInfo(tokenInfo)).thenReturn(bob);
-        when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
-        when(gitHubConfiguration.allowedOrganizations()).thenReturn(Collections.emptyList());
+        when(gitHub.getMyself()).thenReturn(myself);
+        when(gitHubConfiguration.organizationsAllowed()).thenReturn(Collections.emptyList());
 
-        final User user = authenticator.authenticate(tokenInfo, authConfig);
+        final User user = authenticator.authenticate(gitHub, authConfig);
 
-        assertThat(user, is(bob));
-        verify(provider, times(0)).isAMemberOfAtLeastOneOrganization(eq(user), anyList());
-    }
-
-    @Test(expected = AuthenticationException.class)
-    public void authenticate_shouldBlockUserIfUserNotBelongsToAllowedOrganizationList() throws Exception {
-        final TokenInfo tokenInfo = mock(TokenInfo.class);
-        final AuthConfig authConfig = mock(AuthConfig.class);
-        final User bob = new User("bob", "B. Ford", "bob@example.com");
-        final GitHubConfiguration gitHubConfiguration = mock(GitHubConfiguration.class);
-
-        when(provider.userFromTokenInfo(tokenInfo)).thenReturn(bob);
-        when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
-        when(gitHubConfiguration.allowedOrganizations()).thenReturn(asList("gocd"));
-        when(provider.isAMemberOfAtLeastOneOrganization(bob, gitHubConfiguration.allowedOrganizations())).thenReturn(false);
-
-        authenticator.authenticate(tokenInfo, authConfig);
+        assertThat(user, is(new User("bford", "Bob", "bford@example.com")));
     }
 
     @Test
-    public void authenticate_shouldAllowUserIfUserIsAMemberOfAtLeastOneOrganization() throws Exception {
-        final TokenInfo tokenInfo = mock(TokenInfo.class);
-        final AuthConfig authConfig = mock(AuthConfig.class);
-        final User bob = new User("bob", "B. Ford", "bob@example.com");
-        final GitHubConfiguration gitHubConfiguration = mock(GitHubConfiguration.class);
+    public void shouldAuthenticateUserWhenUserIsAMemberOfAtLeastOneOfTheAllowedOrganization() throws Exception {
+        final GHMyself myself = mockUser("bford", "Bob");
+        final List<String> allowedOrganizations = asList("OrgA", "OrgB");
 
-        when(provider.userFromTokenInfo(tokenInfo)).thenReturn(bob);
-        when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
-        when(gitHubConfiguration.allowedOrganizations()).thenReturn(asList("gocd"));
-        when(provider.isAMemberOfAtLeastOneOrganization(bob, gitHubConfiguration.allowedOrganizations())).thenReturn(true);
+        when(gitHub.getMyself()).thenReturn(myself);
+        when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, allowedOrganizations)).thenReturn(true);
 
-        final User user = authenticator.authenticate(tokenInfo, authConfig);
+        final User user = authenticator.authenticate(gitHub, authConfig);
 
-        assertThat(user, is(bob));
+        assertThat(user, is(new User("bford", "Bob", "bford@example.com")));
+    }
+
+    @Test
+    public void shouldNotAuthenticateUserWhenUserIsNoaAMemberOfAnyAllowedOrganization() throws Exception {
+        final GHMyself myself = mockUser("bford", "Bob");
+        final List<String> allowedOrganizations = asList("OrgA", "OrgB");
+
+        when(gitHub.getMyself()).thenReturn(myself);
+        when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, allowedOrganizations)).thenReturn(false);
+
+        final User user = authenticator.authenticate(gitHub, authConfig);
+
+        assertNull(user);
+    }
+
+    private GHMyself mockUser(String username, String name) throws IOException {
+        final GHMyself myself = mock(GHMyself.class);
+
+        when(myself.getLogin()).thenReturn(username);
+        when(myself.getEmail()).thenReturn(username + "@example.com");
+        when(myself.getName()).thenReturn(name);
+
+        return myself;
     }
 }

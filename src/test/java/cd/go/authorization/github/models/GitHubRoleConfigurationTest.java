@@ -36,8 +36,8 @@ public class GitHubRoleConfigurationTest {
         final GitHubRoleConfiguration gitHubRoleConfiguration = GitHubRoleConfiguration.fromJSON(json);
 
         assertThat(gitHubRoleConfiguration.users(), contains("bob", "alice"));
-        assertThat(gitHubRoleConfiguration.organizations(), contains("OrganizationFoo", "OrganizationBar"));
-        assertThat(gitHubRoleConfiguration.teams(), hasEntry("OrganizationFoo", asList("TeamX", "TeamY")));
-        assertThat(gitHubRoleConfiguration.teams(), hasEntry("OrganizationBar", asList("TeamA", "TeamB")));
+        assertThat(gitHubRoleConfiguration.organizations(), contains("organizationfoo", "organizationbar"));
+        assertThat(gitHubRoleConfiguration.teams(), hasEntry("organizationfoo", asList("teamx", "teamy")));
+        assertThat(gitHubRoleConfiguration.teams(), hasEntry("organizationbar", asList("teama", "teamb")));
     }
 }

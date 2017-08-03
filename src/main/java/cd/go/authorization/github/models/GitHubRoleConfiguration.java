@@ -46,21 +46,25 @@ public class GitHubRoleConfiguration implements Validatable {
     private String users;
 
     public List<String> organizations() {
-        return listFromCommaSeparatedString(organizations);
+        return listFromCommaSeparatedString(toLowerCase(organizations));
     }
 
     public Map<String, List<String>> teams() {
         final HashMap<String, List<String>> organizationToTeams = new HashMap<>();
-        splitIntoLinesAndTrimSpaces(teams).forEach(line -> {
-            final String[] parts = line.split(":", 2);
-            organizationToTeams.put(parts[0], listFromCommaSeparatedString(parts[1]));
+        splitIntoLinesAndTrimSpaces(toLowerCase(teams)).forEach(line -> {
+            if (line.contains(":")) {
+                final String[] parts = line.split(":", 2);
+                organizationToTeams.put(parts[0], listFromCommaSeparatedString(parts[1]));
+            } else {
+                throw new RuntimeException("Invalid format. It should be in <organization>:<team-1>,<team-2> format.");
+            }
         });
 
         return organizationToTeams;
     }
 
     public List<String> users() {
-        return listFromCommaSeparatedString(users);
+        return listFromCommaSeparatedString(toLowerCase(users));
     }
 
     @Override
