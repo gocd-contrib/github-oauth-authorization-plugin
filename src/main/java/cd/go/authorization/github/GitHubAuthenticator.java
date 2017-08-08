@@ -17,8 +17,8 @@
 package cd.go.authorization.github;
 
 import cd.go.authorization.github.models.AuthConfig;
-import cd.go.authorization.github.models.User;
-import org.kohsuke.github.GHMyself;
+import cd.go.authorization.github.models.LoggedInUserInfo;
+import cd.go.authorization.github.models.TokenInfo;
 import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
@@ -29,23 +29,25 @@ import static java.text.MessageFormat.format;
 
 public class GitHubAuthenticator {
     private final MembershipChecker membershipChecker;
+    private final GitHubClientBuilder gitHubClientBuilder;
 
     public GitHubAuthenticator() {
-        this(new MembershipChecker());
+        this(new MembershipChecker(), new GitHubClientBuilder());
     }
 
-    GitHubAuthenticator(MembershipChecker membershipChecker) {
+    GitHubAuthenticator(MembershipChecker membershipChecker, GitHubClientBuilder gitHubClientBuilder) {
         this.membershipChecker = membershipChecker;
+        this.gitHubClientBuilder = gitHubClientBuilder;
     }
 
-    public User authenticate(GitHub gitHub, AuthConfig authConfig) throws IOException {
-        final GHMyself myself = gitHub.getMyself();
-        final User user = new User(myself.getLogin(), myself.getName(), myself.getEmail());
+    public LoggedInUserInfo authenticate(TokenInfo tokenInfo, AuthConfig authConfig) throws IOException {
+        final GitHub gitHub = gitHubClientBuilder.build(tokenInfo.accessToken(), authConfig.gitHubConfiguration());
         final List<String> allowedOrganizations = authConfig.gitHubConfiguration().organizationsAllowed();
+        final LoggedInUserInfo loggedInUserInfo = new LoggedInUserInfo(gitHub);
 
-        if (allowedOrganizations.isEmpty() || membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, allowedOrganizations)) {
-            LOG.info(format("[Authenticate] User `{0}` authenticated successfully.", user.username()));
-            return user;
+        if (allowedOrganizations.isEmpty() || membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo, authConfig, allowedOrganizations)) {
+            LOG.info(format("[Authenticate] User `{0}` authenticated successfully.", loggedInUserInfo.getUser().username()));
+            return loggedInUserInfo;
         }
 
         return null;

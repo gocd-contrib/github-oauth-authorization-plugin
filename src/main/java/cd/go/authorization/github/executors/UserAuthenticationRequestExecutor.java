@@ -21,11 +21,10 @@ import cd.go.authorization.github.GitHubAuthorizer;
 import cd.go.authorization.github.GitHubClientBuilder;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
-import cd.go.authorization.github.models.User;
+import cd.go.authorization.github.models.LoggedInUserInfo;
 import cd.go.authorization.github.requests.UserAuthenticationRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.kohsuke.github.GitHub;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,13 +56,12 @@ public class UserAuthenticationRequestExecutor implements RequestExecutor {
         }
 
         final AuthConfig authConfig = request.authConfigs().get(0);
-        final GitHub gitHub = providerManager.build(request.tokenInfo().accessToken(), authConfig);
-        final User user = gitHubAuthenticator.authenticate(gitHub, authConfig);
+        final LoggedInUserInfo loggedInUserInfo = gitHubAuthenticator.authenticate(request.tokenInfo(), authConfig);
 
         Map<String, Object> userMap = new HashMap<>();
-        if (user != null) {
-            userMap.put("user", user);
-            userMap.put("roles", gitHubAuthorizer.authorize(user, gitHub, request.roles()));
+        if (loggedInUserInfo != null) {
+            userMap.put("user", loggedInUserInfo.getUser());
+            userMap.put("roles", gitHubAuthorizer.authorize(loggedInUserInfo, authConfig, request.roles()));
         }
 
         DefaultGoPluginApiResponse response = new DefaultGoPluginApiResponse(SUCCESS_RESPONSE_CODE, GSON.toJson(userMap));

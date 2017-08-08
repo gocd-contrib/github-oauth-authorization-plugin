@@ -16,9 +16,10 @@
 
 package cd.go.authorization.github;
 
+import cd.go.authorization.github.models.AuthConfig;
+import cd.go.authorization.github.models.LoggedInUserInfo;
 import cd.go.authorization.github.models.Role;
 import cd.go.authorization.github.models.User;
-import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +39,8 @@ public class GitHubAuthorizer {
         this.membershipChecker = membershipChecker;
     }
 
-    public List<String> authorize(User user, GitHub gitHub, List<Role> roles) throws IOException {
+    public List<String> authorize(LoggedInUserInfo loggedInUserInfo, AuthConfig authConfig, List<Role> roles) throws IOException {
+        final User user = loggedInUserInfo.getUser();
         final List<String> assignedRoles = new ArrayList<>();
 
         if (roles.isEmpty()) {
@@ -54,12 +56,12 @@ public class GitHubAuthorizer {
                 assignedRoles.add(role.name());
             }
 
-            if (membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, role.roleConfiguration().organizations())) {
+            if (membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo, authConfig, role.roleConfiguration().organizations())) {
                 LOG.debug(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one organization.", role.name(), user.username()));
                 assignedRoles.add(role.name());
             }
 
-            if (membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(gitHub, role.roleConfiguration().teams())) {
+            if (membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(loggedInUserInfo, authConfig, role.roleConfiguration().teams())) {
                 LOG.debug(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one team of the organization.", role.name(), user.username()));
                 assignedRoles.add(role.name());
             }

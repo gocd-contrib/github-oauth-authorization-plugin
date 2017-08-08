@@ -16,6 +16,7 @@
 
 package cd.go.authorization.github.executors;
 
+import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.AuthConfigValidateRequest;
 import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
@@ -25,8 +26,7 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-import java.util.Collections;
-
+import static java.util.Collections.singletonMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -41,7 +41,7 @@ public class AuthConfigValidateRequestExecutorTest {
 
     @Test
     public void shouldValidateMandatoryKeys() throws Exception {
-        when(request.requestBody()).thenReturn(new Gson().toJson(Collections.emptyMap()));
+        when(request.requestBody()).thenReturn(new Gson().toJson(singletonMap("AuthorizeUsing", "UserAccessToken")));
 
         GoPluginApiResponse response = AuthConfigValidateRequest.from(request).execute();
         String json = response.responseBody();
@@ -58,5 +58,52 @@ public class AuthConfigValidateRequestExecutorTest {
                 "]";
 
         JSONAssert.assertEquals(expectedJSON, json, JSONCompareMode.NON_EXTENSIBLE);
+    }
+
+    @Test
+    public void shouldValidateGitHubEnterpriseUrl() throws Exception {
+        when(request.requestBody()).thenReturn("{\n" +
+                "  \"ClientId\": \"client-id\",\n" +
+                "  \"AllowedOrganizations\": \"example-1,example-2\",\n" +
+                "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
+                "  \"ClientSecret\": \"client-secret\",\n" +
+                "  \"AuthorizeUsing\": \"UserAccessToken\"\n" +
+                "}");
+
+        GoPluginApiResponse response = AuthConfigValidateRequest.from(request).execute();
+
+        String expectedJSON = "[\n" +
+                "  {\n" +
+                "    \"key\": \"GitHubEnterpriseUrl\",\n" +
+                "    \"message\": \"GitHubEnterpriseUrl must not be blank.\"\n" +
+                "  }\n" +
+                "]";
+
+        JSONAssert.assertEquals(expectedJSON, response.responseBody(), JSONCompareMode.NON_EXTENSIBLE);
+    }
+
+    @Test
+    public void shouldValidatePersonalAccessTokenWhenUsePersonalAccessTokenIsSetToTrue() throws Exception {
+        final GitHubConfiguration gitHubConfiguration = GitHubConfiguration.fromJSON("{\n" +
+                "  \"ClientId\": \"client-id\",\n" +
+                "  \"AllowedOrganizations\": \"example-1,example-2\",\n" +
+                "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
+                "  \"GitHubEnterpriseUrl\": \"https://enterprise.url\",\n" +
+                "  \"ClientSecret\": \"client-secret\",\n" +
+                "  \"AuthorizeUsing\": \"PersonalAccessToken\"\n" +
+                "}");
+
+        when(request.requestBody()).thenReturn(gitHubConfiguration.toJSON());
+
+        GoPluginApiResponse response = AuthConfigValidateRequest.from(request).execute();
+
+        String expectedJSON = "[\n" +
+                "  {\n" +
+                "    \"key\": \"PersonalAccessToken\",\n" +
+                "    \"message\": \"PersonalAccessToken must not be blank.\"\n" +
+                "  }\n" +
+                "]";
+
+        JSONAssert.assertEquals(expectedJSON, response.responseBody(), JSONCompareMode.NON_EXTENSIBLE);
     }
 }

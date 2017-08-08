@@ -16,7 +16,6 @@
 
 package cd.go.authorization.github;
 
-import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import org.kohsuke.github.GitHub;
@@ -27,8 +26,8 @@ import static cd.go.authorization.github.GitHubPlugin.LOG;
 
 public class GitHubClientBuilder {
 
-    public GitHub build(String usersAccessToken, AuthConfig authConfig) throws IOException {
-        return createGitHub(usersAccessToken, authConfig.gitHubConfiguration());
+    public GitHub build(String usersAccessToken, GitHubConfiguration gitHubConfiguration) throws IOException {
+        return createGitHub(usersAccessToken, gitHubConfiguration);
     }
 
     private GitHub createGitHub(String accessToken, GitHubConfiguration gitHubConfiguration) throws IOException {

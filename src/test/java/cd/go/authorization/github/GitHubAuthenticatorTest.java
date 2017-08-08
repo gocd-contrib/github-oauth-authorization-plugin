@@ -16,9 +16,7 @@
 
 package cd.go.authorization.github;
 
-import cd.go.authorization.github.models.AuthConfig;
-import cd.go.authorization.github.models.GitHubConfiguration;
-import cd.go.authorization.github.models.User;
+import cd.go.authorization.github.models.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.kohsuke.github.GHMyself;
@@ -30,7 +28,10 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -41,17 +42,22 @@ public class GitHubAuthenticatorTest {
     private MembershipChecker membershipChecker;
     private AuthConfig authConfig;
     private GitHubConfiguration gitHubConfiguration;
+    private GitHubClientBuilder gitHubClientBuilder;
+    private TokenInfo tokenInfo;
 
     @Before
     public void setUp() throws Exception {
         gitHub = mock(GitHub.class);
-        membershipChecker = mock(MembershipChecker.class);
         authConfig = mock(AuthConfig.class);
         gitHubConfiguration = mock(GitHubConfiguration.class);
+        tokenInfo = mock(TokenInfo.class);
+        membershipChecker = mock(MembershipChecker.class);
+        gitHubClientBuilder = mock(GitHubClientBuilder.class);
 
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
+        when(gitHubClientBuilder.build(tokenInfo.accessToken(), gitHubConfiguration)).thenReturn(gitHub);
 
-        authenticator = new GitHubAuthenticator(membershipChecker);
+        authenticator = new GitHubAuthenticator(membershipChecker, gitHubClientBuilder);
     }
 
     @Test
@@ -61,9 +67,9 @@ public class GitHubAuthenticatorTest {
         when(gitHub.getMyself()).thenReturn(myself);
         when(gitHubConfiguration.organizationsAllowed()).thenReturn(Collections.emptyList());
 
-        final User user = authenticator.authenticate(gitHub, authConfig);
+        final LoggedInUserInfo loggedInUserInfo = authenticator.authenticate(tokenInfo, authConfig);
 
-        assertThat(user, is(new User("bford", "Bob", "bford@example.com")));
+        assertThat(loggedInUserInfo.getUser(), is(new User("bford", "Bob", "bford@example.com")));
     }
 
     @Test
@@ -73,25 +79,25 @@ public class GitHubAuthenticatorTest {
 
         when(gitHub.getMyself()).thenReturn(myself);
         when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);
-        when(membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, allowedOrganizations)).thenReturn(true);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(any(LoggedInUserInfo.class), eq(authConfig), eq(allowedOrganizations))).thenReturn(true);
 
-        final User user = authenticator.authenticate(gitHub, authConfig);
+        final LoggedInUserInfo loggedInUserInfo = authenticator.authenticate(tokenInfo, authConfig);
 
-        assertThat(user, is(new User("bford", "Bob", "bford@example.com")));
+        assertThat(loggedInUserInfo.getUser(), is(new User("bford", "Bob", "bford@example.com")));
     }
 
     @Test
-    public void shouldNotAuthenticateUserWhenUserIsNoaAMemberOfAnyAllowedOrganization() throws Exception {
+    public void shouldNotAuthenticateUserWhenUserIsNotAMemberOfAnyAllowedOrganization() throws Exception {
         final GHMyself myself = mockUser("bford", "Bob");
         final List<String> allowedOrganizations = asList("OrgA", "OrgB");
 
         when(gitHub.getMyself()).thenReturn(myself);
         when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);
-        when(membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, allowedOrganizations)).thenReturn(false);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(any(LoggedInUserInfo.class), eq(authConfig), eq(allowedOrganizations))).thenReturn(false);
 
-        final User user = authenticator.authenticate(gitHub, authConfig);
+        final LoggedInUserInfo loggedInUserInfo = authenticator.authenticate(tokenInfo, authConfig);
 
-        assertNull(user);
+        assertNull(loggedInUserInfo);
     }
 
     private GHMyself mockUser(String username, String name) throws IOException {

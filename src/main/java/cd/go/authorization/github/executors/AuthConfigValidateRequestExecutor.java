@@ -19,7 +19,10 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.annotation.MetadataValidator;
 import cd.go.authorization.github.annotation.ValidationResult;
+import cd.go.authorization.github.models.AuthenticateWith;
+import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.AuthConfigValidateRequest;
+import cd.go.authorization.github.utils.Util;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
@@ -32,7 +35,17 @@ public class AuthConfigValidateRequestExecutor implements RequestExecutor {
     }
 
     public GoPluginApiResponse execute() throws Exception {
-        final ValidationResult validationResult = new MetadataValidator().validate(request.githubConfiguration());
+        final GitHubConfiguration gitHubConfiguration = request.githubConfiguration();
+        final ValidationResult validationResult = new MetadataValidator().validate(gitHubConfiguration);
+
+        if (gitHubConfiguration.authenticateWith() == AuthenticateWith.GITHUB_ENTERPRISE && Util.isBlank(gitHubConfiguration.gitHubEnterpriseUrl())) {
+            validationResult.addError("GitHubEnterpriseUrl", "GitHubEnterpriseUrl must not be blank.");
+        }
+
+        if (gitHubConfiguration.authorizeUsingPersonalAccessToken() && Util.isBlank(gitHubConfiguration.personalAccessToken())) {
+            validationResult.addError("PersonalAccessToken", "PersonalAccessToken must not be blank.");
+        }
+
         return DefaultGoPluginApiResponse.success(validationResult.toJSON());
     }
 }

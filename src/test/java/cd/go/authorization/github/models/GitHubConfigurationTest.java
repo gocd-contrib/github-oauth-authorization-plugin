@@ -25,6 +25,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class GitHubConfigurationTest {
 
@@ -35,7 +36,9 @@ public class GitHubConfigurationTest {
                 "  \"AllowedOrganizations\": \"example-1,example-2\",\n" +
                 "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
                 "  \"GitHubEnterpriseUrl\": \"https://enterprise.url\",\n" +
-                "  \"ClientSecret\": \"client-secret\"\n" +
+                "  \"ClientSecret\": \"client-secret\",\n" +
+                "  \"PersonalAccessToken\": \"personal-access-token\",\n" +
+                "  \"AuthorizeUsing\": \"PersonalAccessToken\"\n" +
                 "}");
 
         assertThat(gitHubConfiguration.clientId(), is("client-id"));
@@ -43,6 +46,8 @@ public class GitHubConfigurationTest {
         assertThat(gitHubConfiguration.organizationsAllowed(), contains("example-1", "example-2"));
         assertThat(gitHubConfiguration.gitHubEnterpriseUrl(), is("https://enterprise.url"));
         assertThat(gitHubConfiguration.authenticateWith(), is(AuthenticateWith.GITHUB_ENTERPRISE));
+        assertTrue(gitHubConfiguration.authorizeUsingPersonalAccessToken());
+        assertThat(gitHubConfiguration.personalAccessToken(), is("personal-access-token"));
     }
 
     @Test
@@ -55,7 +60,8 @@ public class GitHubConfigurationTest {
                 "  \"ClientSecret\": \"client-secret\",\n" +
                 "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
                 "  \"GitHubEnterpriseUrl\": \"http://enterprise.url\",\n" +
-                "  \"AllowedOrganizations\": \"example-1\"\n" +
+                "  \"AllowedOrganizations\": \"example-1\",\n" +
+                "  \"AuthorizeUsing\": PersonalAccessToken\n" +
                 "}";
 
         JSONAssert.assertEquals(expectedJSON, gitHubConfiguration.toJSON(), true);

@@ -16,12 +16,9 @@
 
 package cd.go.authorization.github;
 
-import cd.go.authorization.github.models.GitHubRoleConfiguration;
-import cd.go.authorization.github.models.Role;
-import cd.go.authorization.github.models.User;
+import cd.go.authorization.github.models.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.kohsuke.github.GitHub;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,29 +34,31 @@ public class GitHubAuthorizerTest {
 
     private GitHubAuthorizer authorizer;
     private MembershipChecker membershipChecker;
-    private GitHub gitHub;
+    private LoggedInUserInfo loggedInUserInfo;
+    private AuthConfig authConfig;
 
     @Before
     public void setUp() throws Exception {
         membershipChecker = mock(MembershipChecker.class);
-        gitHub = mock(GitHub.class);
+        loggedInUserInfo = mock(LoggedInUserInfo.class);
+        authConfig = mock(AuthConfig.class);
+
+        when(loggedInUserInfo.getUser()).thenReturn(new User("bob", "Bob", null));
 
         authorizer = new GitHubAuthorizer(membershipChecker);
     }
 
     @Test
-    public void authorize_shouldReturnEmptyListIfRoleListIsEmpty() throws Exception {
-        final User user = new User("bob", "B. Ford", "bob@example.com");
-
-        final List<String> assignedRoles = authorizer.authorize(user, gitHub, Collections.emptyList());
+    public void shouldReturnEmptyListIfNoRoleConfiguredForGivenAuthConfig() throws Exception {
+        final List<String> assignedRoles = authorizer.authorize(loggedInUserInfo, authConfig, Collections.emptyList());
 
         assertThat(assignedRoles, hasSize(0));
-        verifyZeroInteractions(gitHub);
+        verifyZeroInteractions(authConfig);
+        verifyZeroInteractions(membershipChecker);
     }
 
     @Test
-    public void authorize_shouldAssignRoleIfUserBelongsToRoleUsers() throws Exception {
-        final User user = new User("bob", "B. Ford", "bob@example.com");
+    public void shouldAssignRoleIfUsernameListContainsUsernameOfTheLoggedInUser() throws Exception {
         final Role role = mock(Role.class);
         final GitHubRoleConfiguration roleConfiguration = mock(GitHubRoleConfiguration.class);
 
@@ -67,15 +66,14 @@ public class GitHubAuthorizerTest {
         when(role.roleConfiguration()).thenReturn(roleConfiguration);
         when(roleConfiguration.users()).thenReturn(singletonList("bob"));
 
-        final List<String> assignedRoles = authorizer.authorize(user, gitHub, singletonList(role));
+        final List<String> assignedRoles = authorizer.authorize(loggedInUserInfo, authConfig, singletonList(role));
 
         assertThat(assignedRoles, hasSize(1));
         assertThat(assignedRoles, contains("admin"));
     }
 
     @Test
-    public void authorize_shouldNotAssignRoleIfUserIsNotBelongsToRoleUsers() throws Exception {
-        final User user = new User("bob", "B. Ford", "bob@example.com");
+    public void shouldNotAssignRoleIfUsernameOfTheLoggedInUserIsNotListedInUsernameList() throws Exception {
         final Role role = mock(Role.class);
         final GitHubRoleConfiguration roleConfiguration = mock(GitHubRoleConfiguration.class);
 
@@ -83,73 +81,69 @@ public class GitHubAuthorizerTest {
         when(role.roleConfiguration()).thenReturn(roleConfiguration);
         when(roleConfiguration.users()).thenReturn(singletonList("alice"));
 
-        final List<String> assignedRoles = authorizer.authorize(user, gitHub, singletonList(role));
+        final List<String> assignedRoles = authorizer.authorize(loggedInUserInfo, authConfig, singletonList(role));
 
         assertThat(assignedRoles, hasSize(0));
     }
 
     @Test
-    public void authorize_shouldAssignRoleIfUserIsAMemberOfAtLeastOneOrganization() throws Exception {
-        final User user = new User("bob", "B. Ford", "bob@example.com");
+    public void shouldAssignRoleIfUserIsAMemberOfAtLeastOneOrganization() throws Exception {
         final Role role = mock(Role.class);
         final GitHubRoleConfiguration roleConfiguration = mock(GitHubRoleConfiguration.class);
 
         when(role.name()).thenReturn("admin");
         when(role.roleConfiguration()).thenReturn(roleConfiguration);
         when(roleConfiguration.organizations()).thenReturn(singletonList("organization-1"));
-        when(membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, roleConfiguration.organizations())).thenReturn(true);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo, authConfig, roleConfiguration.organizations())).thenReturn(true);
 
-        final List<String> assignedRoles = authorizer.authorize(user, gitHub, singletonList(role));
+        final List<String> assignedRoles = authorizer.authorize(loggedInUserInfo, authConfig, singletonList(role));
 
         assertThat(assignedRoles, hasSize(1));
         assertThat(assignedRoles, contains("admin"));
     }
 
     @Test
-    public void authorize_shouldNotAssignRoleIfUserIsNotMemberOfAnyOrganization() throws Exception {
-        final User user = new User("bob", "B. Ford", "bob@example.com");
+    public void shouldNotAssignRoleIfUserIsNotMemberOfAnyOrganization() throws Exception {
         final Role role = mock(Role.class);
         final GitHubRoleConfiguration roleConfiguration = mock(GitHubRoleConfiguration.class);
 
         when(role.name()).thenReturn("admin");
         when(role.roleConfiguration()).thenReturn(roleConfiguration);
         when(roleConfiguration.organizations()).thenReturn(singletonList("organization-1"));
-        when(membershipChecker.isAMemberOfAtLeastOneOrganization(gitHub, roleConfiguration.organizations())).thenReturn(false);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo, authConfig, roleConfiguration.organizations())).thenReturn(false);
 
-        final List<String> assignedRoles = authorizer.authorize(user, gitHub, singletonList(role));
+        final List<String> assignedRoles = authorizer.authorize(loggedInUserInfo, authConfig, singletonList(role));
 
         assertThat(assignedRoles, hasSize(0));
     }
 
     @Test
-    public void authorize_shouldAssignRoleIfUserIsAMemberOfAtLeastOneOrganizationTeam() throws Exception {
-        final User user = new User("bob", "B. Ford", "bob@example.com");
+    public void shouldAssignRoleIfUserIsAMemberOfAtLeastOneOrganizationTeam() throws Exception {
         final Role role = mock(Role.class);
         final GitHubRoleConfiguration roleConfiguration = mock(GitHubRoleConfiguration.class);
 
         when(role.name()).thenReturn("admin");
         when(role.roleConfiguration()).thenReturn(roleConfiguration);
         when(roleConfiguration.teams()).thenReturn(singletonMap("organization-1", singletonList("team-1")));
-        when(membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(gitHub, roleConfiguration.teams())).thenReturn(true);
+        when(membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(loggedInUserInfo, authConfig, roleConfiguration.teams())).thenReturn(true);
 
-        final List<String> assignedRoles = authorizer.authorize(user, gitHub, singletonList(role));
+        final List<String> assignedRoles = authorizer.authorize(loggedInUserInfo, authConfig, singletonList(role));
 
         assertThat(assignedRoles, hasSize(1));
         assertThat(assignedRoles, contains("admin"));
     }
 
     @Test
-    public void authorize_shouldNotAssignRoleIfUserIsNotMemberOfAnyOrganizationTeam() throws Exception {
-        final User user = new User("bob", "B. Ford", "bob@example.com");
+    public void shouldNotAssignRoleIfUserIsNotMemberOfAnyOrganizationTeam() throws Exception {
         final Role role = mock(Role.class);
         final GitHubRoleConfiguration roleConfiguration = mock(GitHubRoleConfiguration.class);
 
         when(role.name()).thenReturn("admin");
         when(role.roleConfiguration()).thenReturn(roleConfiguration);
         when(roleConfiguration.teams()).thenReturn(singletonMap("organization-1", singletonList("team-1")));
-        when(membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(gitHub, roleConfiguration.teams())).thenReturn(false);
+        when(membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(loggedInUserInfo, authConfig, roleConfiguration.teams())).thenReturn(false);
 
-        final List<String> assignedRoles = authorizer.authorize(user, gitHub, singletonList(role));
+        final List<String> assignedRoles = authorizer.authorize(loggedInUserInfo, authConfig, singletonList(role));
 
         assertThat(assignedRoles, hasSize(0));
     }
