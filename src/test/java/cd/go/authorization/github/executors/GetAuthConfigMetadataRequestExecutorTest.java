@@ -78,6 +78,20 @@ public class GetAuthConfigMetadataRequestExecutorTest {
                 "      \"required\": false,\n" +
                 "      \"secure\": false\n" +
                 "    }\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"key\": \"AuthorizeUsing\",\n" +
+                "    \"metadata\": {\n" +
+                "      \"required\": true,\n" +
+                "      \"secure\": false\n" +
+                "    }\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"key\": \"PersonalAccessToken\",\n" +
+                "    \"metadata\": {\n" +
+                "      \"required\": false,\n" +
+                "      \"secure\": true\n" +
+                "    }\n" +
                 "  }\n" +
                 "]";
 

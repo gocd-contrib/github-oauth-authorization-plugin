@@ -138,6 +138,33 @@
         <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[ClientSecret].$error.server}" ng-show="GOINPUTNAME[ClientSecret].$error.server">{{GOINPUTNAME[ClientSecret].$error.server}}</span>
     </div>
 
+    <div class="form_item_block row" style="padding-top: 10px" ng-init="AuthorizeUsing = (AuthorizeUsing || 'PersonalAccessToken')">
+        <div class="columns small-3 medium-2 larger-2">
+            <label ng-class="{'is-invalid-label': GOINPUTNAME[AuthorizeUsing].$error.server}">Authorize user using</label>
+        </div>
+        <div class="columns small-9 medium-10 larger-10">
+            <input value="PersonalAccessToken" type="radio" ng-model="AuthorizeUsing" id="personal-access-token" ng-checked="AuthorizeUsing == 'PersonalAccessToken'"/>
+            <label for="personal-access-token">Personal Access Token</label>
+
+            <input value="UserAccessToken" type="radio" ng-model="AuthorizeUsing" ng-checked="AuthorizeUsing == 'UserAccessToken'" id="users-access-token" ng-click="PersonalAccessToken = ''"/>
+            <label for="users-access-token">User's Access Token</label>
+            <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[AuthorizeUsing].$error.server}" ng-show="GOINPUTNAME[AuthorizeUsing].$error.server">{{GOINPUTNAME[AuthorizeUsing].$error.server}}</span>
+        </div>
+
+    </div>
+
+    <div class="form_item_block" ng-show="AuthorizeUsing == 'PersonalAccessToken'" ng-init="PersonalAccessToken = (PersonalAccessToken || '')">
+        <label ng-class="{'is-invalid-label': GOINPUTNAME[PersonalAccessToken].$error.server}">Personal Access Token:<span class='asterix'>*</span>
+            <div class="tooltip-info">
+              <span class="tooltip-content">
+                Personal access token with read:org permission is required.
+              </span>
+            </div>
+        </label>
+        <input ng-class="{'is-invalid-input': GOINPUTNAME[PersonalAccessToken].$error.server}" type="password" ng-model="PersonalAccessToken" ng-required="true"/>
+        <span class="form_error form-error" ng-class="{'is-visible': GOINPUTNAME[PersonalAccessToken].$error.server}" ng-show="GOINPUTNAME[PersonalAccessToken].$error.server">{{GOINPUTNAME[PersonalAccessToken].$error.server}}</span>
+    </div>
+
     <div class="form_item_block">
         <label ng-class="{'is-invalid-label': GOINPUTNAME[AllowedOrganizations].$error.server}">GitHub Organizations <small>(Enter comma-separated)</small>:
             <div class="tooltip-info">

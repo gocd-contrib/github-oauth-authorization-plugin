@@ -16,21 +16,23 @@
 
 package cd.go.authorization.github.models;
 
+import cd.go.authorization.github.GitHubClientBuilder;
 import cd.go.authorization.github.annotation.ProfileField;
 import cd.go.authorization.github.annotation.Validatable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import org.kohsuke.github.GitHub;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static cd.go.authorization.github.utils.Util.GSON;
-import static cd.go.authorization.github.utils.Util.listFromCommaSeparatedString;
-import static cd.go.authorization.github.utils.Util.toLowerCase;
+import static cd.go.authorization.github.utils.Util.*;
 
 public class GitHubConfiguration implements Validatable {
 
+    public static final String GITHUB_URL = "https://github.com";
     @Expose
     @SerializedName("ClientId")
     @ProfileField(key = "ClientId", required = true, secure = true)
@@ -55,6 +57,16 @@ public class GitHubConfiguration implements Validatable {
     @SerializedName("AllowedOrganizations")
     @ProfileField(key = "AllowedOrganizations", required = false, secure = false)
     private String allowedOrganizations;
+
+    @Expose
+    @SerializedName("AuthorizeUsing")
+    @ProfileField(key = "AuthorizeUsing", required = true, secure = false)
+    private String authorizeUsing = "PersonalAccessToken";
+
+    @Expose
+    @SerializedName("PersonalAccessToken")
+    @ProfileField(key = "PersonalAccessToken", required = false, secure = true)
+    private String personalAccessToken;
 
 
     public GitHubConfiguration() {
@@ -93,11 +105,11 @@ public class GitHubConfiguration implements Validatable {
     }
 
     public String apiUrl() {
-        return authenticateWith == AuthenticateWith.GITHUB ? "https://github.com" : gitHubEnterpriseUrl;
+        return authenticateWith == AuthenticateWith.GITHUB ? GITHUB_URL : gitHubEnterpriseUrl;
     }
 
     public String scope() {
-        return "user:email, read:org";
+        return authorizeUsingPersonalAccessToken() ? "user:email" : "user:email, read:org";
     }
 
     public static GitHubConfiguration fromJSON(String json) {
@@ -111,6 +123,14 @@ public class GitHubConfiguration implements Validatable {
     public Map<String, String> toProperties() {
         return GSON.fromJson(toJSON(), new TypeToken<Map<String, String>>() {
         }.getType());
+    }
+
+    public boolean authorizeUsingPersonalAccessToken() {
+        return "PersonalAccessToken".equalsIgnoreCase(authorizeUsing);
+    }
+
+    public String personalAccessToken() {
+        return personalAccessToken;
     }
 
     @Override
@@ -136,5 +156,9 @@ public class GitHubConfiguration implements Validatable {
         result = 31 * result + (gitHubEnterpriseUrl != null ? gitHubEnterpriseUrl.hashCode() : 0);
         result = 31 * result + (allowedOrganizations != null ? allowedOrganizations.hashCode() : 0);
         return result;
+    }
+
+    public GitHub gitHubClient() throws IOException {
+        return new GitHubClientBuilder().build(personalAccessToken, this);
     }
 }
