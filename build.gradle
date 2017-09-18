@@ -15,36 +15,9 @@
  */
 
 apply plugin: 'java'
+apply from: 'plugin-common.gradle'
 
-def gitRevision = { ->
-    def hashStdOut = new ByteArrayOutputStream()
-    exec {
-        commandLine "git", "log", "-n", "1", "--format=%H"
-        standardOutput = hashStdOut
-    }
-
-    return hashStdOut.toString().trim()
-}
-
-def releaseRevision = { ->
-    def hashStdOut = new ByteArrayOutputStream()
-    exec {
-        commandLine "git", "log", "--pretty=format:"
-        standardOutput = hashStdOut
-    }
-
-    return hashStdOut.size().toString()
-}
-
-def DIST_VERSION = releaseRevision()
-def GIT_REVISION = gitRevision()
-def PLUGIN_VERSION = '1.0.0'
-
-project.ext.distVersion = DIST_VERSION
-project.ext.fullVersion = DIST_VERSION ? "${PLUGIN_VERSION}-${DIST_VERSION}" : PLUGIN_VERSION
-project.ext.gitRevision = GIT_REVISION
-
-version = project.fullVersion
+version = '1.0.0'
 group = 'cd.go'
 
 project.ext.pluginDesc = [
@@ -54,11 +27,8 @@ project.ext.pluginDesc = [
         name       : 'GitHub OAuth authorization plugin',
         description: 'GitHub OAuth authorization plugin for GoCD',
         vendorName : 'GoCD Contributors',
-        vendorUrl  : 'https://github.com/gocd/github-authorization-plugin',
+        vendorUrl  : 'https://github.com/gocd-contrib/github-oauth-authorization-plugin',
 ]
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 repositories {
     jcenter()
@@ -92,6 +62,26 @@ processResources {
     }
 }
 
+sourceSets {
+    test {
+        java {
+            compileClasspath += configurations.compileOnly
+            runtimeClasspath += configurations.compileOnly
+        }
+    }
+}
+
+jar {
+    from(configurations.compile) {
+        into "lib/"
+    }
+
+//    This is useful for debugging
+//    from(sourceSets.main.java) {
+//        into "/"
+//    }
+}
+
 tasks.withType(Jar) { jarTask ->
     preserveFileTimestamps = false
     reproducibleFileOrder = true
@@ -114,55 +104,3 @@ tasks.withType(Jar) { jarTask ->
         )
     }
 }
-
-tasks.withType(Test) {
-    outputs.upToDateWhen { false }
-    testLogging {
-        showStandardStreams = project.path != ':server'
-
-        exceptionFormat 'full'
-
-        beforeSuite { suite ->
-            if (suite.parent) {
-                logger.quiet("Running ${suite.name}")
-            }
-        }
-
-        afterSuite { suite, result ->
-            if (suite.parent) {
-                logger.quiet("Tests run: ${result.testCount}, Failures: ${result.failedTestCount}, Skipped: ${result.skippedTestCount}, Time elapsed: ${(result.endTime - result.startTime) / 1000.00} sec")
-                if (result.resultType == TestResult.ResultType.FAILURE) {
-                    logger.quiet("Test ${suite.name} FAILED")
-                }
-            } else {
-                logger.quiet("Total tests run: ${result.testCount}, Failures: ${result.failedTestCount}, Skipped: ${result.skippedTestCount}, Time elapsed: ${(result.endTime - result.startTime) / 1000.00} sec")
-            }
-        }
-    }
-}
-
-sourceSets {
-    test {
-        java {
-            compileClasspath += configurations.compileOnly
-            runtimeClasspath += configurations.compileOnly
-        }
-    }
-}
-
-jar {
-    from(configurations.compile) {
-        into "lib/"
-    }
-
-//    This is useful for debugging
-//    from(sourceSets.main.java) {
-//        into "/"
-//    }
-}
-
-//
-//task deploy(type: Copy) {
-//    from jar
-//    into "../../../gocd/server/plugins/external"
-//}
