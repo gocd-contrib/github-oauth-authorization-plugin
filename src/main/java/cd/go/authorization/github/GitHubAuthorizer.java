@@ -54,11 +54,13 @@ public class GitHubAuthorizer {
             if (!allowedUsers.isEmpty() && allowedUsers.contains(user.username().toLowerCase())) {
                 LOG.info(format("[Authorize] Assigning role `{0}` to user `{1}`. As user belongs to allowed users list.", role.name(), user.username()));
                 assignedRoles.add(role.name());
+                continue;
             }
 
             if (membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo, authConfig, role.roleConfiguration().organizations())) {
                 LOG.debug(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one organization.", role.name(), user.username()));
                 assignedRoles.add(role.name());
+                continue;
             }
 
             if (membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(loggedInUserInfo, authConfig, role.roleConfiguration().teams())) {
