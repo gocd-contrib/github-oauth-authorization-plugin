@@ -26,6 +26,9 @@ import org.kohsuke.github.GHOrganization;
 import org.kohsuke.github.GHTeam;
 import org.kohsuke.github.GitHub;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
@@ -119,7 +122,7 @@ public class MembershipCheckerTest {
 
         when(team.getName()).thenReturn("TeamX");
         when(organization.getName()).thenReturn("organization-foo");
-        when(organization.getTeams()).thenReturn(singletonMap("organization-foo", team));
+        when(organization.getTeams()).thenReturn(singletonMap("TeamX", team));
         when(gitHub.getOrganization("organization-foo")).thenReturn(organization);
         when(gitHubConfiguration.gitHubClient()).thenReturn(gitHub);
         when(team.hasMember(loggedInUserInfo.getGitHubUser())).thenReturn(true);
@@ -133,14 +136,24 @@ public class MembershipCheckerTest {
     @Test
     public void shouldCheckUserMembershipUsingPersonalAccessToken_andReturnFalseIfUserIsNotAMemberOfAnyTeamOfOrganization() throws Exception {
         final GHOrganization organization = mock(GHOrganization.class);
-        final GHTeam team = mock(GHTeam.class);
+        final GHTeam teamX = mock(GHTeam.class);
+        final GHTeam teamY = mock(GHTeam.class);
 
-        when(team.getName()).thenReturn("TeamX");
+        final HashMap<String, GHTeam> teams = new HashMap<>();
+        teams.put("TeamX", teamX);
+        teams.put("TeamY", teamY);
+
         when(organization.getName()).thenReturn("organization-foo");
-        when(organization.getTeams()).thenReturn(singletonMap("organization-foo", team));
+        when(organization.getTeams()).thenReturn(teams);
         when(gitHub.getOrganization("organization-foo")).thenReturn(organization);
+
+        when(teamX.getName()).thenReturn("TeamX");
+        when(teamX.hasMember(loggedInUserInfo.getGitHubUser())).thenReturn(false);
+
+        when(teamY.getName()).thenReturn("TeamY");
+        when(teamX.hasMember(loggedInUserInfo.getGitHubUser())).thenReturn(true);
+
         when(gitHubConfiguration.gitHubClient()).thenReturn(gitHub);
-        when(team.hasMember(loggedInUserInfo.getGitHubUser())).thenReturn(false);
         when(gitHubConfiguration.authorizeUsingPersonalAccessToken()).thenReturn(true);
 
         final boolean aMemberOfAtLeastOneTeamOfOrganization = membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(loggedInUserInfo, authConfig, singletonMap("organization-foo", asList("TeamX")));
@@ -165,12 +178,17 @@ public class MembershipCheckerTest {
 
     @Test
     public void shouldCheckUserMembershipUsingUsersAccessToken_andReturnFalseIfUserIsNotAMemberOfAnyTeamOfOrganization() throws Exception {
-        final GHTeam team = mock(GHTeam.class);
+        final GHTeam teamX = mock(GHTeam.class);
+        final GHTeam teamY = mock(GHTeam.class);
 
-        when(team.getName()).thenReturn("TeamX");
-        when(gitHub.getMyTeams()).thenReturn(singletonMap("organization-foo", singleton(team)));
+        when(teamX.getName()).thenReturn("TeamX");
+        when(teamX.hasMember(loggedInUserInfo.getGitHubUser())).thenReturn(false);
+
+        when(teamX.getName()).thenReturn("TeamY");
+        when(teamX.hasMember(loggedInUserInfo.getGitHubUser())).thenReturn(true);
+
+        when(gitHub.getMyTeams()).thenReturn(singletonMap("organization-foo", new HashSet<>(asList(teamX, teamY))));
         when(loggedInUserInfo.getGitHub()).thenReturn(gitHub);
-        when(team.hasMember(loggedInUserInfo.getGitHubUser())).thenReturn(false);
         when(gitHubConfiguration.authorizeUsingPersonalAccessToken()).thenReturn(false);
 
         final boolean aMemberOfAtLeastOneTeamOfOrganization = membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(loggedInUserInfo, authConfig, singletonMap("organization-foo", asList("TeamX")));

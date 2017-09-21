@@ -91,13 +91,15 @@ public class MembershipChecker {
 
         for (String organizationName : organizationAndTeamsAllowed.keySet()) {
             final GHOrganization organization = gitHubForPersonalAccessToken.getOrganization(organizationName);
+
             if (organization != null) {
+                final List<String> allowedTeamsFromRole = organizationAndTeamsAllowed.get(organizationName);
                 final Map<String, GHTeam> teamsFromGitHub = organization.getTeams();
+
                 for (GHTeam team : teamsFromGitHub.values()) {
-                    if (team.hasMember(loggedInUserInfo.getGitHubUser())) {
+                    if (allowedTeamsFromRole.contains(team.getName().toLowerCase()) && team.hasMember(loggedInUserInfo.getGitHubUser())) {
                         LOG.info(format("[MembershipChecker] User `{0}` is a member of `{1}` team.", loggedInUserInfo.getUser().username(), team.getName()));
                         return true;
-
                     }
                 }
             }
