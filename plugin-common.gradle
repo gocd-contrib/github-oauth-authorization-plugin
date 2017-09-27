@@ -36,7 +36,6 @@ def releaseRevision = { ->
 
 project.ext.gitRevision = gitRevision()
 project.ext.distVersion = releaseRevision()
-project.ext.fullVersion = "${version} (${gitRevision})"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
