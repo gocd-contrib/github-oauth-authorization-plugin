@@ -69,6 +69,8 @@ public class GitHubPlugin implements GoPlugin {
                     return FetchAccessTokenRequest.from(request).execute();
                 case REQUEST_AUTHENTICATE_USER:
                     return UserAuthenticationRequest.from(request).execute();
+                case REQUEST_SEARCH_USERS:
+                    return new SearchUsersRequestExecutor(request).execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }

@@ -29,7 +29,7 @@ public class GetCapabilitiesRequestExecutorTest {
         String expectedJSON = "{\n" +
                 "    \"supported_auth_type\":\"web\",\n" +
                 "    \"can_authorize\":true,\n" +
-                "    \"can_search\":false\n" +
+                "    \"can_search\":true\n" +
                 "}";
 
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
