@@ -16,8 +16,15 @@
 
 package cd.go.authorization.github.models;
 
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
+import static cd.go.authorization.github.utils.Util.GSON;
 
 public class AuthConfig {
     @Expose
@@ -35,4 +42,16 @@ public class AuthConfig {
     public GitHubConfiguration gitHubConfiguration() {
         return gitHubConfiguration;
     }
+
+    public static List<AuthConfig> fromJSONList(String requestBody) {
+        JsonObject jsonObject = GSON.fromJson(requestBody, JsonObject.class);
+        Type type = new TypeToken<List<AuthConfig>>() {
+        }.getType();
+        return GSON.fromJson(jsonObject.get("auth_configs").toString(), type);
+    }
+
+    public static AuthConfig fromJSON(String json) {
+        return GSON.fromJson(json, AuthConfig.class);
+    }
+
 }
