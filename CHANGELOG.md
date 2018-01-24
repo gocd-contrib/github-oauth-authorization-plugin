@@ -1,3 +1,10 @@
+## 2.1.0 - 2018-01-24
+
+### Added
+   
+- Added search user capabilities to plugin.
+
+
 ## 2.0.0 - 2017-09-27
 
 ### Added
