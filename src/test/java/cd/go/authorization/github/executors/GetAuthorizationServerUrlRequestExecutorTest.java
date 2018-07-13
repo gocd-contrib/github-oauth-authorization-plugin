@@ -80,7 +80,7 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
 
     @Test
     public void shouldReturnAuthorizationServerUrlWithTrailingSlash() throws Exception {
-        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url/", "example-1");
+        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url", "example-1");
 
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
         when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
@@ -89,7 +89,7 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
         final GoPluginApiResponse response = executor.execute();
 
         assertThat(response.responseCode(), is(200));
-        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"http://enterprise.url/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser:email\"}"));
+        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"http://enterprise.url/api/v3/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser:email\"}"));
     }
 
     @Test
@@ -103,6 +103,6 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
         final GoPluginApiResponse response = executor.execute();
 
         assertThat(response.responseCode(), is(200));
-        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"http://enterprise.url/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser:email\"}"));
+        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"http://enterprise.url/api/v3/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser:email\"}"));
     }
 }
