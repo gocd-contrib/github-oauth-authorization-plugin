@@ -10,6 +10,13 @@ Documentation for installation is available [here](INSTALL.md)
 
 * The plugin is implemented using `GoCD plugin authorization endpoint`. Hence, it supports `authentication` and `authorization`.
 
+## Troubleshooting
+
+Add environment variable `GO_SERVER_SYSTEM_PROPERTIES=-Dplugin.cd.go.authorization.github.log.level=debug` to enable debug log
+
+`$GODATA/logs/plugin-cd.go.authorization.github.log`
+
+
 ## Building the code base
 
 To build the jar, run `./gradlew clean test assemble`
