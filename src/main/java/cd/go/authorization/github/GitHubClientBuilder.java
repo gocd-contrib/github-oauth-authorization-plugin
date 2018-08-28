@@ -19,6 +19,8 @@ package cd.go.authorization.github;
 import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
+import org.kohsuke.github.RateLimitHandler;
 
 import java.io.IOException;
 
@@ -36,7 +38,7 @@ public class GitHubClientBuilder {
             return GitHub.connectToEnterprise(gitHubConfiguration.gitHubEnterpriseUrl(), accessToken);
         } else {
             LOG.debug("Create GitHub connection to public GitHub with token");
-            return GitHub.connectUsingOAuth(accessToken);
+            return new GitHubBuilder().withOAuthToken(accessToken).withRateLimitHandler(RateLimitHandler.FAIL).build();
         }
     }
 }
