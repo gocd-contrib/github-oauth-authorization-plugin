@@ -1,3 +1,10 @@
+##  2.2.0 - 2018-08-29
+
+### Fixed
+
+- Avoid locking up server threads when rate limited by GitHub
+
+
 ## 2.1.0 - 2018-01-24
 
 ### Added
