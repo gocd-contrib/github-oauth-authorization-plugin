@@ -32,6 +32,9 @@ public enum RequestFromServer {
     REQUEST_ROLE_CONFIG_VIEW(String.join(".", Constants.REQUEST_PREFIX, Constants._ROLE_CONFIG_METADATA, "get-view")),
     REQUEST_VALIDATE_ROLE_CONFIG(String.join(".", Constants.REQUEST_PREFIX, Constants._ROLE_CONFIG_METADATA, "validate")),
 
+    REQUEST_GET_USER_ROLES(String.join(".", Constants.REQUEST_PREFIX, "get-user-roles")),
+    REQUEST_IS_VALID_USER(String.join(".", Constants.REQUEST_PREFIX, "is-valid-user")),
+
     REQUEST_AUTHENTICATE_USER(Constants.REQUEST_PREFIX + ".authenticate-user"),
     REQUEST_SEARCH_USERS(Constants.REQUEST_PREFIX + ".search-users"),
 

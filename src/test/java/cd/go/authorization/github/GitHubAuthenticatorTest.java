@@ -30,7 +30,6 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -79,7 +78,7 @@ public class GitHubAuthenticatorTest {
 
         when(gitHub.getMyself()).thenReturn(myself);
         when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);
-        when(membershipChecker.isAMemberOfAtLeastOneOrganization(any(LoggedInUserInfo.class), eq(authConfig), eq(allowedOrganizations))).thenReturn(true);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(eq(myself), eq(authConfig), eq(allowedOrganizations))).thenReturn(true);
 
         final LoggedInUserInfo loggedInUserInfo = authenticator.authenticate(tokenInfo, authConfig);
 
@@ -93,7 +92,7 @@ public class GitHubAuthenticatorTest {
 
         when(gitHub.getMyself()).thenReturn(myself);
         when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);
-        when(membershipChecker.isAMemberOfAtLeastOneOrganization(any(LoggedInUserInfo.class), eq(authConfig), eq(allowedOrganizations))).thenReturn(false);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(eq(myself), eq(authConfig), eq(allowedOrganizations))).thenReturn(false);
 
         final LoggedInUserInfo loggedInUserInfo = authenticator.authenticate(tokenInfo, authConfig);
 

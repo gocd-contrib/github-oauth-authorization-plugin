@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ThoughtWorks, Inc.
+ * Copyright 2019 ThoughtWorks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,36 @@
 
 package cd.go.authorization.github.requests;
 
-import cd.go.authorization.github.executors.FetchAccessTokenRequestExecutor;
 import cd.go.authorization.github.executors.RequestExecutor;
+import cd.go.authorization.github.executors.ValidateUserRequestExecutor;
 import cd.go.authorization.github.models.AuthConfig;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 
-import java.util.List;
-
-public class FetchAccessTokenRequest extends Request {
+public class ValidateUserRequest extends Request {
     @Expose
-    @SerializedName("auth_configs")
-    private List<AuthConfig> authConfigs;
+    @SerializedName("auth_config")
+    private AuthConfig authConfig;
 
-    public static FetchAccessTokenRequest from(GoPluginApiRequest apiRequest) {
-        return Request.from(apiRequest, FetchAccessTokenRequest.class);
-    }
+    @Expose
+    @SerializedName("username")
+    private String username;
 
-    public List<AuthConfig> authConfigs() {
-        return authConfigs;
+    public static Request from(GoPluginApiRequest request) {
+        return Request.from(request, ValidateUserRequest.class);
     }
 
     @Override
     public RequestExecutor executor() {
-        return new FetchAccessTokenRequestExecutor(this);
+        return new ValidateUserRequestExecutor(this);
+    }
+
+    public AuthConfig getAuthConfig() {
+        return authConfig;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

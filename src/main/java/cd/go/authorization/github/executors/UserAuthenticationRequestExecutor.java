@@ -61,7 +61,7 @@ public class UserAuthenticationRequestExecutor implements RequestExecutor {
         Map<String, Object> userMap = new HashMap<>();
         if (loggedInUserInfo != null) {
             userMap.put("user", loggedInUserInfo.getUser());
-            userMap.put("roles", gitHubAuthorizer.authorize(loggedInUserInfo, authConfig, request.roles()));
+            userMap.put("roles", gitHubAuthorizer.authorize(loggedInUserInfo.getGitHubUser(), authConfig, request.roles()));
         }
 
         DefaultGoPluginApiResponse response = new DefaultGoPluginApiResponse(SUCCESS_RESPONSE_CODE, GSON.toJson(userMap));

@@ -45,7 +45,7 @@ public class GitHubAuthenticator {
         final List<String> allowedOrganizations = authConfig.gitHubConfiguration().organizationsAllowed();
         final LoggedInUserInfo loggedInUserInfo = new LoggedInUserInfo(gitHub);
 
-        if (allowedOrganizations.isEmpty() || membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo, authConfig, allowedOrganizations)) {
+        if (allowedOrganizations.isEmpty() || membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo.getGitHubUser(), authConfig, allowedOrganizations)) {
             LOG.info(format("[Authenticate] User `{0}` authenticated successfully.", loggedInUserInfo.getUser().username()));
             return loggedInUserInfo;
         }

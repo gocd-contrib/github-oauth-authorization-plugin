@@ -21,10 +21,11 @@ import cd.go.authorization.github.annotation.ProfileMetadata;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.utils.Util;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
@@ -36,12 +37,14 @@ public class GetAuthConfigViewRequestExecutorTest {
     public void shouldRenderTheTemplateInJSON() throws Exception {
         GoPluginApiResponse response = new GetAuthConfigViewRequestExecutor().execute();
         assertThat(response.responseCode(), is(200));
-        Map<String, String> hashSet = new Gson().fromJson(response.responseBody(), HashMap.class);
+        Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
+        Map<String, String> hashSet = new Gson().fromJson(response.responseBody(), type);
         assertThat(hashSet, hasEntry("template", Util.readResource("/auth-config.template.html")));
     }
 
     @Test
-    public void allFieldsShouldBePresentInView() throws Exception {
+    public void allFieldsShouldBePresentInView() {
         String template = Util.readResource("/auth-config.template.html");
 
         for (ProfileMetadata field : MetadataHelper.getMetadata(GitHubConfiguration.class)) {
