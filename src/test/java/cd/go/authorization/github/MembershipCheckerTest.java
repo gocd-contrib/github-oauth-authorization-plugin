@@ -62,8 +62,6 @@ public class MembershipCheckerTest {
         final GHOrganization organization = mock(GHOrganization.class);
 
         when(organization.getName()).thenReturn("organization-foo");
-        when(gitHubConfiguration.gitHubClient()).thenReturn(gitHub);
-        when(gitHubConfiguration.authorizeUsingPersonalAccessToken()).thenReturn(true);
         when(gitHub.getOrganization("organization-foo")).thenReturn(organization);
         when(organization.hasMember(ghUser)).thenReturn(true);
 
@@ -77,8 +75,6 @@ public class MembershipCheckerTest {
         final GHOrganization organization = mock(GHOrganization.class);
 
         when(organization.getName()).thenReturn("organization-baz");
-        when(gitHubConfiguration.gitHubClient()).thenReturn(gitHub);
-        when(gitHubConfiguration.authorizeUsingPersonalAccessToken()).thenReturn(true);
         when(gitHub.getOrganization("organization-foo")).thenReturn(organization);
         when(organization.hasMember(ghUser)).thenReturn(false);
 
@@ -96,9 +92,7 @@ public class MembershipCheckerTest {
         when(organization.getName()).thenReturn("organization-foo");
         when(organization.getTeams()).thenReturn(singletonMap("TeamX", team));
         when(gitHub.getOrganization("organization-foo")).thenReturn(organization);
-        when(gitHubConfiguration.gitHubClient()).thenReturn(gitHub);
         when(team.hasMember(ghUser)).thenReturn(true);
-        when(gitHubConfiguration.authorizeUsingPersonalAccessToken()).thenReturn(true);
 
         final boolean aMemberOfAtLeastOneTeamOfOrganization = membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(ghUser, authConfig, singletonMap("organization-foo", asList("teamx")));
 
@@ -123,10 +117,7 @@ public class MembershipCheckerTest {
         when(teamX.hasMember(ghUser)).thenReturn(false);
 
         when(teamY.getName()).thenReturn("TeamY");
-        when(teamX.hasMember(ghUser)).thenReturn(true);
-
-        when(gitHubConfiguration.gitHubClient()).thenReturn(gitHub);
-        when(gitHubConfiguration.authorizeUsingPersonalAccessToken()).thenReturn(true);
+        when(teamX.hasMember(ghUser)).thenReturn(true);;
 
         final boolean aMemberOfAtLeastOneTeamOfOrganization = membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(ghUser, authConfig, singletonMap("organization-foo", asList("TeamX")));
 

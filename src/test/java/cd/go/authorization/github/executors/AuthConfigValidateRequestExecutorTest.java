@@ -35,13 +35,13 @@ public class AuthConfigValidateRequestExecutorTest {
     private GoPluginApiRequest request;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         request = mock(GoPluginApiRequest.class);
     }
 
     @Test
     public void shouldValidateMandatoryKeys() throws Exception {
-        when(request.requestBody()).thenReturn(new Gson().toJson(singletonMap("AuthorizeUsing", "UserAccessToken")));
+        when(request.requestBody()).thenReturn(new Gson().toJson(singletonMap("AllowedOrganizations", "Foo")));
 
         GoPluginApiResponse response = AuthConfigValidateRequest.from(request).execute();
         String json = response.responseBody();
@@ -54,6 +54,10 @@ public class AuthConfigValidateRequestExecutorTest {
                 "  {\n" +
                 "    \"key\": \"ClientSecret\",\n" +
                 "    \"message\": \"ClientSecret must not be blank.\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"key\": \"PersonalAccessToken\",\n" +
+                "    \"message\": \"PersonalAccessToken must not be blank.\"\n" +
                 "  }\n" +
                 "]";
 
@@ -67,7 +71,7 @@ public class AuthConfigValidateRequestExecutorTest {
                 "  \"AllowedOrganizations\": \"example-1,example-2\",\n" +
                 "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
                 "  \"ClientSecret\": \"client-secret\",\n" +
-                "  \"AuthorizeUsing\": \"UserAccessToken\"\n" +
+                "  \"PersonalAccessToken\": \"Foobar\"\n" +
                 "}");
 
         GoPluginApiResponse response = AuthConfigValidateRequest.from(request).execute();
@@ -83,14 +87,13 @@ public class AuthConfigValidateRequestExecutorTest {
     }
 
     @Test
-    public void shouldValidatePersonalAccessTokenWhenUsePersonalAccessTokenIsSetToTrue() throws Exception {
+    public void shouldValidatePersonalAccessToken() throws Exception {
         final GitHubConfiguration gitHubConfiguration = GitHubConfiguration.fromJSON("{\n" +
                 "  \"ClientId\": \"client-id\",\n" +
                 "  \"AllowedOrganizations\": \"example-1,example-2\",\n" +
                 "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
                 "  \"GitHubEnterpriseUrl\": \"https://enterprise.url\",\n" +
-                "  \"ClientSecret\": \"client-secret\",\n" +
-                "  \"AuthorizeUsing\": \"PersonalAccessToken\"\n" +
+                "  \"ClientSecret\": \"client-secret\"" +
                 "}");
 
         when(request.requestBody()).thenReturn(gitHubConfiguration.toJSON());
