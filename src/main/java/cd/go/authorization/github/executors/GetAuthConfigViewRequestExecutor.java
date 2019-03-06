@@ -26,7 +26,7 @@ import static cd.go.authorization.github.utils.Util.GSON;
 public class GetAuthConfigViewRequestExecutor implements RequestExecutor {
 
     @Override
-    public GoPluginApiResponse execute() throws Exception {
+    public GoPluginApiResponse execute() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("template", Util.readResource("/auth-config.template.html"));
         return DefaultGoPluginApiResponse.success(GSON.toJson(jsonObject));

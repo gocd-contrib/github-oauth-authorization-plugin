@@ -42,7 +42,7 @@ public class GitHubPlugin implements GoPlugin {
     }
 
     @Override
-    public GoPluginApiResponse handle(GoPluginApiRequest request) throws UnhandledRequestTypeException {
+    public GoPluginApiResponse handle(GoPluginApiRequest request) {
         try {
             switch (RequestFromServer.fromString(request.requestName())) {
                 case REQUEST_GET_PLUGIN_ICON:
@@ -67,10 +67,14 @@ public class GitHubPlugin implements GoPlugin {
                     return GetAuthorizationServerUrlRequest.from(request).execute();
                 case REQUEST_ACCESS_TOKEN:
                     return FetchAccessTokenRequest.from(request).execute();
+                case REQUEST_IS_VALID_USER:
+                    return ValidateUserRequest.from(request).execute();
                 case REQUEST_AUTHENTICATE_USER:
                     return UserAuthenticationRequest.from(request).execute();
                 case REQUEST_SEARCH_USERS:
-                    return new SearchUsersRequestExecutor(request).execute();
+                    return SearchUsersRequest.from(request).execute();
+                case REQUEST_GET_USER_ROLES:
+                    return GetRolesRequest.from(request).execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }

@@ -36,7 +36,7 @@ public class VerifyConnectionRequestExecutorTest {
     private VerifyConnectionRequestExecutor executor;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         request = mock(VerifyConnectionRequest.class);
         providerManager = mock(GitHubClientBuilder.class);
 
@@ -50,8 +50,11 @@ public class VerifyConnectionRequestExecutorTest {
         GoPluginApiResponse response = executor.execute();
 
         String expectedJSON = "{\n" +
-                "  \"message\": \"Validation failed for the given Auth Config\",\n" +
                 "  \"errors\": [\n" +
+                "    {\n" +
+                "      \"key\": \"PersonalAccessToken\",\n" +
+                "      \"message\": \"PersonalAccessToken must not be blank.\"\n" +
+                "    },\n" +
                 "    {\n" +
                 "      \"key\": \"ClientId\",\n" +
                 "      \"message\": \"ClientId must not be blank.\"\n" +
@@ -61,6 +64,7 @@ public class VerifyConnectionRequestExecutorTest {
                 "      \"message\": \"ClientSecret must not be blank.\"\n" +
                 "    }\n" +
                 "  ],\n" +
+                "  \"message\": \"Validation failed for the given Auth Config\",\n" +
                 "  \"status\": \"validation-failed\"\n" +
                 "}";
 

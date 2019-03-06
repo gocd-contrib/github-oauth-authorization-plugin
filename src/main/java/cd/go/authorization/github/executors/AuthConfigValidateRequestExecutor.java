@@ -34,7 +34,7 @@ public class AuthConfigValidateRequestExecutor implements RequestExecutor {
         this.request = request;
     }
 
-    public GoPluginApiResponse execute() throws Exception {
+    public GoPluginApiResponse execute() {
         final GitHubConfiguration gitHubConfiguration = request.githubConfiguration();
         final ValidationResult validationResult = new MetadataValidator().validate(gitHubConfiguration);
 
@@ -42,7 +42,7 @@ public class AuthConfigValidateRequestExecutor implements RequestExecutor {
             validationResult.addError("GitHubEnterpriseUrl", "GitHubEnterpriseUrl must not be blank.");
         }
 
-        if (gitHubConfiguration.authorizeUsingPersonalAccessToken() && Util.isBlank(gitHubConfiguration.personalAccessToken())) {
+        if (Util.isBlank(gitHubConfiguration.personalAccessToken())) {
             validationResult.addError("PersonalAccessToken", "PersonalAccessToken must not be blank.");
         }
 

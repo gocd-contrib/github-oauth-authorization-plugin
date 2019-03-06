@@ -17,6 +17,7 @@
 package cd.go.authorization.github.requests;
 
 import cd.go.authorization.github.executors.AuthConfigValidateRequestExecutor;
+import cd.go.authorization.github.executors.RequestExecutor;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 
@@ -36,7 +37,7 @@ public class AuthConfigValidateRequest extends Request {
     }
 
     @Override
-    public AuthConfigValidateRequestExecutor executor() {
+    public RequestExecutor executor() {
         return new AuthConfigValidateRequestExecutor(this);
     }
 }

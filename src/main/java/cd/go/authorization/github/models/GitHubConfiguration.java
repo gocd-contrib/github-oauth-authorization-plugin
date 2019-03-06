@@ -16,23 +16,21 @@
 
 package cd.go.authorization.github.models;
 
-import cd.go.authorization.github.GitHubClientBuilder;
 import cd.go.authorization.github.annotation.ProfileField;
 import cd.go.authorization.github.annotation.Validatable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import org.kohsuke.github.GitHub;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static cd.go.authorization.github.utils.Util.*;
 
 public class GitHubConfiguration implements Validatable {
+    private static final String GITHUB_URL = "https://github.com";
 
-    public static final String GITHUB_URL = "https://github.com";
     @Expose
     @SerializedName("ClientId")
     @ProfileField(key = "ClientId", required = true, secure = true)
@@ -59,13 +57,8 @@ public class GitHubConfiguration implements Validatable {
     private String allowedOrganizations;
 
     @Expose
-    @SerializedName("AuthorizeUsing")
-    @ProfileField(key = "AuthorizeUsing", required = true, secure = false)
-    private String authorizeUsing = "PersonalAccessToken";
-
-    @Expose
     @SerializedName("PersonalAccessToken")
-    @ProfileField(key = "PersonalAccessToken", required = false, secure = true)
+    @ProfileField(key = "PersonalAccessToken", required = true, secure = true)
     private String personalAccessToken;
 
 
@@ -109,7 +102,7 @@ public class GitHubConfiguration implements Validatable {
     }
 
     public String scope() {
-        return authorizeUsingPersonalAccessToken() ? "user:email" : "user:email, read:org";
+        return "user:email";
     }
 
     public static GitHubConfiguration fromJSON(String json) {
@@ -125,10 +118,6 @@ public class GitHubConfiguration implements Validatable {
         }.getType());
     }
 
-    public boolean authorizeUsingPersonalAccessToken() {
-        return "PersonalAccessToken".equalsIgnoreCase(authorizeUsing);
-    }
-
     public String personalAccessToken() {
         return personalAccessToken;
     }
@@ -137,28 +126,18 @@ public class GitHubConfiguration implements Validatable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         GitHubConfiguration that = (GitHubConfiguration) o;
-
-        if (clientId != null ? !clientId.equals(that.clientId) : that.clientId != null) return false;
-        if (clientSecret != null ? !clientSecret.equals(that.clientSecret) : that.clientSecret != null) return false;
-        if (authenticateWith != that.authenticateWith) return false;
-        if (gitHubEnterpriseUrl != null ? !gitHubEnterpriseUrl.equals(that.gitHubEnterpriseUrl) : that.gitHubEnterpriseUrl != null)
-            return false;
-        return allowedOrganizations != null ? allowedOrganizations.equals(that.allowedOrganizations) : that.allowedOrganizations == null;
+        return Objects.equals(clientId, that.clientId) &&
+                Objects.equals(clientSecret, that.clientSecret) &&
+                authenticateWith == that.authenticateWith &&
+                Objects.equals(gitHubEnterpriseUrl, that.gitHubEnterpriseUrl) &&
+                Objects.equals(allowedOrganizations, that.allowedOrganizations) &&
+                Objects.equals(personalAccessToken, that.personalAccessToken);
     }
 
     @Override
     public int hashCode() {
-        int result = clientId != null ? clientId.hashCode() : 0;
-        result = 31 * result + (clientSecret != null ? clientSecret.hashCode() : 0);
-        result = 31 * result + (authenticateWith != null ? authenticateWith.hashCode() : 0);
-        result = 31 * result + (gitHubEnterpriseUrl != null ? gitHubEnterpriseUrl.hashCode() : 0);
-        result = 31 * result + (allowedOrganizations != null ? allowedOrganizations.hashCode() : 0);
-        return result;
-    }
-
-    public GitHub gitHubClient() throws IOException {
-        return new GitHubClientBuilder().build(personalAccessToken, this);
+        return Objects.hash(clientId, clientSecret, authenticateWith, gitHubEnterpriseUrl, allowedOrganizations, personalAccessToken);
     }
 }
+

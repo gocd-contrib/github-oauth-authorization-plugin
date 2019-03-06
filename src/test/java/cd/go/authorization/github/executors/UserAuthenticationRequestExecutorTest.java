@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kohsuke.github.GHMyself;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Collections;
@@ -58,7 +59,7 @@ public class UserAuthenticationRequestExecutorTest {
         authenticator = mock(GitHubAuthenticator.class);
         gitHubClientBuilder = mock(GitHubClientBuilder.class);
 
-        executor = new UserAuthenticationRequestExecutor(request, gitHubClientBuilder, authenticator, authorizer);
+        executor = new UserAuthenticationRequestExecutor(request, authenticator, authorizer);
     }
 
     @Test
@@ -76,12 +77,14 @@ public class UserAuthenticationRequestExecutorTest {
         final User user = new User("bford", "Bob", "bford@example.com");
         final LoggedInUserInfo loggedInUserInfo = mock(LoggedInUserInfo.class);
         final TokenInfo tokenInfo = new TokenInfo("access-token", "token-type", "user:email,org:read");
+        final GHMyself ghUser = mock(GHMyself.class);
 
         when(loggedInUserInfo.getUser()).thenReturn(user);
+        when(loggedInUserInfo.getGitHubUser()).thenReturn(ghUser);
         when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
         when(request.tokenInfo()).thenReturn(tokenInfo);
         when(authenticator.authenticate(tokenInfo, authConfig)).thenReturn(loggedInUserInfo);
-        when(authorizer.authorize(eq(loggedInUserInfo), eq(authConfig), anyList())).thenReturn(Collections.emptyList());
+        when(authorizer.authorize(eq(ghUser), eq(authConfig), anyList())).thenReturn(Collections.emptyList());
 
         final GoPluginApiResponse response = executor.execute();
 
@@ -104,13 +107,15 @@ public class UserAuthenticationRequestExecutorTest {
         final LoggedInUserInfo loggedInUserInfo = mock(LoggedInUserInfo.class);
         final User user = new User("bford", "Bob", "bford@example.com");
         final Role role = mock(Role.class);
+        final GHMyself ghUser = mock(GHMyself.class);
 
         when(loggedInUserInfo.getUser()).thenReturn(user);
         when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
         when(request.roles()).thenReturn(Collections.singletonList(role));
         when(request.tokenInfo()).thenReturn(tokenInfo);
         when(authenticator.authenticate(tokenInfo, authConfig)).thenReturn(loggedInUserInfo);
-        when(authorizer.authorize(loggedInUserInfo, authConfig, request.roles())).thenReturn(Collections.singletonList("admin"));
+        when(loggedInUserInfo.getGitHubUser()).thenReturn(ghUser);
+        when(authorizer.authorize(ghUser, authConfig, request.roles())).thenReturn(Collections.singletonList("admin"));
 
         final GoPluginApiResponse response = executor.execute();
 
