@@ -28,17 +28,22 @@ import static cd.go.authorization.github.GitHubPlugin.LOG;
 
 public class GitHubClientBuilder {
 
-    public GitHub build(String usersAccessToken, GitHubConfiguration gitHubConfiguration) throws IOException {
-        return createGitHub(usersAccessToken, gitHubConfiguration);
+    public GitHub from(GitHubConfiguration gitHubConfiguration) throws IOException {
+        return clientFor(gitHubConfiguration.personalAccessToken(), gitHubConfiguration);
     }
 
-    private GitHub createGitHub(String accessToken, GitHubConfiguration gitHubConfiguration) throws IOException {
+    public GitHub fromAccessToken(String accessToken, GitHubConfiguration gitHubConfiguration) throws IOException {
+        return clientFor(accessToken, gitHubConfiguration);
+    }
+
+    private GitHub clientFor(String personalAccessTokenOrUsersAccessToken, GitHubConfiguration gitHubConfiguration) throws IOException {
         if (gitHubConfiguration.authenticateWith() == AuthenticateWith.GITHUB_ENTERPRISE) {
             LOG.debug("Create GitHub connection to enterprise GitHub with token");
-            return GitHub.connectToEnterprise(gitHubConfiguration.gitHubEnterpriseUrl(), accessToken);
+            return GitHub.connectToEnterprise(gitHubConfiguration.gitHubEnterpriseUrl(), gitHubConfiguration.personalAccessToken());
         } else {
             LOG.debug("Create GitHub connection to public GitHub with token");
-            return new GitHubBuilder().withOAuthToken(accessToken).withRateLimitHandler(RateLimitHandler.FAIL).build();
+            return new GitHubBuilder()
+                    .withOAuthToken(personalAccessTokenOrUsersAccessToken).withRateLimitHandler(RateLimitHandler.FAIL).build();
         }
     }
 }

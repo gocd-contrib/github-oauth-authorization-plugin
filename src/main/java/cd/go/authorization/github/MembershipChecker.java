@@ -51,7 +51,7 @@ public class MembershipChecker {
     }
 
     private boolean checkMembershipUsingPersonalAccessToken(GHUser ghUser, AuthConfig authConfig, List<String> organizationsAllowed) throws IOException {
-        final GitHub gitHubForPersonalAccessToken = clientBuilder.build(null, authConfig.gitHubConfiguration());
+        final GitHub gitHubForPersonalAccessToken = clientBuilder.from(authConfig.gitHubConfiguration());
 
         for (String organizationName : organizationsAllowed) {
             final GHOrganization organization = gitHubForPersonalAccessToken.getOrganization(organizationName);
@@ -74,7 +74,7 @@ public class MembershipChecker {
     }
 
     private boolean checkTeamMembershipUsingPersonalAccessToken(GHUser ghUser, AuthConfig authConfig, Map<String, List<String>> organizationAndTeamsAllowed) throws IOException {
-        final GitHub gitHubForPersonalAccessToken = clientBuilder.build(null, authConfig.gitHubConfiguration());
+        final GitHub gitHubForPersonalAccessToken = clientBuilder.from(authConfig.gitHubConfiguration());
 
         for (String organizationName : organizationAndTeamsAllowed.keySet()) {
             final GHOrganization organization = gitHubForPersonalAccessToken.getOrganization(organizationName);

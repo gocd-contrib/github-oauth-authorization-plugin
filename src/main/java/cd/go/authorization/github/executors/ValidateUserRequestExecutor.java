@@ -41,7 +41,7 @@ public class ValidateUserRequestExecutor implements RequestExecutor {
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
-        GitHub gitHub = clientBuilder.build(null, request.getAuthConfig().gitHubConfiguration());
+        GitHub gitHub = clientBuilder.from(request.getAuthConfig().gitHubConfiguration());
         GHUser user = gitHub.getUser(request.getUsername());
         if (user == null) {
             LOG.error(format("[Is Valid User] User %s does not exist in GitHub.", request.getUsername()));

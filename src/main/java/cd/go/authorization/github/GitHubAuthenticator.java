@@ -41,7 +41,7 @@ public class GitHubAuthenticator {
     }
 
     public LoggedInUserInfo authenticate(TokenInfo tokenInfo, AuthConfig authConfig) throws IOException {
-        final GitHub gitHub = gitHubClientBuilder.build(tokenInfo.accessToken(), authConfig.gitHubConfiguration());
+        final GitHub gitHub = gitHubClientBuilder.fromAccessToken(tokenInfo.accessToken(),authConfig.gitHubConfiguration());
         final List<String> allowedOrganizations = authConfig.gitHubConfiguration().organizationsAllowed();
         final LoggedInUserInfo loggedInUserInfo = new LoggedInUserInfo(gitHub);
 

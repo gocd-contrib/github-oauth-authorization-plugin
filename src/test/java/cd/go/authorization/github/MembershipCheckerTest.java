@@ -52,7 +52,7 @@ public class MembershipCheckerTest {
         final GitHubClientBuilder clientBuilder = mock(GitHubClientBuilder.class);
 
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
-        when(clientBuilder.build(null, gitHubConfiguration)).thenReturn(gitHub);
+        when(clientBuilder.from(gitHubConfiguration)).thenReturn(gitHub);
 
         membershipChecker = new MembershipChecker(clientBuilder);
     }
