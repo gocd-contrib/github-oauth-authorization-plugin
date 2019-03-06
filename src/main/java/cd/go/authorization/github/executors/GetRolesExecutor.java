@@ -53,7 +53,7 @@ public class GetRolesExecutor implements RequestExecutor {
             return DefaultGoPluginApiResponse.success("[]");
         }
 
-        GitHub gitHub = clientBuilder.build(null, request.getAuthConfig().gitHubConfiguration());
+        GitHub gitHub = clientBuilder.from(request.getAuthConfig().gitHubConfiguration());
         GHUser user = gitHub.getUser(request.getUsername());
 
         if (user == null) {

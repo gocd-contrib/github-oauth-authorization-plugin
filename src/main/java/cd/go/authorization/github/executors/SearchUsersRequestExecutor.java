@@ -62,7 +62,7 @@ public class SearchUsersRequestExecutor implements RequestExecutor {
     private Set<User> search(String searchText, AuthConfig authConfig) throws IOException {
         Set<User> users = new HashSet<>();
         long start = System.currentTimeMillis();
-        GitHub client = gitHubClientBuilder.build(authConfig.gitHubConfiguration().personalAccessToken(), authConfig.gitHubConfiguration());
+        GitHub client = gitHubClientBuilder.from(authConfig.gitHubConfiguration());
         PagedSearchIterable<GHUser> ghUsers = client.searchUsers().q(searchText).list();
         long afterRequest = System.currentTimeMillis();
         LOG.debug("Time for request: " + (afterRequest - start) + "ms");
