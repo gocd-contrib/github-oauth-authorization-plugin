@@ -59,7 +59,7 @@ public class UserAuthenticationRequestExecutorTest {
         authenticator = mock(GitHubAuthenticator.class);
         gitHubClientBuilder = mock(GitHubClientBuilder.class);
 
-        executor = new UserAuthenticationRequestExecutor(request, gitHubClientBuilder, authenticator, authorizer);
+        executor = new UserAuthenticationRequestExecutor(request, authenticator, authorizer);
     }
 
     @Test

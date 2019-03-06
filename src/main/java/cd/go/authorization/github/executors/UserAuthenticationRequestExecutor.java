@@ -18,7 +18,6 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.GitHubAuthenticator;
 import cd.go.authorization.github.GitHubAuthorizer;
-import cd.go.authorization.github.GitHubClientBuilder;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.LoggedInUserInfo;
@@ -30,21 +29,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cd.go.authorization.github.utils.Util.GSON;
-import static com.thoughtworks.go.plugin.api.response.DefaultGoApiResponse.SUCCESS_RESPONSE_CODE;
 
 public class UserAuthenticationRequestExecutor implements RequestExecutor {
     private final UserAuthenticationRequest request;
-    private final GitHubClientBuilder providerManager;
     private final GitHubAuthenticator gitHubAuthenticator;
     private final GitHubAuthorizer gitHubAuthorizer;
 
     public UserAuthenticationRequestExecutor(UserAuthenticationRequest request) {
-        this(request, new GitHubClientBuilder(), new GitHubAuthenticator(), new GitHubAuthorizer());
+        this(request, new GitHubAuthenticator(), new GitHubAuthorizer());
     }
 
-    UserAuthenticationRequestExecutor(UserAuthenticationRequest request, GitHubClientBuilder providerManager, GitHubAuthenticator gitHubAuthenticator, GitHubAuthorizer gitHubAuthorizer) {
+    UserAuthenticationRequestExecutor(UserAuthenticationRequest request, GitHubAuthenticator gitHubAuthenticator, GitHubAuthorizer gitHubAuthorizer) {
         this.request = request;
-        this.providerManager = providerManager;
         this.gitHubAuthenticator = gitHubAuthenticator;
         this.gitHubAuthorizer = gitHubAuthorizer;
     }
@@ -64,7 +60,6 @@ public class UserAuthenticationRequestExecutor implements RequestExecutor {
             userMap.put("roles", gitHubAuthorizer.authorize(loggedInUserInfo.getGitHubUser(), authConfig, request.roles()));
         }
 
-        DefaultGoPluginApiResponse response = new DefaultGoPluginApiResponse(SUCCESS_RESPONSE_CODE, GSON.toJson(userMap));
-        return response;
+        return DefaultGoPluginApiResponse.success(GSON.toJson(userMap));
     }
 }
