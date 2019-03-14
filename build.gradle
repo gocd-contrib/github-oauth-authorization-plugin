@@ -58,7 +58,7 @@ dependencies {
     testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.3'
     testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
     testCompile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
-    testCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '3.12.0'
+    testCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '3.14.0'
     testCompile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
 }
 
