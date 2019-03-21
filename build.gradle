@@ -24,7 +24,7 @@ apply from: 'plugin-helpers.gradle'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-project.ext.pluginVersion = '3.0.0'
+project.ext.pluginVersion = '3.0.1'
 project.ext.fullVersion = project.git.distVersion() ? "${project.pluginVersion}-${project.git.distVersion()}" : project.pluginVersion
 
 version = project.fullVersion

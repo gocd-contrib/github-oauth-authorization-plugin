@@ -1,4 +1,6 @@
-##  2.2.0 - 2018-08-29
+See the [GitHub releases page](https://github.com/gocd-contrib/github-oauth-authorization-plugin/releases) for changes after version 2.2.0. 
+
+## 2.2.0 - 2018-08-29
 
 ### Fixed
 
