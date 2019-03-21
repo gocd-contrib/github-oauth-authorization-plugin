@@ -17,6 +17,7 @@
 package cd.go.authorization.github.requests;
 
 import cd.go.authorization.github.executors.GetAuthorizationServerUrlRequestExecutor;
+import cd.go.authorization.github.executors.RequestExecutor;
 import cd.go.authorization.github.models.AuthConfig;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -46,7 +47,7 @@ public class GetAuthorizationServerUrlRequest extends Request {
     }
 
     @Override
-    public GetAuthorizationServerUrlRequestExecutor executor() {
+    public RequestExecutor executor() {
         return new GetAuthorizationServerUrlRequestExecutor(this);
     }
 }

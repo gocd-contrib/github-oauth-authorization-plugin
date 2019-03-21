@@ -41,11 +41,11 @@ public class GitHubAuthenticator {
     }
 
     public LoggedInUserInfo authenticate(TokenInfo tokenInfo, AuthConfig authConfig) throws IOException {
-        final GitHub gitHub = gitHubClientBuilder.build(tokenInfo.accessToken(), authConfig.gitHubConfiguration());
+        final GitHub gitHub = gitHubClientBuilder.fromAccessToken(tokenInfo.accessToken(),authConfig.gitHubConfiguration());
         final List<String> allowedOrganizations = authConfig.gitHubConfiguration().organizationsAllowed();
         final LoggedInUserInfo loggedInUserInfo = new LoggedInUserInfo(gitHub);
 
-        if (allowedOrganizations.isEmpty() || membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo, authConfig, allowedOrganizations)) {
+        if (allowedOrganizations.isEmpty() || membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo.getGitHubUser(), authConfig, allowedOrganizations)) {
             LOG.info(format("[Authenticate] User `{0}` authenticated successfully.", loggedInUserInfo.getUser().username()));
             return loggedInUserInfo;
         }

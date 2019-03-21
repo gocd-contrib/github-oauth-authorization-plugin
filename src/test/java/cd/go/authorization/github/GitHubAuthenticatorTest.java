@@ -30,7 +30,6 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -42,7 +41,6 @@ public class GitHubAuthenticatorTest {
     private MembershipChecker membershipChecker;
     private AuthConfig authConfig;
     private GitHubConfiguration gitHubConfiguration;
-    private GitHubClientBuilder gitHubClientBuilder;
     private TokenInfo tokenInfo;
 
     @Before
@@ -52,10 +50,11 @@ public class GitHubAuthenticatorTest {
         gitHubConfiguration = mock(GitHubConfiguration.class);
         tokenInfo = mock(TokenInfo.class);
         membershipChecker = mock(MembershipChecker.class);
-        gitHubClientBuilder = mock(GitHubClientBuilder.class);
+        GitHubClientBuilder gitHubClientBuilder = mock(GitHubClientBuilder.class);
 
+        when(tokenInfo.accessToken()).thenReturn("some-token");
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
-        when(gitHubClientBuilder.build(tokenInfo.accessToken(), gitHubConfiguration)).thenReturn(gitHub);
+        when(gitHubClientBuilder.fromAccessToken(tokenInfo.accessToken(), gitHubConfiguration)).thenReturn(gitHub);
 
         authenticator = new GitHubAuthenticator(membershipChecker, gitHubClientBuilder);
     }
@@ -79,7 +78,7 @@ public class GitHubAuthenticatorTest {
 
         when(gitHub.getMyself()).thenReturn(myself);
         when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);
-        when(membershipChecker.isAMemberOfAtLeastOneOrganization(any(LoggedInUserInfo.class), eq(authConfig), eq(allowedOrganizations))).thenReturn(true);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(eq(myself), eq(authConfig), eq(allowedOrganizations))).thenReturn(true);
 
         final LoggedInUserInfo loggedInUserInfo = authenticator.authenticate(tokenInfo, authConfig);
 
@@ -93,7 +92,7 @@ public class GitHubAuthenticatorTest {
 
         when(gitHub.getMyself()).thenReturn(myself);
         when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);
-        when(membershipChecker.isAMemberOfAtLeastOneOrganization(any(LoggedInUserInfo.class), eq(authConfig), eq(allowedOrganizations))).thenReturn(false);
+        when(membershipChecker.isAMemberOfAtLeastOneOrganization(eq(myself), eq(authConfig), eq(allowedOrganizations))).thenReturn(false);
 
         final LoggedInUserInfo loggedInUserInfo = authenticator.authenticate(tokenInfo, authConfig);
 
