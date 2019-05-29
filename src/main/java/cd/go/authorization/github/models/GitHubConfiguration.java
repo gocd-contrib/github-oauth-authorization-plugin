@@ -30,6 +30,7 @@ import static cd.go.authorization.github.utils.Util.*;
 
 public class GitHubConfiguration implements Validatable {
     private static final String GITHUB_URL = "https://github.com";
+    private static final String GITHUB_ENTERPRISE_API_SUFFIX = "/api/v3/";
 
     @Expose
     @SerializedName("ClientId")
@@ -95,6 +96,10 @@ public class GitHubConfiguration implements Validatable {
 
     public String gitHubEnterpriseUrl() {
         return gitHubEnterpriseUrl;
+    }
+
+    public String gitHubEnterpriseApiUrl() {
+        return gitHubEnterpriseUrl.concat(GITHUB_ENTERPRISE_API_SUFFIX);
     }
 
     public String apiUrl() {
