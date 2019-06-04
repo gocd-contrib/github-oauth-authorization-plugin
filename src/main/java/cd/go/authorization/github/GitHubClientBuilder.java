@@ -39,7 +39,7 @@ public class GitHubClientBuilder {
     private GitHub clientFor(String personalAccessTokenOrUsersAccessToken, GitHubConfiguration gitHubConfiguration) throws IOException {
         if (gitHubConfiguration.authenticateWith() == AuthenticateWith.GITHUB_ENTERPRISE) {
             LOG.debug("Create GitHub connection to enterprise GitHub with token");
-            return GitHub.connectToEnterprise(gitHubConfiguration.gitHubEnterpriseUrl(), gitHubConfiguration.personalAccessToken());
+            return GitHub.connectToEnterprise(gitHubConfiguration.gitHubEnterpriseApiUrl(), personalAccessTokenOrUsersAccessToken);
         } else {
             LOG.debug("Create GitHub connection to public GitHub with token");
             return new GitHubBuilder()
