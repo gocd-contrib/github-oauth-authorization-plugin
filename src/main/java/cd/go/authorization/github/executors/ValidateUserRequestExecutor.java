@@ -47,7 +47,7 @@ public class ValidateUserRequestExecutor implements RequestExecutor {
             LOG.error(format("[Is Valid User] User %s does not exist in GitHub.", request.getUsername()));
             return DefaultGoPluginApiResponse.error(String.format("User '%s' does not exist in GitHub.", request.getUsername()));
         } else {
-            LOG.info(format("[Is Valid User] %s is valid user.", request.getUsername()));
+            LOG.debug(format("[Is Valid User] %s is valid user.", request.getUsername()));
             return DefaultGoPluginApiResponse.success("");
         }
     }
