@@ -1,0 +1,12 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: friday
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: cd.go.plugin:go-plugin-api
+    versions:
+    - "> 17.5.0"
