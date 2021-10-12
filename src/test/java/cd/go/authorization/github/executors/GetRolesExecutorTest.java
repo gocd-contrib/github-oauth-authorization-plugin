@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class GetRolesExecutorTest {
@@ -68,8 +68,8 @@ public class GetRolesExecutorTest {
 
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals("[]", response.responseBody(), true);
-        verifyZeroInteractions(authorizer);
-        verifyZeroInteractions(clientBuilder);
+        verifyNoMoreInteractions(authorizer);
+        verifyNoMoreInteractions(clientBuilder);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class GetRolesExecutorTest {
         InOrder inOrder = inOrder(clientBuilder, gitHub);
         inOrder.verify(clientBuilder).from(request.getAuthConfig().gitHubConfiguration());
         inOrder.verify(gitHub).getUser(request.getUsername());
-        verifyZeroInteractions(authorizer);
+        verifyNoMoreInteractions(authorizer);
     }
 
     private Role roleWithName(String name) {

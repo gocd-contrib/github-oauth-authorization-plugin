@@ -18,14 +18,14 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.utils.Util;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
+import java.util.Base64;
 import java.util.HashMap;
 
 import static cd.go.authorization.github.utils.Util.GSON;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class GetPluginIconRequestExecutorTest {
 
@@ -35,6 +35,6 @@ public class GetPluginIconRequestExecutorTest {
         HashMap<String, String> hashMap = GSON.fromJson(response.responseBody(), HashMap.class);
         assertThat(hashMap.size(), is(2));
         assertThat(hashMap.get("content_type"), is("image/svg+xml"));
-        assertThat(Util.readResourceBytes("/logo.svg"), is(Base64.decodeBase64(hashMap.get("data"))));
+        assertThat(Util.readResourceBytes("/logo.svg"), is(Base64.getDecoder().decode(hashMap.get("data"))));
     }
 }

@@ -29,7 +29,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class GitHubAuthorizerTest {
@@ -54,8 +54,8 @@ public class GitHubAuthorizerTest {
         final List<String> assignedRoles = authorizer.authorize(ghUser, authConfig, Collections.emptyList());
 
         assertThat(assignedRoles, hasSize(0));
-        verifyZeroInteractions(authConfig);
-        verifyZeroInteractions(membershipChecker);
+        verifyNoMoreInteractions(authConfig);
+        verifyNoMoreInteractions(membershipChecker);
     }
 
     @Test
