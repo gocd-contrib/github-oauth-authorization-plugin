@@ -19,6 +19,7 @@ package cd.go.authorization.github.executors;
 import cd.go.authorization.github.exceptions.AuthenticationException;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
+import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.models.TokenInfo;
 import cd.go.authorization.github.requests.FetchAccessTokenRequest;
@@ -26,6 +27,7 @@ import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +55,8 @@ public class FetchAccessTokenRequestExecutorTest {
 
         fetchAccessTokenRequest = mock(FetchAccessTokenRequest.class);
         authConfig = mock(AuthConfig.class);
-        gitHubConfiguration = mock(GitHubConfiguration.class);
+        gitHubConfiguration = new GitHubConfiguration("my-client", "my-secret", AuthenticateWith.GITHUB_ENTERPRISE,
+                mockWebServer.url("/").toString(), "");
 
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
 
@@ -83,7 +86,7 @@ public class FetchAccessTokenRequestExecutorTest {
 
         when(fetchAccessTokenRequest.authConfigs()).thenReturn(Collections.singletonList(authConfig));
         when(fetchAccessTokenRequest.requestParameters()).thenReturn(Collections.singletonMap("code", "code-received-in-previous-step"));
-        when(gitHubConfiguration.apiUrl()).thenReturn(mockWebServer.url("/").toString());
+
 
         final GoPluginApiResponse response = executor.execute();
 
@@ -95,6 +98,11 @@ public class FetchAccessTokenRequestExecutorTest {
 
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
+
+        RecordedRequest recordedRequest = mockWebServer.takeRequest();
+        assertThat(recordedRequest.getPath(), is("/login/oauth/access_token"));
+        assertThat(recordedRequest.getHeader("Content-Type"), is("application/x-www-form-urlencoded"));
+        assertThat(recordedRequest.getBody().readUtf8(), is("client_id=my-client&client_secret=my-secret&code=code-received-in-previous-step"));
     }
 
     @Test
@@ -104,7 +112,6 @@ public class FetchAccessTokenRequestExecutorTest {
 
         when(fetchAccessTokenRequest.authConfigs()).thenReturn(Collections.singletonList(authConfig));
         when(fetchAccessTokenRequest.requestParameters()).thenReturn(Collections.singletonMap("code", "code-received-in-previous-step"));
-        when(gitHubConfiguration.apiUrl()).thenReturn(mockWebServer.url("/").toString());
 
         assertThrows(AuthenticationException.class, executor::execute);
     }
