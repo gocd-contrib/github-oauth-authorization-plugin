@@ -24,10 +24,7 @@ import cd.go.authorization.github.models.TokenInfo;
 import cd.go.authorization.github.requests.FetchAccessTokenRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
 import static java.text.MessageFormat.format;
@@ -57,8 +54,7 @@ public class FetchAccessTokenRequestExecutor implements RequestExecutor {
         final AuthConfig authConfig = request.authConfigs().get(0);
         final GitHubConfiguration gitHubConfiguration = authConfig.gitHubConfiguration();
 
-        String fetchAccessTokenUrl = fetchAccessTokenUrl(gitHubConfiguration);
-        final Request fetchAccessTokenRequest = fetchAccessTokenRequest(fetchAccessTokenUrl);
+        final Request fetchAccessTokenRequest = accessTokenRequestFrom(gitHubConfiguration);
 
         final Response response = httpClient.newCall(fetchAccessTokenRequest).execute();
         if (response.isSuccessful()) {
@@ -70,22 +66,24 @@ public class FetchAccessTokenRequestExecutor implements RequestExecutor {
         throw new AuthenticationException(format("[Get Access Token] {0}", response.message()));
     }
 
-    private Request fetchAccessTokenRequest(String fetchAccessTokenUrl) {
+    private Request accessTokenRequestFrom(GitHubConfiguration gitHubConfiguration) {
         return new Request.Builder()
-                .url(fetchAccessTokenUrl)
+                .url(accessTokenUrl(gitHubConfiguration))
                 .addHeader("Accept", "application/json")
+                .post(new FormBody.Builder()
+                        .add("client_id", gitHubConfiguration.clientId())
+                        .add("client_secret", gitHubConfiguration.clientSecret())
+                        .add("code", request.requestParameters().get("code"))
+                        .build())
                 .build();
     }
 
-    private String fetchAccessTokenUrl(GitHubConfiguration gitHubConfiguration) {
+    private HttpUrl accessTokenUrl(GitHubConfiguration gitHubConfiguration) {
         return HttpUrl.parse(gitHubConfiguration.apiUrl())
                 .newBuilder()
                 .addPathSegment("login")
                 .addPathSegment("oauth")
                 .addPathSegment("access_token")
-                .addQueryParameter("client_id", gitHubConfiguration.clientId())
-                .addQueryParameter("client_secret", gitHubConfiguration.clientSecret())
-                .addQueryParameter("code", request.requestParameters().get("code"))
-                .build().toString();
+                .build();
     }
 }
