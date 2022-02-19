@@ -17,8 +17,8 @@
 package cd.go.authorization.github;
 
 import cd.go.authorization.github.models.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GitHub;
 
@@ -28,8 +28,8 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,7 +43,7 @@ public class GitHubAuthenticatorTest {
     private GitHubConfiguration gitHubConfiguration;
     private TokenInfo tokenInfo;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         gitHub = mock(GitHub.class);
         authConfig = mock(AuthConfig.class);

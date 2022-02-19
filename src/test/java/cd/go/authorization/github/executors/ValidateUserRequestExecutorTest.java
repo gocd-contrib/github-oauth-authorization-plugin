@@ -21,14 +21,14 @@ import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.ValidateUserRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +38,7 @@ public class ValidateUserRequestExecutorTest {
     private ValidateUserRequest request;
     private GitHubClientBuilder clientBuilder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         request = mock(ValidateUserRequest.class);
         clientBuilder = mock(GitHubClientBuilder.class);

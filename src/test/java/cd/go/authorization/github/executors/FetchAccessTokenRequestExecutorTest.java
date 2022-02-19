@@ -26,16 +26,16 @@ import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +46,7 @@ public class FetchAccessTokenRequestExecutorTest {
     private FetchAccessTokenRequestExecutor executor;
     private MockWebServer mockWebServer;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
@@ -60,7 +60,7 @@ public class FetchAccessTokenRequestExecutorTest {
         executor = new FetchAccessTokenRequestExecutor(fetchAccessTokenRequest);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         mockWebServer.shutdown();
     }

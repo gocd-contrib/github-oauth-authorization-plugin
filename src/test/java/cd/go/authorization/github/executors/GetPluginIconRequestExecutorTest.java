@@ -18,7 +18,7 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.utils.Util;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Base64;
 import java.util.HashMap;

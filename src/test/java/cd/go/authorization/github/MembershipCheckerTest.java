@@ -18,8 +18,8 @@ package cd.go.authorization.github;
 
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.GitHubConfiguration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHOrganization;
 import org.kohsuke.github.GHTeam;
 import org.kohsuke.github.GHUser;
@@ -30,8 +30,8 @@ import java.util.HashMap;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,7 +43,7 @@ public class MembershipCheckerTest {
     private GitHubConfiguration gitHubConfiguration;
     private GHUser ghUser;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         gitHub = mock(GitHub.class);
         authConfig = mock(AuthConfig.class);

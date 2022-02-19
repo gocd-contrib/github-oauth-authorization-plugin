@@ -18,7 +18,7 @@ package cd.go.authorization.github.requests;
 
 import cd.go.authorization.github.executors.ValidateUserRequestExecutor;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

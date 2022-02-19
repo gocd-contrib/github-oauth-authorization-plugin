@@ -51,19 +51,32 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute module("junit:junit") using module("io.quarkus:quarkus-junit4-mock:2.7.1.Final") because "We don't want JUnit 4; but is an unneeded transitive of mockwebserver."
+    }
+}
+
 dependencies {
-    compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '21.2.0'
+    compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '21.4.0'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
     implementation group: 'org.kohsuke', name: 'github-api', version: '1.301'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
 
-    testImplementation group: 'cd.go.plugin', name: 'go-plugin-api', version: '17.4.0'
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation group: 'cd.go.plugin', name: 'go-plugin-api', version: '21.4.0'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.3.1'
     testImplementation group: 'org.hamcrest', name: 'hamcrest-library', version: '2.2'
     testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
     testImplementation group: 'org.jsoup', name: 'jsoup', version: '1.14.3'
     testImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.9.3'
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.8.2'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 jar {

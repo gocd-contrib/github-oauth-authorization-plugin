@@ -24,8 +24,8 @@ import cd.go.authorization.github.models.Role;
 import cd.go.authorization.github.requests.GetRolesRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.json.JSONException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.mockito.InOrder;
@@ -36,8 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
 public class GetRolesExecutorTest {
@@ -47,7 +47,7 @@ public class GetRolesExecutorTest {
     private GitHubAuthorizer authorizer;
     private GitHubClientBuilder clientBuilder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         request = mock(GetRolesRequest.class);
         authorizer = mock(GitHubAuthorizer.class);

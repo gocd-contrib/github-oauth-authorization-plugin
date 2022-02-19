@@ -23,8 +23,8 @@ import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationExcepti
 import cd.go.authorization.github.models.*;
 import cd.go.authorization.github.requests.UserAuthenticationRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHMyself;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -32,7 +32,7 @@ import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -47,7 +47,7 @@ public class UserAuthenticationRequestExecutorTest {
     private GitHubClientBuilder gitHubClientBuilder;
     private GitHubAuthenticator authenticator;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         request = mock(UserAuthenticationRequest.class);
         authConfig = mock(AuthConfig.class);
@@ -62,7 +62,7 @@ public class UserAuthenticationRequestExecutorTest {
     public void shouldErrorOutIfAuthConfigIsNotProvided() throws Exception {
         when(request.authConfigs()).thenReturn(Collections.emptyList());
 
-        assertThrows("[Authenticate] No authorization configuration found.", NoAuthorizationConfigurationException.class, executor::execute);
+        assertThrows(NoAuthorizationConfigurationException.class, executor::execute, "[Authenticate] No authorization configuration found.");
     }
 
     @Test

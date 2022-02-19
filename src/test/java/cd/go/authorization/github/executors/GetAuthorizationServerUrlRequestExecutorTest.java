@@ -22,8 +22,8 @@ import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.GetAuthorizationServerUrlRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.util.Collections;
@@ -31,7 +31,7 @@ import java.util.Collections;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -43,7 +43,7 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
 
     private GetAuthorizationServerUrlRequestExecutor executor;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         openMocks(this);
 
@@ -54,7 +54,7 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
     public void shouldErrorOutIfAuthConfigIsNotProvided() throws Exception {
         when(request.authConfigs()).thenReturn(Collections.emptyList());
 
-        assertThrows("[Authorization Server Url] No authorization configuration found.", NoAuthorizationConfigurationException.class, executor::execute);
+        assertThrows(NoAuthorizationConfigurationException.class, executor::execute, "[Authorization Server Url] No authorization configuration found.");
     }
 
     @Test

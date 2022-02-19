@@ -5,16 +5,16 @@ import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.SearchUsersRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kohsuke.github.*;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Collections;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -26,7 +26,7 @@ public class SearchUsersRequestExecutorTest {
     private GHUserSearchBuilder userSearchBuilder;
     private SearchUsersRequestExecutor executor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         clientBuilder = mock(GitHubClientBuilder.class);
         request = mock(SearchUsersRequest.class);

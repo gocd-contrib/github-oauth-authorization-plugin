@@ -16,12 +16,12 @@
 
 package cd.go.authorization.github.executors;
 
-import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.GitHubClientBuilder;
+import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.VerifyConnectionRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -35,7 +35,7 @@ public class VerifyConnectionRequestExecutorTest {
     private GitHubClientBuilder providerManager;
     private VerifyConnectionRequestExecutor executor;
 
-    @Before
+    @BeforeEach
     public void setup() {
         request = mock(VerifyConnectionRequest.class);
         providerManager = mock(GitHubClientBuilder.class);

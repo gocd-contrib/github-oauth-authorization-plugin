@@ -16,9 +16,11 @@
 
 package cd.go.authorization.github;
 
-import cd.go.authorization.github.models.*;
-import org.junit.Before;
-import org.junit.Test;
+import cd.go.authorization.github.models.AuthConfig;
+import cd.go.authorization.github.models.GitHubRoleConfiguration;
+import cd.go.authorization.github.models.Role;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHUser;
 
 import java.io.IOException;
@@ -27,9 +29,9 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class GitHubAuthorizerTest {
@@ -39,7 +41,7 @@ public class GitHubAuthorizerTest {
     private GHUser ghUser;
     private AuthConfig authConfig;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         membershipChecker = mock(MembershipChecker.class);
         ghUser = mock(GHUser.class);
