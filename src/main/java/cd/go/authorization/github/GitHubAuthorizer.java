@@ -56,13 +56,13 @@ public class GitHubAuthorizer {
             }
 
             if (membershipChecker.isAMemberOfAtLeastOneOrganization(user, authConfig, role.roleConfiguration().organizations())) {
-                LOG.debug(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one organization.", role.name(), user.getLogin()));
+                LOG.info(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one organization.", role.name(), user.getLogin()));
                 assignedRoles.add(role.name());
                 continue;
             }
 
             if (membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(user, authConfig, role.roleConfiguration().teams())) {
-                LOG.debug(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one team of the organization.", role.name(), user.getLogin()));
+                LOG.info(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one team of the organization.", role.name(), user.getLogin()));
                 assignedRoles.add(role.name());
             }
         }
