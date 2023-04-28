@@ -78,7 +78,7 @@ dependencies {
     testImplementation group: 'org.jsoup', name: 'jsoup', version: '1.15.4'
     testImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.11.0'
 
-    testImplementation platform('org.junit:junit-bom:5.9.2')
+    testImplementation platform('org.junit:junit-bom:5.9.3')
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
