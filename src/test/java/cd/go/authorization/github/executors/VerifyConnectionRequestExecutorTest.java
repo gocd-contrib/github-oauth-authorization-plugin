@@ -74,7 +74,7 @@ public class VerifyConnectionRequestExecutorTest {
 
     @Test
     public void shouldReturnSuccessResponseOnSuccessfulVerification() throws Exception {
-        final GitHubConfiguration gitHubConfiguration = mock(GitHubConfiguration.class);
+        final GitHubConfiguration gitHubConfiguration = GitHubConfiguration.fromJSON("{ \"ClientId\": \"id\", \"ClientSecret\": \"secret\", \"PersonalAccessToken\": \"pat\"}");
 
         when(request.githubConfiguration()).thenReturn(gitHubConfiguration);
 
