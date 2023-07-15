@@ -16,26 +16,33 @@
 
 package cd.go.authorization.github.executors;
 
+import cd.go.authorization.github.Constants;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.GetAuthorizationServerUrlRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 public class GetAuthorizationServerUrlRequestExecutorTest {
+    public static final String DUMMY_STATE_VALUE = "some-state-value";
     @Mock
     private GetAuthorizationServerUrlRequest request;
     @Mock
@@ -59,43 +66,68 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
 
     @Test
     public void shouldReturnAuthorizationServerUrlForGitHub() throws Exception {
-        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB, null, "example-1");
+        try (MockedStatic<StateGenerator> stateGenerator = Mockito.mockStatic(StateGenerator.class)) {
+            stateGenerator.when(StateGenerator::generate).thenReturn(DUMMY_STATE_VALUE);
+            GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB, null, "example-1");
 
-        when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
-        when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
-        when(request.callbackUrl()).thenReturn("call-back-url");
+            when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
+            when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+            when(request.callbackUrl()).thenReturn("call-back-url");
 
-        final GoPluginApiResponse response = executor.execute();
+            final GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(200));
-        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"https://github.com/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser%3Aemail\"}"));
+            assertThat(response.responseCode(), is(200));
+            JSONObject expectedJSON = new JSONObject(Map.of(
+                    "authorization_server_url", "https://github.com/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&scope=user%3Aemail&state=some-state-value",
+                    "auth_session", Map.of(Constants.AUTH_SESSION_STATE, DUMMY_STATE_VALUE)
+            ));
+
+            JSONAssert.assertEquals(expectedJSON, new JSONObject(response.responseBody()), JSONCompareMode.LENIENT);
+        }
     }
 
     @Test
     public void shouldReturnAuthorizationServerUrlWithTrailingSlash() throws Exception {
-        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url/", "example-1");
+        try (MockedStatic<StateGenerator> stateGenerator = Mockito.mockStatic(StateGenerator.class)) {
+            stateGenerator.when(StateGenerator::generate).thenReturn(DUMMY_STATE_VALUE);
+            GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url/", "example-1");
 
-        when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
-        when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
-        when(request.callbackUrl()).thenReturn("call-back-url");
+            when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
+            when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+            when(request.callbackUrl()).thenReturn("call-back-url");
 
-        final GoPluginApiResponse response = executor.execute();
+            final GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(200));
-        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"http://enterprise.url/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser%3Aemail\"}"));
+            assertThat(response.responseCode(), is(200));
+            JSONObject expectedJSON = new JSONObject(Map.of(
+                    "authorization_server_url", "http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&scope=user%3Aemail&state=some-state-value",
+                    "auth_session", Map.of(Constants.AUTH_SESSION_STATE, DUMMY_STATE_VALUE)
+            ));
+
+            JSONAssert.assertEquals(expectedJSON, new JSONObject(response.responseBody()), JSONCompareMode.LENIENT);
+        }
     }
 
     @Test
     public void shouldReturnAuthorizationServerUrlForGitHubEnterprise() throws Exception {
-        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url", "example-1");
+        try (MockedStatic<StateGenerator> stateGenerator = Mockito.mockStatic(StateGenerator.class)) {
+            stateGenerator.when(StateGenerator::generate).thenReturn(DUMMY_STATE_VALUE);
+            GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url", "example-1");
 
-        when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
-        when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
-        when(request.callbackUrl()).thenReturn("call-back-url");
+            when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
+            when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+            when(request.callbackUrl()).thenReturn("call-back-url");
 
-        final GoPluginApiResponse response = executor.execute();
+            final GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(200));
-        assertThat(response.responseBody(), startsWith("{\"authorization_server_url\":\"http://enterprise.url/login/oauth/authorize?client_id\\u003dclient-id\\u0026redirect_uri\\u003dcall-back-url\\u0026scope\\u003duser%3Aemail\"}"));
+            assertThat(response.responseCode(), is(200));
+
+            JSONObject expectedJSON = new JSONObject(Map.of(
+                    "authorization_server_url", "http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&scope=user%3Aemail&state=some-state-value",
+                    "auth_session", Map.of(Constants.AUTH_SESSION_STATE, DUMMY_STATE_VALUE)
+            ));
+
+            JSONAssert.assertEquals(expectedJSON, new JSONObject(response.responseBody()), JSONCompareMode.LENIENT);
+        }
     }
 }

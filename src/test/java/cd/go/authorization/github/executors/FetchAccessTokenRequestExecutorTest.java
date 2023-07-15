@@ -16,6 +16,7 @@
 
 package cd.go.authorization.github.executors;
 
+import cd.go.authorization.github.Constants;
 import cd.go.authorization.github.exceptions.AuthenticationException;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
@@ -34,12 +35,12 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class FetchAccessTokenRequestExecutorTest {
     private FetchAccessTokenRequest fetchAccessTokenRequest;
@@ -76,6 +77,8 @@ public class FetchAccessTokenRequestExecutorTest {
         FetchAccessTokenRequestExecutor executor = new FetchAccessTokenRequestExecutor(FetchAccessTokenRequest.from(request));
 
         assertThrows(NoAuthorizationConfigurationException.class, executor::execute);
+
+        verify(fetchAccessTokenRequest, never()).validateState();
     }
 
     @Test
@@ -103,6 +106,8 @@ public class FetchAccessTokenRequestExecutorTest {
         assertThat(recordedRequest.getPath(), is("/login/oauth/access_token"));
         assertThat(recordedRequest.getHeader("Content-Type"), is("application/x-www-form-urlencoded"));
         assertThat(recordedRequest.getBody().readUtf8(), is("client_id=my-client&client_secret=my-secret&code=code-received-in-previous-step"));
+
+        verify(fetchAccessTokenRequest).validateState();
     }
 
     @Test
@@ -113,6 +118,20 @@ public class FetchAccessTokenRequestExecutorTest {
         when(fetchAccessTokenRequest.authConfigs()).thenReturn(Collections.singletonList(authConfig));
         when(fetchAccessTokenRequest.requestParameters()).thenReturn(Collections.singletonMap("code", "code-received-in-previous-step"));
 
-        assertThrows(AuthenticationException.class, executor::execute);
+        Exception exception = assertThrows(AuthenticationException.class, executor::execute);
+        assertThat(exception.getMessage(), is("[Get Access Token] Client Error"));
+
+        verify(fetchAccessTokenRequest).validateState();
+    }
+
+    @Test
+    public void fetchAccessToken_shouldErrorIfStateDoesNotMatch() throws Exception {
+        when(fetchAccessTokenRequest.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+        when(fetchAccessTokenRequest.authSession()).thenReturn(Map.of(Constants.AUTH_SESSION_STATE, "some-value"));
+        when(fetchAccessTokenRequest.requestParameters()).thenReturn(Collections.singletonMap("code", "code-received-in-previous-step"));
+        doThrow(new AuthenticationException("error validating state")).when(fetchAccessTokenRequest).validateState();
+
+        Exception exception = assertThrows(AuthenticationException.class, executor::execute);
+        assertThat(exception.getMessage(), is("error validating state"));
     }
 }

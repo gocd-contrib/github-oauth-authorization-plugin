@@ -29,4 +29,6 @@ public interface Constants {
 
     // the identifier of this plugin
     GoPluginIdentifier PLUGIN_IDENTIFIER = new GoPluginIdentifier(EXTENSION_TYPE, Collections.singletonList(API_VERSION));
+
+    String AUTH_SESSION_STATE = "oauth2_state";
 }
