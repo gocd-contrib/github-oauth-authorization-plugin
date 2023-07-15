@@ -16,6 +16,7 @@
 
 package cd.go.authorization.github.executors;
 
+import cd.go.authorization.github.Constants;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.GitHubConfiguration;
@@ -24,7 +25,7 @@ import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import okhttp3.HttpUrl;
 
-import java.util.Collections;
+import java.util.Map;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
 import static cd.go.authorization.github.utils.Util.GSON;
@@ -46,6 +47,7 @@ public class GetAuthorizationServerUrlRequestExecutor implements RequestExecutor
         final AuthConfig authConfig = request.authConfigs().get(0);
         final GitHubConfiguration gitHubConfiguration = authConfig.gitHubConfiguration();
 
+        String state = StateGenerator.generate();
         String authorizationServerUrl = HttpUrl.parse(gitHubConfiguration.apiUrl())
                 .newBuilder()
                 .addPathSegment("login")
@@ -54,9 +56,13 @@ public class GetAuthorizationServerUrlRequestExecutor implements RequestExecutor
                 .addQueryParameter("client_id", gitHubConfiguration.clientId())
                 .addQueryParameter("redirect_uri", request.callbackUrl())
                 .addQueryParameter("scope", gitHubConfiguration.scope())
+                .addQueryParameter("state", state)
                 .build().toString();
 
 
-        return DefaultGoPluginApiResponse.success(GSON.toJson(Collections.singletonMap("authorization_server_url", authorizationServerUrl)));
+        return DefaultGoPluginApiResponse.success(GSON.toJson(Map.of(
+                "authorization_server_url", authorizationServerUrl,
+                "auth_session", Map.of(Constants.AUTH_SESSION_STATE, state)
+        )));
     }
 }

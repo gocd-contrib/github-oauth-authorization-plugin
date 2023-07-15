@@ -51,6 +51,8 @@ public class FetchAccessTokenRequestExecutor implements RequestExecutor {
             throw new IllegalArgumentException("Get Access Token] Expecting `code` in request params, but not received.");
         }
 
+        request.validateState();
+
         final AuthConfig authConfig = request.authConfigs().get(0);
         final GitHubConfiguration gitHubConfiguration = authConfig.gitHubConfiguration();
 
