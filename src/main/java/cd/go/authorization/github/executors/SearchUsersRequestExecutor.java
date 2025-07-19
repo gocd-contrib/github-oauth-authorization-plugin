@@ -1,7 +1,7 @@
 package cd.go.authorization.github.executors;
 
 
-import cd.go.authorization.github.GitHubClientBuilder;
+import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.User;
 import cd.go.authorization.github.requests.SearchUsersRequest;

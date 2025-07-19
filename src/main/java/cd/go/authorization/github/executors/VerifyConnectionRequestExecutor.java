@@ -16,9 +16,9 @@
 
 package cd.go.authorization.github.executors;
 
-import cd.go.authorization.github.GitHubClientBuilder;
 import cd.go.authorization.github.annotation.MetadataValidator;
 import cd.go.authorization.github.annotation.ValidationResult;
+import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.requests.VerifyConnectionRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;

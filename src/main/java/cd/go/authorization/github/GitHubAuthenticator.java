@@ -16,6 +16,7 @@
 
 package cd.go.authorization.github;
 
+import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.LoggedInUserInfo;
 import cd.go.authorization.github.models.TokenInfo;

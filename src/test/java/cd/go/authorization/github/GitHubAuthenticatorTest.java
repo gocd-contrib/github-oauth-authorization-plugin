@@ -16,6 +16,7 @@
 
 package cd.go.authorization.github;
 
+import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

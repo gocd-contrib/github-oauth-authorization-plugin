@@ -18,7 +18,7 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.GitHubAuthenticator;
 import cd.go.authorization.github.GitHubAuthorizer;
-import cd.go.authorization.github.GitHubClientBuilder;
+import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.*;
 import cd.go.authorization.github.requests.UserAuthenticationRequest;

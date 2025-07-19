@@ -16,6 +16,7 @@
 
 package cd.go.authorization.github;
 
+import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.models.AuthConfig;
 import org.kohsuke.github.GHOrganization;
 import org.kohsuke.github.GHTeam;

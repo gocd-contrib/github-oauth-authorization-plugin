@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package cd.go.authorization.github;
+package cd.go.authorization.github.client;
 
 import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
-import org.kohsuke.github.RateLimitHandler;
+import org.kohsuke.github.GitHubRateLimitHandler;
 
 import java.io.IOException;
 
@@ -39,11 +39,13 @@ public class GitHubClientBuilder {
     private GitHub clientFor(String personalAccessTokenOrUsersAccessToken, GitHubConfiguration gitHubConfiguration) throws IOException {
         if (gitHubConfiguration.authenticateWith() == AuthenticateWith.GITHUB_ENTERPRISE) {
             LOG.debug("Create GitHub connection to enterprise GitHub with token");
-            return GitHub.connectToEnterprise(gitHubConfiguration.gitHubEnterpriseApiUrl(), personalAccessTokenOrUsersAccessToken);
+            return GitHub.connectToEnterpriseWithOAuth(gitHubConfiguration.gitHubEnterpriseApiUrl(), null, personalAccessTokenOrUsersAccessToken);
         } else {
             LOG.debug("Create GitHub connection to public GitHub with token");
             return new GitHubBuilder()
-                    .withOAuthToken(personalAccessTokenOrUsersAccessToken).withRateLimitHandler(RateLimitHandler.FAIL).build();
+                    .withOAuthToken(personalAccessTokenOrUsersAccessToken)
+                    .withRateLimitHandler(GitHubRateLimitHandler.FAIL)
+                    .build();
         }
     }
 }

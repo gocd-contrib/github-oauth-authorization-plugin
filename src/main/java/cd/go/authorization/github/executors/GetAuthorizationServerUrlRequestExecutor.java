@@ -17,6 +17,7 @@
 package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.Constants;
+import cd.go.authorization.github.client.StateGenerator;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.GitHubConfiguration;

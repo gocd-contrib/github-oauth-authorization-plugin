@@ -22,6 +22,7 @@ import org.kohsuke.github.GHUser;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
@@ -39,11 +40,11 @@ public class GitHubAuthorizer {
     }
 
     public List<String> authorize(GHUser user, AuthConfig authConfig, List<Role> roles) throws IOException {
-        final List<String> assignedRoles = new ArrayList<>();
-
-        if (roles.isEmpty()) {
-            return assignedRoles;
+        if (roles == null || roles.isEmpty()) {
+            return Collections.emptyList();
         }
+
+        final List<String> assignedRoles = new ArrayList<>();
 
         LOG.debug(format("[Authorize] Authorizing user {0}", user.getLogin()));
 
