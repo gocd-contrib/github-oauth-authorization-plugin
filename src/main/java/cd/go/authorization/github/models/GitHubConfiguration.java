@@ -29,7 +29,7 @@ import java.util.Objects;
 import static cd.go.authorization.github.utils.Util.*;
 
 public class GitHubConfiguration implements Validatable {
-    private static final String GITHUB_URL = "https://github.com";
+    public static final String GITHUB_URL = "https://github.com";
     private static final String GITHUB_ENTERPRISE_API_SUFFIX = "/api/v3/";
 
     @Expose
@@ -100,10 +100,6 @@ public class GitHubConfiguration implements Validatable {
 
     public String gitHubEnterpriseApiUrl() {
         return gitHubEnterpriseUrl.concat(GITHUB_ENTERPRISE_API_SUFFIX);
-    }
-
-    public String apiUrl() {
-        return authenticateWith == AuthenticateWith.GITHUB ? GITHUB_URL : gitHubEnterpriseUrl;
     }
 
     public String scope() {

@@ -29,9 +29,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class GitHubAuthorizerTest {
@@ -55,7 +53,7 @@ public class GitHubAuthorizerTest {
     public void shouldReturnEmptyListIfNoRoleConfiguredForGivenAuthConfig() throws IOException {
         final List<String> assignedRoles = authorizer.authorize(ghUser, authConfig, Collections.emptyList());
 
-        assertThat(assignedRoles, hasSize(0));
+        assertThat(assignedRoles).hasSize(0);
         verifyNoMoreInteractions(authConfig);
         verifyNoMoreInteractions(membershipChecker);
     }
@@ -71,8 +69,8 @@ public class GitHubAuthorizerTest {
 
         final List<String> assignedRoles = authorizer.authorize(ghUser, authConfig, singletonList(role));
 
-        assertThat(assignedRoles, hasSize(1));
-        assertThat(assignedRoles, contains("admin"));
+        assertThat(assignedRoles).hasSize(1);
+        assertThat(assignedRoles).contains("admin");
     }
 
     @Test
@@ -86,7 +84,7 @@ public class GitHubAuthorizerTest {
 
         final List<String> assignedRoles = authorizer.authorize(ghUser, authConfig, singletonList(role));
 
-        assertThat(assignedRoles, hasSize(0));
+        assertThat(assignedRoles).hasSize(0);
     }
 
     @Test
@@ -101,8 +99,8 @@ public class GitHubAuthorizerTest {
 
         final List<String> assignedRoles = authorizer.authorize(ghUser, authConfig, singletonList(role));
 
-        assertThat(assignedRoles, hasSize(1));
-        assertThat(assignedRoles, contains("admin"));
+        assertThat(assignedRoles).hasSize(1);
+        assertThat(assignedRoles).contains("admin");
     }
 
     @Test
@@ -117,7 +115,7 @@ public class GitHubAuthorizerTest {
 
         final List<String> assignedRoles = authorizer.authorize(ghUser, authConfig, singletonList(role));
 
-        assertThat(assignedRoles, hasSize(0));
+        assertThat(assignedRoles).hasSize(0);
     }
 
     @Test
@@ -132,8 +130,8 @@ public class GitHubAuthorizerTest {
 
         final List<String> assignedRoles = authorizer.authorize(ghUser, authConfig, singletonList(role));
 
-        assertThat(assignedRoles, hasSize(1));
-        assertThat(assignedRoles, contains("admin"));
+        assertThat(assignedRoles).hasSize(1);
+        assertThat(assignedRoles).contains("admin");
     }
 
     @Test
@@ -148,6 +146,6 @@ public class GitHubAuthorizerTest {
 
         final List<String> assignedRoles = authorizer.authorize(ghUser, authConfig, singletonList(role));
 
-        assertThat(assignedRoles, hasSize(0));
+        assertThat(assignedRoles).hasSize(0);
     }
 }

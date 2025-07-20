@@ -20,9 +20,7 @@ import cd.go.authorization.github.executors.SearchUsersRequestExecutor;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,8 +45,8 @@ public class SearchUsersRequestTest {
 
         SearchUsersRequest searchUsersRequest = SearchUsersRequest.from(request);
 
-        assertThat(searchUsersRequest.getSearchTerm(), is("tom"));
-        assertThat(searchUsersRequest.getAuthConfigs(), hasSize(1));
+        assertThat(searchUsersRequest.getSearchTerm()).isEqualTo("tom");
+        assertThat(searchUsersRequest.getAuthConfigs()).hasSize(1);
     }
 
     @Test
@@ -58,6 +56,6 @@ public class SearchUsersRequestTest {
 
         Request request = SearchUsersRequest.from(apiRequest);
 
-        assertThat(request.executor() instanceof SearchUsersRequestExecutor, is(true));
+        assertThat(request.executor()).isInstanceOf(SearchUsersRequestExecutor.class);
     }
 }

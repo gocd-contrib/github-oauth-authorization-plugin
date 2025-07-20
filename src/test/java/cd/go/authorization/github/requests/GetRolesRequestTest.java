@@ -20,9 +20,7 @@ import cd.go.authorization.github.executors.GetRolesExecutor;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,9 +47,9 @@ public class GetRolesRequestTest {
 
         GetRolesRequest request = (GetRolesRequest) GetRolesRequest.from(apiRequest);
 
-        assertThat(request.getUsername(), is("bob"));
-        assertThat(request.getAuthConfig().getId(), is("GitHub"));
-        assertThat(request.getRoles(), hasSize(0));
+        assertThat(request.getUsername()).isEqualTo("bob");
+        assertThat(request.getAuthConfig().getId()).isEqualTo("GitHub");
+        assertThat(request.getRoles()).hasSize(0);
     }
 
     @Test
@@ -75,6 +73,6 @@ public class GetRolesRequestTest {
                 "}");
 
         GetRolesRequest request = (GetRolesRequest) GetRolesRequest.from(apiRequest);
-        assertThat(request.executor() instanceof GetRolesExecutor, is(true));
+        assertThat(request.executor() instanceof GetRolesExecutor).isEqualTo(true);
     }
 }

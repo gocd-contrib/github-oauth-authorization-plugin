@@ -27,8 +27,7 @@ import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -60,7 +59,7 @@ public class ValidateUserRequestExecutorTest {
 
         GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals("", response.responseBody(), true);
     }
 
@@ -74,6 +73,6 @@ public class ValidateUserRequestExecutorTest {
 
         GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(500));
+        assertThat(response.responseCode()).isEqualTo(500);
     }
 }

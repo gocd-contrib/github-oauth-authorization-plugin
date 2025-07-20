@@ -21,10 +21,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasEntry;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GitHubConfigurationTest {
 
@@ -40,12 +37,12 @@ public class GitHubConfigurationTest {
                 "  \"AuthorizeUsing\": \"PersonalAccessToken\"\n" +
                 "}");
 
-        assertThat(gitHubConfiguration.clientId(), is("client-id"));
-        assertThat(gitHubConfiguration.clientSecret(), is("client-secret"));
-        assertThat(gitHubConfiguration.organizationsAllowed(), contains("example-1", "example-2"));
-        assertThat(gitHubConfiguration.gitHubEnterpriseUrl(), is("https://enterprise.url"));
-        assertThat(gitHubConfiguration.authenticateWith(), is(AuthenticateWith.GITHUB_ENTERPRISE));
-        assertThat(gitHubConfiguration.personalAccessToken(), is("personal-access-token"));
+        assertThat(gitHubConfiguration.clientId()).isEqualTo("client-id");
+        assertThat(gitHubConfiguration.clientSecret()).isEqualTo("client-secret");
+        assertThat(gitHubConfiguration.organizationsAllowed()).contains("example-1", "example-2");
+        assertThat(gitHubConfiguration.gitHubEnterpriseUrl()).isEqualTo("https://enterprise.url");
+        assertThat(gitHubConfiguration.authenticateWith()).isEqualTo(AuthenticateWith.GITHUB_ENTERPRISE);
+        assertThat(gitHubConfiguration.personalAccessToken()).isEqualTo("personal-access-token");
     }
 
     @Test
@@ -71,10 +68,10 @@ public class GitHubConfigurationTest {
 
         final Map<String, String> properties = gitHubConfiguration.toProperties();
 
-        assertThat(properties, hasEntry("ClientId", "client-id"));
-        assertThat(properties, hasEntry("ClientSecret", "client-secret"));
-        assertThat(properties, hasEntry("AllowedOrganizations", "example-1"));
-        assertThat(properties, hasEntry("AuthenticateWith", "GitHubEnterprise"));
-        assertThat(properties, hasEntry("GitHubEnterpriseUrl", "http://enterprise.url"));
+        assertThat(properties).containsEntry("ClientId", "client-id");
+        assertThat(properties).containsEntry("ClientSecret", "client-secret");
+        assertThat(properties).containsEntry("AllowedOrganizations", "example-1");
+        assertThat(properties).containsEntry("AuthenticateWith", "GitHubEnterprise");
+        assertThat(properties).containsEntry("GitHubEnterpriseUrl", "http://enterprise.url");
     }
 }

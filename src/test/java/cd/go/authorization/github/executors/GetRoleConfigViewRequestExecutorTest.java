@@ -31,8 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GetRoleConfigViewRequestExecutorTest {
 
@@ -44,23 +43,25 @@ public class GetRoleConfigViewRequestExecutorTest {
         final List<ProfileMetadata> metadataList = MetadataHelper.getMetadata(GitHubRoleConfiguration.class);
         for (ProfileMetadata field : metadataList) {
             final Elements inputFieldForKey = document.getElementsByAttributeValue("ng-model", field.getKey());
-            assertThat(inputFieldForKey, hasSize(1));
+            assertThat(inputFieldForKey).hasSize(1);
 
             final Elements spanToShowError = document.getElementsByAttributeValue("ng-class", "{'is-visible': GOINPUTNAME[" + field.getKey() + "].$error.server}");
-            assertThat(spanToShowError, hasSize(1));
-            assertThat(spanToShowError.attr("ng-show"), is("GOINPUTNAME[" + field.getKey() + "].$error.server"));
-            assertThat(spanToShowError.text(), is("{{GOINPUTNAME[" + field.getKey() + "].$error.server}}"));
+            assertThat(spanToShowError).hasSize(1);
+            assertThat(spanToShowError.attr("ng-show")).isEqualTo("GOINPUTNAME[" + field.getKey() + "].$error.server");
+            assertThat(spanToShowError.text()).isEqualTo("{{GOINPUTNAME[" + field.getKey() + "].$error.server}}");
         }
 
         final Elements inputs = document.select("textarea,input,select");
-        assertThat("should contains only inputs that defined in GitHubRoleConfiguration.java",inputs, hasSize(metadataList.size()));
+        assertThat(inputs)
+                .describedAs("should contains only inputs that defined in GitHubRoleConfiguration.java")
+                .hasSize(metadataList.size());
     }
 
     @Test
     public void shouldRenderTheTemplateInJSON() throws Exception {
         GoPluginApiResponse response = new GetRoleConfigViewRequestExecutor().execute();
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         Map<String, String> hashSet = new Gson().fromJson(response.responseBody(), HashMap.class);
-        assertThat(hashSet, hasEntry("template", Util.readResource("/role-config.template.html")));
+        assertThat(hashSet).containsEntry("template", Util.readResource("/role-config.template.html"));
     }
 }

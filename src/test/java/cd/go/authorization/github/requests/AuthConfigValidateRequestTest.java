@@ -22,8 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -49,7 +48,7 @@ public class AuthConfigValidateRequestTest {
         final AuthConfigValidateRequest request = AuthConfigValidateRequest.from(apiRequest);
         final GitHubConfiguration gitHubConfiguration = request.githubConfiguration();
 
-        assertThat(gitHubConfiguration.clientId(), is("client-id"));
-        assertThat(gitHubConfiguration.clientSecret(), is("client-secret"));
+        assertThat(gitHubConfiguration.clientId()).isEqualTo("client-id");
+        assertThat(gitHubConfiguration.clientSecret()).isEqualTo("client-secret");
     }
 }

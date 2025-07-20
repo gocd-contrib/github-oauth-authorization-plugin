@@ -32,12 +32,12 @@ public class UserAuthenticationRequest extends Request {
     private List<AuthConfig> authConfigs;
 
     @Expose
-    @SerializedName("role_configs")
-    private List<Role> roles;
-
-    @Expose
     @SerializedName("credentials")
     private TokenInfo tokenInfo;
+
+    @Expose
+    @SerializedName("role_configs")
+    private List<Role> roles;
 
     public static UserAuthenticationRequest from(GoPluginApiRequest apiRequest) {
         return Request.from(apiRequest, UserAuthenticationRequest.class);

@@ -24,10 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -55,13 +52,13 @@ public class VerifyConnectionRequestTest {
         final VerifyConnectionRequest request = VerifyConnectionRequest.from(apiRequest);
         final GitHubConfiguration gitHubConfiguration = request.githubConfiguration();
 
-        assertThat(request.executor(), instanceOf(VerifyConnectionRequestExecutor.class));
+        assertThat(request.executor()).isInstanceOf(VerifyConnectionRequestExecutor.class);
 
-        assertThat(gitHubConfiguration.clientId(), is("client-id"));
-        assertThat(gitHubConfiguration.clientSecret(), is("client-secret"));
-        assertThat(gitHubConfiguration.authenticateWith(), is(AuthenticateWith.GITHUB_ENTERPRISE));
-        assertThat(gitHubConfiguration.gitHubEnterpriseUrl(), is("my-enterprise-url"));
-        assertThat(gitHubConfiguration.organizationsAllowed(), contains("foo", "bar"));
+        assertThat(gitHubConfiguration.clientId()).isEqualTo("client-id");
+        assertThat(gitHubConfiguration.clientSecret()).isEqualTo("client-secret");
+        assertThat(gitHubConfiguration.authenticateWith()).isEqualTo(AuthenticateWith.GITHUB_ENTERPRISE);
+        assertThat(gitHubConfiguration.gitHubEnterpriseUrl()).isEqualTo("my-enterprise-url");
+        assertThat(gitHubConfiguration.organizationsAllowed()).contains("foo", "bar");
     }
 
 }

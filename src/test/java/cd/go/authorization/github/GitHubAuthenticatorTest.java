@@ -27,9 +27,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -69,13 +67,13 @@ public class GitHubAuthenticatorTest {
 
         final LoggedInUserInfo loggedInUserInfo = authenticator.authenticate(tokenInfo, authConfig);
 
-        assertThat(loggedInUserInfo.getUser(), is(new User("bford", "Bob", "bford@example.com")));
+        assertThat(loggedInUserInfo.getUser()).isEqualTo(new User("bford", "Bob", "bford@example.com"));
     }
 
     @Test
     public void shouldAuthenticateUserWhenUserIsAMemberOfAtLeastOneOfTheAllowedOrganization() throws Exception {
         final GHMyself myself = mockUser("bford", "Bob");
-        final List<String> allowedOrganizations = asList("OrgA", "OrgB");
+        final List<String> allowedOrganizations = List.of("OrgA", "OrgB");
 
         when(gitHub.getMyself()).thenReturn(myself);
         when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);
@@ -83,13 +81,13 @@ public class GitHubAuthenticatorTest {
 
         final LoggedInUserInfo loggedInUserInfo = authenticator.authenticate(tokenInfo, authConfig);
 
-        assertThat(loggedInUserInfo.getUser(), is(new User("bford", "Bob", "bford@example.com")));
+        assertThat(loggedInUserInfo.getUser()).isEqualTo(new User("bford", "Bob", "bford@example.com"));
     }
 
     @Test
     public void shouldNotAuthenticateUserWhenUserIsNotAMemberOfAnyAllowedOrganization() throws Exception {
         final GHMyself myself = mockUser("bford", "Bob");
-        final List<String> allowedOrganizations = asList("OrgA", "OrgB");
+        final List<String> allowedOrganizations = List.of("OrgA", "OrgB");
 
         when(gitHub.getMyself()).thenReturn(myself);
         when(gitHubConfiguration.organizationsAllowed()).thenReturn(allowedOrganizations);

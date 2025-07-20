@@ -25,8 +25,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetAuthConfigMetadataRequestExecutorTest {
@@ -42,7 +41,7 @@ public class GetAuthConfigMetadataRequestExecutorTest {
     public void assertJsonStructure() throws Exception {
         GoPluginApiResponse response = new GetAuthConfigMetadataRequestExecutor().execute();
 
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         String expectedJSON = "[\n" +
                 "  {\n" +
                 "    \"key\": \"ClientId\",\n" +

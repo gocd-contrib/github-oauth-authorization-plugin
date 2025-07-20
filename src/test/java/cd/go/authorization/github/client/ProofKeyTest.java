@@ -19,13 +19,17 @@ package cd.go.authorization.github.client;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class StateGeneratorTest {
+class ProofKeyTest {
+
     @Test
-    public void shouldGenerateState() {
-        String state = StateGenerator.generate();
-        assertNotNull(state);
-        assertThat(state).matches("[A-Za-z0-9_-]{43}=");
+    public void shouldGenerate() {
+        ProofKey proofKey = new ProofKey();
+
+        assertThat(proofKey).satisfies(args -> {
+            assertThat(args.codeVerifierEncoded()).matches("[A-Za-z0-9_-]{43}");
+            assertThat(args.codeChallengeEncoded()).matches("[A-Za-z0-9_-]{43}");
+            assertThat(args.codeChallengeEncoded()).isNotEqualTo(args.codeVerifierEncoded());
+        });
     }
 }

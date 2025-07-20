@@ -28,8 +28,8 @@ import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -66,7 +66,7 @@ public class MembershipCheckerTest {
         when(gitHub.getOrganization("organization-foo")).thenReturn(organization);
         when(organization.hasMember(ghUser)).thenReturn(true);
 
-        final boolean aMemberOfAtLeastOneOrganization = membershipChecker.isAMemberOfAtLeastOneOrganization(ghUser, authConfig, asList("organization-foo", "organization-bar"));
+        final boolean aMemberOfAtLeastOneOrganization = membershipChecker.isAMemberOfAtLeastOneOrganization(ghUser, authConfig, List.of("organization-foo", "organization-bar"));
 
         assertTrue(aMemberOfAtLeastOneOrganization);
     }
@@ -79,7 +79,7 @@ public class MembershipCheckerTest {
         when(gitHub.getOrganization("organization-foo")).thenReturn(organization);
         when(organization.hasMember(ghUser)).thenReturn(false);
 
-        final boolean aMemberOfAtLeastOneOrganization = membershipChecker.isAMemberOfAtLeastOneOrganization(ghUser, authConfig, asList("organization-foo", "organization-bar"));
+        final boolean aMemberOfAtLeastOneOrganization = membershipChecker.isAMemberOfAtLeastOneOrganization(ghUser, authConfig, List.of("organization-foo", "organization-bar"));
 
         assertFalse(aMemberOfAtLeastOneOrganization);
     }
@@ -95,7 +95,7 @@ public class MembershipCheckerTest {
         when(gitHub.getOrganization("organization-foo")).thenReturn(organization);
         when(team.hasMember(ghUser)).thenReturn(true);
 
-        final boolean aMemberOfAtLeastOneTeamOfOrganization = membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(ghUser, authConfig, singletonMap("organization-foo", asList("teamx")));
+        final boolean aMemberOfAtLeastOneTeamOfOrganization = membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(ghUser, authConfig, singletonMap("organization-foo", List.of("teamx")));
 
         assertTrue(aMemberOfAtLeastOneTeamOfOrganization);
     }
@@ -120,7 +120,7 @@ public class MembershipCheckerTest {
         when(teamY.getName()).thenReturn("TeamY");
         when(teamX.hasMember(ghUser)).thenReturn(true);;
 
-        final boolean aMemberOfAtLeastOneTeamOfOrganization = membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(ghUser, authConfig, singletonMap("organization-foo", asList("TeamX")));
+        final boolean aMemberOfAtLeastOneTeamOfOrganization = membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(ghUser, authConfig, singletonMap("organization-foo", List.of("TeamX")));
 
         assertFalse(aMemberOfAtLeastOneTeamOfOrganization);
     }

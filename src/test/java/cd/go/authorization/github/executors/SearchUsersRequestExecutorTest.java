@@ -13,8 +13,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.util.Collections;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -60,7 +59,7 @@ public class SearchUsersRequestExecutorTest {
 
         GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals("[{\"username\":\"tom01\", \"display_name\": \"Tom NoLastname\", \"email\": \"tom@gocd.org\"}]", response.responseBody(), true);
     }
 
@@ -71,7 +70,7 @@ public class SearchUsersRequestExecutorTest {
         GoPluginApiResponse response = executor.execute();
 
         verify(clientBuilder, never()).from(any());
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals("[]", response.responseBody(), false);
     }
 }

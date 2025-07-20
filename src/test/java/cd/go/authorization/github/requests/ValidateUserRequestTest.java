@@ -20,8 +20,7 @@ import cd.go.authorization.github.executors.ValidateUserRequestExecutor;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -48,8 +47,8 @@ public class ValidateUserRequestTest {
 
         ValidateUserRequest request = (ValidateUserRequest) ValidateUserRequest.from(apiRequest);
 
-        assertThat(request.getUsername(), is("bob"));
-        assertThat(request.getAuthConfig().getId(), is("GitHub"));
+        assertThat(request.getUsername()).isEqualTo("bob");
+        assertThat(request.getAuthConfig().getId()).isEqualTo("GitHub");
     }
 
     @Test
@@ -73,6 +72,6 @@ public class ValidateUserRequestTest {
 
         Request request = ValidateUserRequest.from(apiRequest);
 
-        assertThat(request.executor() instanceof ValidateUserRequestExecutor, is(true));
+        assertThat(request.executor() instanceof ValidateUserRequestExecutor).isEqualTo(true);
     }
 }

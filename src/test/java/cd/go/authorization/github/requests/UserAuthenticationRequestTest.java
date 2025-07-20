@@ -25,11 +25,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -79,9 +77,9 @@ public class UserAuthenticationRequestTest {
 
         final UserAuthenticationRequest request = UserAuthenticationRequest.from(this.request);
 
-        assertThat(request.authConfigs(), hasSize(1));
-        assertThat(request.roles(), hasSize(1));
-        assertThat(request.executor(), instanceOf(UserAuthenticationRequestExecutor.class));
+        assertThat(request.authConfigs()).hasSize(1);
+        assertThat(request.roles()).hasSize(1);
+        assertThat(request.executor()).isInstanceOf(UserAuthenticationRequestExecutor.class);
 
         assertAuthConfig(request.authConfigs().get(0));
         assertTokenInfo(request.tokenInfo());
@@ -89,24 +87,24 @@ public class UserAuthenticationRequestTest {
     }
 
     private void assertRole(Role role) {
-        assertThat(role.name(), is("admin"));
-        assertThat(role.authConfigId(), is("github-config"));
-        assertThat(role.roleConfiguration().users(), contains("bob", "alice"));
-        assertThat(role.roleConfiguration().organizations(), contains("organizationfoo", "organizationbar"));
-        assertThat(role.roleConfiguration().teams(), hasEntry("organizationfoo", asList("teamx", "teamy")));
-        assertThat(role.roleConfiguration().teams(), hasEntry("organizationbar", asList("teama", "teamb")));
+        assertThat(role.name()).isEqualTo("admin");
+        assertThat(role.authConfigId()).isEqualTo("github-config");
+        assertThat(role.roleConfiguration().users()).contains("bob", "alice");
+        assertThat(role.roleConfiguration().organizations()).contains("organizationfoo", "organizationbar");
+        assertThat(role.roleConfiguration().teams()).containsEntry("organizationfoo", List.of("teamx", "teamy"));
+        assertThat(role.roleConfiguration().teams()).containsEntry("organizationbar", List.of("teama", "teamb"));
     }
 
     private void assertTokenInfo(TokenInfo tokenInfo) {
-        assertThat(tokenInfo.accessToken(), is("access-token"));
-        assertThat(tokenInfo.tokenType(), is("token"));
-        assertThat(tokenInfo.scope(), is("profile"));
+        assertThat(tokenInfo.accessToken()).isEqualTo("access-token");
+        assertThat(tokenInfo.tokenType()).isEqualTo("token");
+        assertThat(tokenInfo.scope()).isEqualTo("profile");
     }
 
     private void assertAuthConfig(AuthConfig authConfig) {
-        assertThat(authConfig.getId(), is("github-config"));
-        assertThat(authConfig.gitHubConfiguration().clientId(), is("client-id"));
-        assertThat(authConfig.gitHubConfiguration().clientSecret(), is("client-secret"));
-        assertThat(authConfig.gitHubConfiguration().organizationsAllowed(), contains("org1","org2"));
+        assertThat(authConfig.getId()).isEqualTo("github-config");
+        assertThat(authConfig.gitHubConfiguration().clientId()).isEqualTo("client-id");
+        assertThat(authConfig.gitHubConfiguration().clientSecret()).isEqualTo("client-secret");
+        assertThat(authConfig.gitHubConfiguration().organizationsAllowed()).contains("org1","org2");
     }
 }

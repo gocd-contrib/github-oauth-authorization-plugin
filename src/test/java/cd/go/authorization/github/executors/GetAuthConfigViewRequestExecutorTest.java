@@ -32,19 +32,18 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GetAuthConfigViewRequestExecutorTest {
 
     @Test
     public void shouldRenderTheTemplateInJSON() {
         GoPluginApiResponse response = new GetAuthConfigViewRequestExecutor().execute();
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         Type type = new TypeToken<Map<String, String>>() {
         }.getType();
         Map<String, String> hashSet = new Gson().fromJson(response.responseBody(), type);
-        assertThat(hashSet, hasEntry("template", Util.readResource("/auth-config.template.html")));
+        assertThat(hashSet).containsEntry("template", Util.readResource("/auth-config.template.html"));
     }
 
     @Test
@@ -53,19 +52,19 @@ public class GetAuthConfigViewRequestExecutorTest {
 
         final Document document = Jsoup.parse(template);
 
-        for (ProfileMetadata field : MetadataHelper.getMetadata(GitHubConfiguration.class)) {
+        for (ProfileMetadata<?> field : MetadataHelper.getMetadata(GitHubConfiguration.class)) {
             final Elements inputFieldForKey = document.getElementsByAttributeValue("ng-model", field.getKey());
             int elementCount = field.getKey().equalsIgnoreCase("AuthenticateWith") ? 2 : 1;
-            assertThat(format("Should have only one ng-model for %s", inputFieldForKey), inputFieldForKey, hasSize(elementCount));
+            assertThat(inputFieldForKey).describedAs(format("Should have only one ng-model for %s", inputFieldForKey)).hasSize(elementCount);
 
             final Elements spanToShowError = document.getElementsByAttributeValue("ng-class", "{'is-visible': GOINPUTNAME[" + field.getKey() + "].$error.server}");
-            assertThat(spanToShowError, hasSize(1));
-            assertThat(spanToShowError.attr("ng-show"), is("GOINPUTNAME[" + field.getKey() + "].$error.server"));
-            assertThat(spanToShowError.text(), is("{{GOINPUTNAME[" + field.getKey() + "].$error.server}}"));
+            assertThat(spanToShowError).hasSize(1);
+            assertThat(spanToShowError.attr("ng-show")).isEqualTo("GOINPUTNAME[" + field.getKey() + "].$error.server");
+            assertThat(spanToShowError.text()).isEqualTo("{{GOINPUTNAME[" + field.getKey() + "].$error.server}}");
         }
 
         final Elements inputs = document.select("textarea,input,select");
         //AuthenticateWith is coming twice as it is radio button
-        assertThat(inputs, hasSize(MetadataHelper.getMetadata(GitHubConfiguration.class).size() + 1));
+        assertThat(inputs).hasSize(MetadataHelper.getMetadata(GitHubConfiguration.class).size() + 1);
     }
 }

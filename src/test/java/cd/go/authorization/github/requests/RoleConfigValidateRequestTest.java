@@ -22,10 +22,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasEntry;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -52,8 +51,8 @@ public class RoleConfigValidateRequestTest {
         final RoleConfigValidateRequest request = RoleConfigValidateRequest.from(apiRequest);
         final GitHubRoleConfiguration gitHubRoleConfiguration = request.gitHubRoleConfiguration();
 
-        assertThat(gitHubRoleConfiguration.organizations(), contains("org1", "org2", "org3"));
-        assertThat(gitHubRoleConfiguration.teams(), hasEntry("org4", asList("team-1", "team-2")));
-        assertThat(gitHubRoleConfiguration.users(), contains("bob", "alice"));
+        assertThat(gitHubRoleConfiguration.organizations()).contains("org1", "org2", "org3");
+        assertThat(gitHubRoleConfiguration.teams()).containsEntry("org4", List.of("team-1", "team-2"));
+        assertThat(gitHubRoleConfiguration.users()).contains("bob", "alice");
     }
 }

@@ -18,11 +18,15 @@ package cd.go.authorization.github.client;
 
 import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.Request;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.kohsuke.github.GitHubRateLimitHandler;
 
 import java.io.IOException;
+import java.util.List;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
 
@@ -48,4 +52,44 @@ public class GitHubClientBuilder {
                     .build();
         }
     }
+
+    public List<String> authorizationServerArgs(GitHubConfiguration config, String callbackUrl) {
+        String state = StateGenerator.generate();
+        ProofKey proofKey = new ProofKey();
+        String authorizationServerUrl = HttpUrl.parse(config.authenticateWith() == AuthenticateWith.GITHUB ? GitHubConfiguration.GITHUB_URL : config.gitHubEnterpriseUrl())
+                .newBuilder()
+                .addPathSegment("login")
+                .addPathSegment("oauth")
+                .addPathSegment("authorize")
+                .addQueryParameter("client_id", config.clientId())
+                .addQueryParameter("redirect_uri", callbackUrl)
+                .addQueryParameter("response_type", "code")
+                .addQueryParameter("scope", config.scope())
+                .addQueryParameter("state", state)
+                .addQueryParameter("code_challenge_method", "S256")
+                .addEncodedQueryParameter("code_challenge", proofKey.codeChallengeEncoded())
+                .build().toString();
+        return List.of(authorizationServerUrl, state, proofKey.codeVerifierEncoded());
+    }
+
+    public Request accessTokenRequestFrom(GitHubConfiguration config, String authorizationCode, String codeVerifierEncoded) {
+        HttpUrl accessTokenUrl = HttpUrl.parse(config.authenticateWith() == AuthenticateWith.GITHUB ? GitHubConfiguration.GITHUB_URL : config.gitHubEnterpriseUrl())
+                .newBuilder()
+                .addPathSegment("login")
+                .addPathSegment("oauth")
+                .addPathSegment("access_token")
+                .build();
+
+        return new Request.Builder()
+                .url(accessTokenUrl)
+                .addHeader("Accept", "application/json")
+                .post(new FormBody.Builder()
+                        .add("client_id", config.clientId())
+                        .add("client_secret", config.clientSecret())
+                        .add("code", authorizationCode)
+                        .add("code_verifier", codeVerifierEncoded)
+                        .build())
+                .build();
+    }
+
 }
