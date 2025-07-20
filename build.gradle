@@ -20,7 +20,7 @@ apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-help
 gocdPlugin {
     id = 'cd.go.authorization.github'
     pluginVersion = '4.0.0'
-    goCdVersion = '22.1.0'
+    goCdVersion = '23.2.0'
     name = 'GitHub OAuth authorization plugin'
     description = 'GitHub OAuth authorization plugin for GoCD'
     vendorName = 'Thoughtworks, Inc.'
