@@ -18,10 +18,9 @@ package cd.go.authorization.github.models;
 
 import org.junit.jupiter.api.Test;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasEntry;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GitHubRoleConfigurationTest {
 
@@ -35,9 +34,9 @@ public class GitHubRoleConfigurationTest {
 
         final GitHubRoleConfiguration gitHubRoleConfiguration = GitHubRoleConfiguration.fromJSON(json);
 
-        assertThat(gitHubRoleConfiguration.users(), contains("bob", "alice"));
-        assertThat(gitHubRoleConfiguration.organizations(), contains("organizationfoo", "organizationbar"));
-        assertThat(gitHubRoleConfiguration.teams(), hasEntry("organizationfoo", asList("teamx", "teamy")));
-        assertThat(gitHubRoleConfiguration.teams(), hasEntry("organizationbar", asList("teama", "teamb")));
+        assertThat(gitHubRoleConfiguration.users()).contains("bob", "alice");
+        assertThat(gitHubRoleConfiguration.organizations()).contains("organizationfoo", "organizationbar");
+        assertThat(gitHubRoleConfiguration.teams()).containsEntry("organizationfoo", List.of("teamx", "teamy"));
+        assertThat(gitHubRoleConfiguration.teams()).containsEntry("organizationbar", List.of("teama", "teamb"));
     }
 }

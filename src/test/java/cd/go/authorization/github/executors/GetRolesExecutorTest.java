@@ -36,8 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class GetRolesExecutorTest {
@@ -66,7 +65,7 @@ public class GetRolesExecutorTest {
 
         GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals("[]", response.responseBody(), true);
         verifyNoMoreInteractions(authorizer);
         verifyNoMoreInteractions(clientBuilder);
@@ -84,7 +83,7 @@ public class GetRolesExecutorTest {
 
         GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals("[\"blackbird\",\"super-admin\"]", response.responseBody(), true);
 
         InOrder inOrder = inOrder(clientBuilder, gitHub, authorizer);
@@ -103,7 +102,7 @@ public class GetRolesExecutorTest {
 
         GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(500));
+        assertThat(response.responseCode()).isEqualTo(500);
 
         InOrder inOrder = inOrder(clientBuilder, gitHub);
         inOrder.verify(clientBuilder).from(request.getAuthConfig().gitHubConfiguration());

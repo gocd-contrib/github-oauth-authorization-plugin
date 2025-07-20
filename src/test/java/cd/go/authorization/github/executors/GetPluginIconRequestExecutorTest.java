@@ -24,8 +24,7 @@ import java.util.Base64;
 import java.util.HashMap;
 
 import static cd.go.authorization.github.utils.Util.GSON;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GetPluginIconRequestExecutorTest {
 
@@ -33,8 +32,8 @@ public class GetPluginIconRequestExecutorTest {
     public void rendersIconInBase64() throws Exception {
         GoPluginApiResponse response = new GetPluginIconRequestExecutor().execute();
         HashMap<String, String> hashMap = GSON.fromJson(response.responseBody(), HashMap.class);
-        assertThat(hashMap.size(), is(2));
-        assertThat(hashMap.get("content_type"), is("image/svg+xml"));
-        assertThat(Util.readResourceBytes("/logo.svg"), is(Base64.getDecoder().decode(hashMap.get("data"))));
+        assertThat(hashMap.size()).isEqualTo(2);
+        assertThat(hashMap.get("content_type")).isEqualTo("image/svg+xml");
+        assertThat(Util.readResourceBytes("/logo.svg")).isEqualTo(Base64.getDecoder().decode(hashMap.get("data")));
     }
 }

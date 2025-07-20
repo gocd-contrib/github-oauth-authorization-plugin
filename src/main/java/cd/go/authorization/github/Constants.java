@@ -31,4 +31,5 @@ public interface Constants {
     GoPluginIdentifier PLUGIN_IDENTIFIER = new GoPluginIdentifier(EXTENSION_TYPE, Collections.singletonList(API_VERSION));
 
     String AUTH_SESSION_STATE = "oauth2_state";
+    String AUTH_CODE_VERIFIER_ENCODED = "oauth2_code_verifier_encoded";
 }

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -69,14 +68,14 @@ public class Util {
         if (isBlank(lines)) {
             return Collections.emptyList();
         }
-        return Arrays.asList(lines.split("\\s*[\r\n]+\\s*"));
+        return List.of(lines.split("\\s*[\r\n]+\\s*"));
     }
 
     public static List<String> listFromCommaSeparatedString(String str) {
         if (isBlank(str)) {
             return Collections.emptyList();
         }
-        return Arrays.asList(str.trim().split("\\s*,\\s*"));
+        return List.of(str.trim().split("\\s*,\\s*"));
     }
 
     public static String toLowerCase(String str) {

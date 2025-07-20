@@ -30,8 +30,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Collections;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -90,7 +89,7 @@ public class UserAuthenticationRequestExecutorTest {
                 "  }\n" +
                 "}";
 
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
     }
 
@@ -121,7 +120,7 @@ public class UserAuthenticationRequestExecutorTest {
                 "  }\n" +
                 "}";
 
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
     }
 }

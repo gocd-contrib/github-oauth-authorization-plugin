@@ -24,82 +24,86 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.util.Collections;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 public class FetchAccessTokenRequestTest {
-    public static final String WITH_NO_SESSION_RESPONSE = "{\n" +
-            "  \"auth_configs\": [\n" +
-            "    {\n" +
-            "      \"id\": \"github-auth-config\",\n" +
-            "      \"configuration\": {\n" +
-            "        \"GoServerUrl\": \"https://your.go.server.url\",\n" +
-            "        \"ClientId\": \"client-id\",\n" +
-            "        \"ClientSecret\": \"client-secret\"\n" +
-            "      }\n" +
-            "    }\n" +
-            "  ]\n" +
-            "}";
+    public static final String WITH_NO_SESSION_RESPONSE = """
+            {
+              "auth_configs": [
+                {
+                  "id": "github-auth-config",
+                  "configuration": {
+                    "GoServerUrl": "https://your.go.server.url",
+                    "ClientId": "client-id",
+                    "ClientSecret": "client-secret"
+                  }
+                }
+              ]
+            }""";
 
-    public static final String WITH_SESSION_STATE_RESPONSE = "{\n" +
-            "  \"auth_configs\": [\n" +
-            "    {\n" +
-            "      \"id\": \"github-auth-config\",\n" +
-            "      \"configuration\": {\n" +
-            "        \"GoServerUrl\": \"https://your.go.server.url\",\n" +
-            "        \"ClientId\": \"client-id\",\n" +
-            "        \"ClientSecret\": \"client-secret\"\n" +
-            "      }\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"auth_session\": {" +
-            "    \"oauth2_state\": \"some-state-value\"" +
-            "  }\n" +
-            "}";
-    public static final String WITH_EMPTY_SESSION_RESPONSE = "{\n" +
-            "  \"auth_configs\": [\n" +
-            "    {\n" +
-            "      \"id\": \"github-auth-config\",\n" +
-            "      \"configuration\": {\n" +
-            "        \"GoServerUrl\": \"https://your.go.server.url\",\n" +
-            "        \"ClientId\": \"client-id\",\n" +
-            "        \"ClientSecret\": \"client-secret\"\n" +
-            "      }\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"auth_session\": {}\n" +
-            "}";
+    public static final String WITH_SESSION_STATE_RESPONSE = """
+            {
+              "auth_configs": [
+                {
+                  "id": "github-auth-config",
+                  "configuration": {
+                    "GoServerUrl": "https://your.go.server.url",
+                    "ClientId": "client-id",
+                    "ClientSecret": "client-secret"
+                  }
+                }
+              ],
+              "auth_session": {\
+                "oauth2_state": "some-state-value"\
+              }
+            }""";
+    public static final String WITH_NORMAL_SESSION_RESPONSE = """
+            {
+              "auth_configs": [
+                {
+                  "id": "github-auth-config",
+                  "configuration": {
+                    "GoServerUrl": "https://your.go.server.url",
+                    "ClientId": "client-id",
+                    "ClientSecret": "client-secret"
+                  }
+                }
+              ],
+              "auth_session": {
+                "oauth2_code_verifier_encoded": "code-verifier"
+              }
+            }""";
     @Mock
     private GoPluginApiRequest apiRequest;
 
     @BeforeEach
     public void setUp() throws Exception {
         openMocks(this);
+        when(apiRequest.requestParameters()).thenReturn(Map.of("code", "authorization-code"));
+        when(apiRequest.requestBody()).thenReturn(WITH_NORMAL_SESSION_RESPONSE);
     }
 
     @Test
     public void shouldDeserializeGoPluginApiRequestToFetchAccessTokenRequest() throws Exception {
 
-        when(apiRequest.requestBody()).thenReturn(WITH_NO_SESSION_RESPONSE);
-
         final FetchAccessTokenRequest request = FetchAccessTokenRequest.from(apiRequest);
 
-        assertThat(request.authConfigs(), hasSize(1));
-        assertThat(request.authSession(), nullValue());
-        assertThat(request.executor(), instanceOf(FetchAccessTokenRequestExecutor.class));
+        assertThat(request.authConfigs()).hasSize(1);
+        assertThat(request.executor()).isInstanceOf(FetchAccessTokenRequestExecutor.class);
 
         final AuthConfig authConfig = request.authConfigs().get(0);
-        assertThat(authConfig.getId(), is("github-auth-config"));
-        assertThat(authConfig.gitHubConfiguration().clientId(), is("client-id"));
-        assertThat(authConfig.gitHubConfiguration().clientSecret(), is("client-secret"));
+        assertThat(authConfig.getId()).isEqualTo("github-auth-config");
+        assertThat(authConfig.gitHubConfiguration().clientId()).isEqualTo("client-id");
+        assertThat(authConfig.gitHubConfiguration().clientSecret()).isEqualTo("client-secret");
+
+        assertThat(request.authSession()).containsOnly(Map.entry("oauth2_code_verifier_encoded", "code-verifier"));
     }
 
     @Test
@@ -123,17 +127,17 @@ public class FetchAccessTokenRequestTest {
 
         final FetchAccessTokenRequest request = FetchAccessTokenRequest.from(apiRequest);
         Exception error = assertThrows(NullPointerException.class, request::validateState);
-        assertThat(error.getMessage(), is("OAuth2 state is missing from redirect"));
+        assertThat(error.getMessage()).isEqualTo("OAuth2 state is missing from redirect");
     }
 
     @Test
     public void validateStateShouldFailWhenSessionStateIsMissing() {
-        when(apiRequest.requestBody()).thenReturn(WITH_EMPTY_SESSION_RESPONSE);
+        when(apiRequest.requestBody()).thenReturn(WITH_NORMAL_SESSION_RESPONSE);
         when(apiRequest.requestParameters()).thenReturn(Map.of("state", "some-state-value"));
 
         final FetchAccessTokenRequest request = FetchAccessTokenRequest.from(apiRequest);
         Exception error = assertThrows(NullPointerException.class, request::validateState);
-        assertThat(error.getMessage(), is("OAuth2 state is missing from session"));
+        assertThat(error.getMessage()).isEqualTo("OAuth2 state is missing from session");
     }
 
     @Test
@@ -143,6 +147,48 @@ public class FetchAccessTokenRequestTest {
 
         final FetchAccessTokenRequest request = FetchAccessTokenRequest.from(apiRequest);
         Exception error = assertThrows(AuthenticationException.class, request::validateState);
-        assertThat(error.getMessage(), is("Redirected OAuth2 state from GitHub did not match previously generated state stored in session"));
+        assertThat(error.getMessage()).isEqualTo("Redirected OAuth2 state from GitHub did not match previously generated state stored in session");
+    }
+
+    @Test
+    public void shouldValidateAuthorizationCode() {
+        assertThat(FetchAccessTokenRequest.from(apiRequest).authorizationCode())
+                .isEqualTo("authorization-code");
+    }
+
+    @Test
+    public void shouldFailIfAuthorizationNotFound() {
+        when(apiRequest.requestParameters()).thenReturn(Collections.emptyMap());
+        assertThatThrownBy(() -> FetchAccessTokenRequest.from(apiRequest).authorizationCode())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("[Get Access Token] Expecting `code` in request params, but not received.");
+    }
+
+    @Test
+    public void shouldValidateCodeVerifier() {
+        assertThat(FetchAccessTokenRequest.from(apiRequest).codeVerifierEncoded())
+                .isEqualTo("code-verifier");
+    }
+
+    @Test
+    public void shouldFailIfCodeVerifierNotFound() {
+        when(apiRequest.requestBody()).thenReturn("""
+                {
+                  "auth_configs": [
+                    {
+                      "id": "github-auth-config",
+                      "configuration": {
+                        "GoServerUrl": "https://your.go.server.url",
+                        "ClientId": "client-id",
+                        "ClientSecret": "client-secret"
+                      }
+                    }
+                  ],
+                  "auth_session": {}
+                }
+                """);
+        assertThatThrownBy(() -> FetchAccessTokenRequest.from(apiRequest).codeVerifierEncoded())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("[Get Access Token] OAuth2 code verifier is missing from session");
     }
 }

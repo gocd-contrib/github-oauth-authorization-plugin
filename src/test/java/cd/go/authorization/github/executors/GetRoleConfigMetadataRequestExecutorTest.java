@@ -20,8 +20,7 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GetRoleConfigMetadataRequestExecutorTest {
 
@@ -29,7 +28,7 @@ public class GetRoleConfigMetadataRequestExecutorTest {
     public void shouldReturnRoleConfigMetadata() throws Exception {
         final GoPluginApiResponse response = new GetRoleConfigMetadataRequestExecutor().execute();
 
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode()).isEqualTo(200);
 
         final String expectedRoleConfigMetadata = "[\n" +
                 "  {\n" +

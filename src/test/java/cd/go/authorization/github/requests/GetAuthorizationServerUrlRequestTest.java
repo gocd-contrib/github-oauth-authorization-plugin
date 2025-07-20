@@ -23,10 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -59,16 +56,16 @@ public class GetAuthorizationServerUrlRequestTest {
 
         final GetAuthorizationServerUrlRequest request = GetAuthorizationServerUrlRequest.from(apiRequest);
 
-        assertThat(request.authConfigs(), hasSize(1));
-        assertThat(request.executor(), instanceOf(GetAuthorizationServerUrlRequestExecutor.class));
+        assertThat(request.authConfigs()).hasSize(1);
+        assertThat(request.executor()).isInstanceOf(GetAuthorizationServerUrlRequestExecutor.class);
 
         final AuthConfig authConfig = request.authConfigs().get(0);
 
-        assertThat(request.callbackUrl(), is("https://redirect.url"));
+        assertThat(request.callbackUrl()).isEqualTo("https://redirect.url");
 
-        assertThat(authConfig.getId(), is("github-config"));
-        assertThat(authConfig.gitHubConfiguration().clientId(), is("client-id"));
-        assertThat(authConfig.gitHubConfiguration().clientSecret(), is("client-secret"));
+        assertThat(authConfig.getId()).isEqualTo("github-config");
+        assertThat(authConfig.gitHubConfiguration().clientId()).isEqualTo("client-id");
+        assertThat(authConfig.gitHubConfiguration().clientSecret()).isEqualTo("client-secret");
 
     }
 }

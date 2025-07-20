@@ -72,4 +72,12 @@ public class FetchAccessTokenRequest extends Request {
             throw new AuthenticationException("Redirected OAuth2 state from GitHub did not match previously generated state stored in session");
         }
     }
+
+    public String authorizationCode() {
+        return Objects.requireNonNullElseGet(requestParameters().get("code"), () -> { throw new IllegalArgumentException("[Get Access Token] Expecting `code` in request params, but not received."); });
+    }
+
+    public String codeVerifierEncoded() {
+        return Objects.requireNonNullElseGet(authSession.get(Constants.AUTH_CODE_VERIFIER_ENCODED), () -> { throw new IllegalArgumentException("[Get Access Token] OAuth2 code verifier is missing from session"); });
+    }
 }
