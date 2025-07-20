@@ -36,12 +36,6 @@ gocdPlugin {
 
     prerelease = !"No".equalsIgnoreCase(System.getenv('PRERELEASE'))
     assetsToRelease = [project.tasks.jar]
-
-    licenseReport {
-        excludes = [
-                'com.squareup.okio:okio' // Seems to not be able to resolve license, not sure if POM issue or jk1-license-report issue. Maybe due to no jar?
-        ]
-    }
 }
 
 java {
