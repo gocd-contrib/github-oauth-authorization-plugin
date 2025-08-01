@@ -62,11 +62,11 @@ ext {
 dependencies {
     compileOnly project.deps.gocdPluginApi
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.13.1'
-    implementation group: 'org.kohsuke', name: 'github-api', version: '1.327'
+    implementation group: 'org.kohsuke', name: 'github-api', version: '1.329'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '5.1.0'
 
     testImplementation project.deps.gocdPluginApi
-    testImplementation platform('org.junit:junit-bom:5.13.3')
+    testImplementation platform('org.junit:junit-bom:5.13.4')
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
