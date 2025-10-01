@@ -38,6 +38,11 @@ gocdPlugin {
     assetsToRelease = [project.tasks.jar]
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.release = 17
 }
@@ -52,7 +57,7 @@ repositories {
 
 ext {
     deps = [
-            gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.3.0',
+        gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.3.0',
     ]
 
     versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
