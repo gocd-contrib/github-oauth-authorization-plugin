@@ -19,8 +19,7 @@ package cd.go.authorization.github.annotation;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import static cd.go.authorization.github.utils.Util.isBlank;
-import static cd.go.authorization.github.utils.Util.isNotBlank;
+import java.util.Optional;
 
 public class ProfileMetadata<T extends Metadata> {
 
@@ -37,23 +36,11 @@ public class ProfileMetadata<T extends Metadata> {
         this.metadata = metadata;
     }
 
-    public ValidationError validate(String input) {
-        String validationError = doValidate(input);
-        if (isNotBlank(validationError)) {
-            return new ValidationError(key, validationError);
-        }
-        return null;
+    public Optional<ValidationError> validate(String input) {
+        return isRequired() && (input == null || input.isBlank())
+                ? Optional.of(new ValidationError(key, this.key + " must not be blank."))
+                : Optional.empty();
     }
-
-    protected String doValidate(String input) {
-        if (isRequired()) {
-            if (isBlank(input)) {
-                return this.key + " must not be blank.";
-            }
-        }
-        return null;
-    }
-
 
     public String getKey() {
         return key;

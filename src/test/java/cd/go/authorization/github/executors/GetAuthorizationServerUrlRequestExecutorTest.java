@@ -44,7 +44,7 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
     private GetAuthorizationServerUrlRequestExecutor executor;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         openMocks(this);
 
         executor = new GetAuthorizationServerUrlRequestExecutor(request, gitHubClientBuilder);

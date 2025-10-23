@@ -27,15 +27,16 @@ public class GitHubConfigurationTest {
 
     @Test
     public void shouldDeserializeGitHubConfiguration() {
-        final GitHubConfiguration gitHubConfiguration = GitHubConfiguration.fromJSON("{\n" +
-                "  \"ClientId\": \"client-id\",\n" +
-                "  \"AllowedOrganizations\": \"example-1,example-2\",\n" +
-                "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
-                "  \"GitHubEnterpriseUrl\": \"https://enterprise.url\",\n" +
-                "  \"ClientSecret\": \"client-secret\",\n" +
-                "  \"PersonalAccessToken\": \"personal-access-token\",\n" +
-                "  \"AuthorizeUsing\": \"PersonalAccessToken\"\n" +
-                "}");
+        final GitHubConfiguration gitHubConfiguration = GitHubConfiguration.fromJSON("""
+                {
+                  "ClientId": "client-id",
+                  "AllowedOrganizations": "example-1,example-2",
+                  "AuthenticateWith": "GitHubEnterprise",
+                  "GitHubEnterpriseUrl": "https://enterprise.url",
+                  "ClientSecret": "client-secret",
+                  "PersonalAccessToken": "personal-access-token",
+                  "AuthorizeUsing": "PersonalAccessToken"
+                }""");
 
         assertThat(gitHubConfiguration.clientId()).isEqualTo("client-id");
         assertThat(gitHubConfiguration.clientSecret()).isEqualTo("client-secret");
@@ -50,13 +51,14 @@ public class GitHubConfigurationTest {
         GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret",
                 AuthenticateWith.GITHUB_ENTERPRISE, "http://enterprise.url", "example-1");
 
-        String expectedJSON = "{\n" +
-                "  \"ClientId\": \"client-id\",\n" +
-                "  \"ClientSecret\": \"client-secret\",\n" +
-                "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
-                "  \"GitHubEnterpriseUrl\": \"http://enterprise.url\",\n" +
-                "  \"AllowedOrganizations\": \"example-1\"\n" +
-                "}";
+        String expectedJSON = """
+                {
+                  "ClientId": "client-id",
+                  "ClientSecret": "client-secret",
+                  "AuthenticateWith": "GitHubEnterprise",
+                  "GitHubEnterpriseUrl": "http://enterprise.url",
+                  "AllowedOrganizations": "example-1"
+                }""";
 
         JSONAssert.assertEquals(expectedJSON, gitHubConfiguration.toJSON(), true);
 

@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static cd.go.authorization.github.GitHubPlugin.LOG;
+import static cd.go.authorization.github.requests.SearchUsersRequest.LOG;
 
 public class SearchUsersRequestExecutor implements RequestExecutor {
     private final SearchUsersRequest request;
@@ -48,10 +48,10 @@ public class SearchUsersRequestExecutor implements RequestExecutor {
 
         for (AuthConfig authConfig : authConfigs) {
             try {
-                LOG.info("[User Search] Looking up for users matching search_term: `{}` using auth_config: `{}}`", searchTerm, authConfig.getId());
+                LOG.info("Looking up for users matching search_term: `{}` using auth_config: `{}}`", searchTerm, authConfig.getId());
                 users.addAll(search(searchTerm, authConfig));
             } catch (Exception e) {
-                LOG.error("[User Search] Error while searching users with auth_config: '{}'", authConfig.getId(), e);
+                LOG.error("Error while searching users with auth_config: '{}'", authConfig.getId(), e);
             }
         }
 
@@ -63,14 +63,12 @@ public class SearchUsersRequestExecutor implements RequestExecutor {
         long start = System.currentTimeMillis();
         GitHub client = gitHubClientBuilder.fromServerPersonalAccessToken(authConfig.gitHubConfiguration());
         PagedSearchIterable<GHUser> ghUsers = client.searchUsers().q(searchText).list();
-        long afterRequest = System.currentTimeMillis();
-        LOG.debug("Time for request: " + (afterRequest - start) + "ms");
+        LOG.debug("Time for request: {} ms", System.currentTimeMillis() - start);
         PagedSearchIterable<GHUser> listOfUsers = ghUsers.withPageSize(10);
         for (GHUser ghUser : listOfUsers.iterator().nextPage()) {
             users.add(new User(ghUser.getLogin(), ghUser.getName(), ghUser.getEmail()));
         }
-        long end = System.currentTimeMillis();
-        LOG.debug("Total time: " + (end - start) + "ms");
+        LOG.debug("Total time: {} ms", System.currentTimeMillis() - start);
         return users;
     }
 }

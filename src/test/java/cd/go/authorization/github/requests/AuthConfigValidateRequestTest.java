@@ -31,17 +31,18 @@ public class AuthConfigValidateRequestTest {
     private GoPluginApiRequest apiRequest;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         openMocks(this);
     }
 
     @Test
-    public void shouldDeserializeGoPluginApiRequestToAuthConfigValidateRequest() throws Exception {
-        String responseBody = "{\n" +
-                "  \"GoServerUrl\": \"https://your.go.server.url\",\n" +
-                "  \"ClientId\": \"client-id\",\n" +
-                "  \"ClientSecret\": \"client-secret\"\n" +
-                "}";
+    public void shouldDeserializeGoPluginApiRequestToAuthConfigValidateRequest() {
+        String responseBody = """
+                {
+                  "GoServerUrl": "https://your.go.server.url",
+                  "ClientId": "client-id",
+                  "ClientSecret": "client-secret"
+                }""";
 
         when(apiRequest.requestBody()).thenReturn(responseBody);
 

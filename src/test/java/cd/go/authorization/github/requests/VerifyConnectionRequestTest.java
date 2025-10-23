@@ -33,19 +33,20 @@ public class VerifyConnectionRequestTest {
     private GoPluginApiRequest apiRequest;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         openMocks(this);
     }
 
     @Test
-    public void shouldDeserializeGoPluginApiRequestToVerifyConnectionRequest() throws Exception {
-        String responseBody = "{\n" +
-                "  \"ClientId\": \"client-id\",\n" +
-                "  \"ClientSecret\": \"client-secret\",\n" +
-                "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
-                "  \"GitHubEnterpriseUrl\": \"my-enterprise-url\",\n" +
-                "  \"AllowedOrganizations\": \"Foo,Bar\"\n" +
-                "}";
+    public void shouldDeserializeGoPluginApiRequestToVerifyConnectionRequest() {
+        String responseBody = """
+                {
+                  "ClientId": "client-id",
+                  "ClientSecret": "client-secret",
+                  "AuthenticateWith": "GitHubEnterprise",
+                  "GitHubEnterpriseUrl": "my-enterprise-url",
+                  "AllowedOrganizations": "Foo,Bar"
+                }""";
 
         when(apiRequest.requestBody()).thenReturn(responseBody);
 

@@ -28,20 +28,21 @@ public class SearchUsersRequestTest {
     @Test
     public void shouldParseRequest() {
         GoPluginApiRequest request = mock(GoPluginApiRequest.class);
-        when(request.requestBody()).thenReturn("{\n" +
-                "  \"search_term\": \"tom\",\n" +
-                "  \"auth_configs\": [\n" +
-                "    {\n" +
-                "      \"id\": \"github\",\n" +
-                "      \"configuration\": {\n" +
-                "        \"PersonalAccessToken\": \"personalAccessToken\",\n" +
-                "        \"AuthenticateWith\": \"GitHub\",\n" +
-                "        \"ClientId\": \"clientId\"," +
-                "        \"ClientSecret\": \"clientSecret\"" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}");
+        when(request.requestBody()).thenReturn("""
+                {
+                  "search_term": "tom",
+                  "auth_configs": [
+                    {
+                      "id": "github",
+                      "configuration": {
+                        "PersonalAccessToken": "personalAccessToken",
+                        "AuthenticateWith": "GitHub",
+                        "ClientId": "clientId",\
+                        "ClientSecret": "clientSecret"\
+                      }
+                    }
+                  ]
+                }""");
 
         SearchUsersRequest searchUsersRequest = SearchUsersRequest.from(request);
 

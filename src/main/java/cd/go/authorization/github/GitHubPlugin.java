@@ -23,61 +23,46 @@ import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
 import com.thoughtworks.go.plugin.api.annotation.Extension;
-import com.thoughtworks.go.plugin.api.exceptions.UnhandledRequestTypeException;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import static cd.go.authorization.github.Constants.PLUGIN_IDENTIFIER;
 
 @Extension
 public class GitHubPlugin implements GoPlugin {
-    public static final Logger LOG = Logger.getLoggerFor(GitHubPlugin.class);
+    private static final Logger LOG = Logger.getLoggerFor(GitHubPlugin.class);
 
-    private GoApplicationAccessor accessor;
+    static {
+        // Redirect logging from the GitHub API and OKHttp to SLF4J and thus GoCD's logging system
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+    }
 
     @Override
-    public void initializeGoApplicationAccessor(GoApplicationAccessor accessor) {
-        this.accessor = accessor;
-    }
+    public void initializeGoApplicationAccessor(GoApplicationAccessor accessor) {}
 
     @Override
     public GoPluginApiResponse handle(GoPluginApiRequest request) {
         try {
-            switch (RequestFromServer.fromString(request.requestName())) {
-                case REQUEST_GET_PLUGIN_ICON:
-                    return new GetPluginIconRequestExecutor().execute();
-                case REQUEST_GET_CAPABILITIES:
-                    return new GetCapabilitiesRequestExecutor().execute();
-                case REQUEST_GET_AUTH_CONFIG_METADATA:
-                    return new GetAuthConfigMetadataRequestExecutor().execute();
-                case REQUEST_AUTH_CONFIG_VIEW:
-                    return new GetAuthConfigViewRequestExecutor().execute();
-                case REQUEST_VALIDATE_AUTH_CONFIG:
-                    return AuthConfigValidateRequest.from(request).execute();
-                case REQUEST_VERIFY_CONNECTION:
-                    return VerifyConnectionRequest.from(request).execute();
-                case REQUEST_GET_ROLE_CONFIG_METADATA:
-                    return new GetRoleConfigMetadataRequestExecutor().execute();
-                case REQUEST_ROLE_CONFIG_VIEW:
-                    return new GetRoleConfigViewRequestExecutor().execute();
-                case REQUEST_VALIDATE_ROLE_CONFIG:
-                    return RoleConfigValidateRequest.from(request).execute();
-                case REQUEST_AUTHORIZATION_SERVER_REDIRECT_URL:
-                    return GetAuthorizationServerUrlRequest.from(request).execute();
-                case REQUEST_ACCESS_TOKEN:
-                    return FetchAccessTokenRequest.from(request).execute();
-                case REQUEST_IS_VALID_USER:
-                    return ValidateUserRequest.from(request).execute();
-                case REQUEST_AUTHENTICATE_USER:
-                    return UserAuthenticationRequest.from(request).execute();
-                case REQUEST_SEARCH_USERS:
-                    return SearchUsersRequest.from(request).execute();
-                case REQUEST_GET_USER_ROLES:
-                    return GetRolesRequest.from(request).execute();
-                default:
-                    throw new UnhandledRequestTypeException(request.requestName());
-            }
+            return switch (RequestFromServer.fromString(request.requestName())) {
+                case REQUEST_GET_PLUGIN_ICON -> new GetPluginIconRequestExecutor().execute();
+                case REQUEST_GET_CAPABILITIES -> new GetCapabilitiesRequestExecutor().execute();
+                case REQUEST_GET_AUTH_CONFIG_METADATA -> new GetAuthConfigMetadataRequestExecutor().execute();
+                case REQUEST_AUTH_CONFIG_VIEW -> new GetAuthConfigViewRequestExecutor().execute();
+                case REQUEST_VALIDATE_AUTH_CONFIG -> AuthConfigValidateRequest.from(request).execute();
+                case REQUEST_VERIFY_CONNECTION -> VerifyConnectionRequest.from(request).execute();
+                case REQUEST_GET_ROLE_CONFIG_METADATA -> new GetRoleConfigMetadataRequestExecutor().execute();
+                case REQUEST_ROLE_CONFIG_VIEW -> new GetRoleConfigViewRequestExecutor().execute();
+                case REQUEST_VALIDATE_ROLE_CONFIG -> RoleConfigValidateRequest.from(request).execute();
+                case REQUEST_AUTHORIZATION_SERVER_REDIRECT_URL -> GetAuthorizationServerUrlRequest.from(request).execute();
+                case REQUEST_ACCESS_TOKEN -> FetchAccessTokenRequest.from(request).execute();
+                case REQUEST_IS_VALID_USER -> ValidateUserRequest.from(request).execute();
+                case REQUEST_AUTHENTICATE_USER -> UserAuthenticationRequest.from(request).execute();
+                case REQUEST_SEARCH_USERS -> SearchUsersRequest.from(request).execute();
+                case REQUEST_GET_USER_ROLES -> GetRolesRequest.from(request).execute();
+            };
         } catch (NoSuchRequestHandlerException e) {
             LOG.warn(e.getMessage());
             return null;

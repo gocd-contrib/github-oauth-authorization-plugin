@@ -30,29 +30,30 @@ public class GetRoleConfigMetadataRequestExecutorTest {
 
         assertThat(response.responseCode()).isEqualTo(200);
 
-        final String expectedRoleConfigMetadata = "[\n" +
-                "  {\n" +
-                "    \"key\": \"Organizations\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Teams\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Users\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  }\n" +
-                "]";
+        final String expectedRoleConfigMetadata = """
+                [
+                  {
+                    "key": "Organizations",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "Teams",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "Users",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  }
+                ]""";
 
         JSONAssert.assertEquals(expectedRoleConfigMetadata, response.responseBody(), true);
     }

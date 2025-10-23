@@ -22,11 +22,10 @@ import com.google.gson.GsonBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
+import java.util.Objects;
 
 public class Util {
     public static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -36,7 +35,7 @@ public class Util {
     }
 
     public static byte[] readResourceBytes(String resourceFile) {
-        try (InputStream in = Util.class.getResourceAsStream(resourceFile)) {
+        try (InputStream in = Objects.requireNonNull(Util.class.getResourceAsStream(resourceFile))) {
             return readFully(in);
         } catch (IOException e) {
             throw new RuntimeException("Could not find resource " + resourceFile, e);
@@ -51,17 +50,6 @@ public class Util {
             output.write(buffer, 0, bytesRead);
         }
         return output.toByteArray();
-    }
-
-    public static String pluginId() {
-        String s = readResource("/plugin.properties");
-        try {
-            Properties properties = new Properties();
-            properties.load(new StringReader(s));
-            return (String) properties.get("id");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static List<String> splitIntoLinesAndTrimSpaces(String lines) {
@@ -79,23 +67,14 @@ public class Util {
     }
 
     public static String toLowerCase(String str) {
-        return isBlank(str) ? str : str.toLowerCase();
+        return str == null || str.isBlank() ? str : str.toLowerCase();
     }
 
-    public static boolean isBlank(final CharSequence cs) {
-        int strLen;
-        if (cs == null || (strLen = cs.length()) == 0) {
-            return true;
-        }
-        for (int i = 0; i < strLen; i++) {
-            if (Character.isWhitespace(cs.charAt(i)) == false) {
-                return false;
-            }
-        }
-        return true;
+    public static boolean isBlank(String str) {
+        return str == null || str.isBlank();
     }
 
-    public static boolean isNotBlank(final CharSequence cs) {
-        return !isBlank(cs);
+    public static boolean isNotBlank(String str) {
+        return str != null && !str.isBlank();
     }
 }

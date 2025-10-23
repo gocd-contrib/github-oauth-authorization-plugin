@@ -16,6 +16,8 @@
 
 package cd.go.authorization.github.annotation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 import static cd.go.authorization.github.utils.Util.GSON;
@@ -34,10 +36,7 @@ public class ValidationResult {
         errors.add(new ValidationError(key, message));
     }
 
-    public void addError(ValidationError validationError) {
-        if (validationError == null) {
-            return;
-        }
+    public void addError(@NotNull ValidationError validationError) {
         errors.add(validationError);
     }
 

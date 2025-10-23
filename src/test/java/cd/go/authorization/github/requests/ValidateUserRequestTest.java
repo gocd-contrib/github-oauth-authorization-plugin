@@ -29,21 +29,22 @@ public class ValidateUserRequestTest {
     @Test
     public void shouldParseGoAPIRequestToValidateUserRequest() {
         GoPluginApiRequest apiRequest = mock(GoPluginApiRequest.class);
-        when(apiRequest.requestBody()).thenReturn("{\n" +
-                "  \"auth_config\": {\n" +
-                "    \"configuration\": {\n" +
-                "      \"AllowedOrganizations\": \"\",\n" +
-                "      \"AuthenticateWith\": \"GitHub\",\n" +
-                "      \"AuthorizeUsing\": \"PersonalAccessToken\",\n" +
-                "      \"ClientId\": \"Foo\",\n" +
-                "      \"ClientSecret\": \"bar\",\n" +
-                "      \"GitHubEnterpriseUrl\": \"\",\n" +
-                "      \"PersonalAccessToken\": \"Baz\"\n" +
-                "    },\n" +
-                "    \"id\": \"GitHub\"\n" +
-                "  },\n" +
-                "  \"username\": \"bob\"\n" +
-                "}");
+        when(apiRequest.requestBody()).thenReturn("""
+                {
+                  "auth_config": {
+                    "configuration": {
+                      "AllowedOrganizations": "",
+                      "AuthenticateWith": "GitHub",
+                      "AuthorizeUsing": "PersonalAccessToken",
+                      "ClientId": "Foo",
+                      "ClientSecret": "bar",
+                      "GitHubEnterpriseUrl": "",
+                      "PersonalAccessToken": "Baz"
+                    },
+                    "id": "GitHub"
+                  },
+                  "username": "bob"
+                }""");
 
         ValidateUserRequest request = (ValidateUserRequest) ValidateUserRequest.from(apiRequest);
 
@@ -54,21 +55,22 @@ public class ValidateUserRequestTest {
     @Test
     public void shouldReturnValidateUserExecutor() {
         GoPluginApiRequest apiRequest = mock(GoPluginApiRequest.class);
-        when(apiRequest.requestBody()).thenReturn("{\n" +
-                "  \"auth_config\": {\n" +
-                "    \"configuration\": {\n" +
-                "      \"AllowedOrganizations\": \"\",\n" +
-                "      \"AuthenticateWith\": \"GitHub\",\n" +
-                "      \"AuthorizeUsing\": \"PersonalAccessToken\",\n" +
-                "      \"ClientId\": \"Foo\",\n" +
-                "      \"ClientSecret\": \"bar\",\n" +
-                "      \"GitHubEnterpriseUrl\": \"\",\n" +
-                "      \"PersonalAccessToken\": \"Baz\"\n" +
-                "    },\n" +
-                "    \"id\": \"GitHub\"\n" +
-                "  },\n" +
-                "  \"username\": \"bob\"\n" +
-                "}");
+        when(apiRequest.requestBody()).thenReturn("""
+                {
+                  "auth_config": {
+                    "configuration": {
+                      "AllowedOrganizations": "",
+                      "AuthenticateWith": "GitHub",
+                      "AuthorizeUsing": "PersonalAccessToken",
+                      "ClientId": "Foo",
+                      "ClientSecret": "bar",
+                      "GitHubEnterpriseUrl": "",
+                      "PersonalAccessToken": "Baz"
+                    },
+                    "id": "GitHub"
+                  },
+                  "username": "bob"
+                }""");
 
         Request request = ValidateUserRequest.from(apiRequest);
 

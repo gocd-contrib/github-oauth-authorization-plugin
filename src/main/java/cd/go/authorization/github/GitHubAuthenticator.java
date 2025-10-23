@@ -20,14 +20,15 @@ import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.LoggedInUserInfo;
 import cd.go.authorization.github.models.OAuthTokenInfo;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
 import java.util.List;
 
-import static cd.go.authorization.github.GitHubPlugin.LOG;
-
 public class GitHubAuthenticator {
+    private static final Logger LOG = Logger.getLoggerFor(GitHubAuthenticator.class);
+
     private final MembershipChecker membershipChecker;
     private final GitHubClientBuilder gitHubClientBuilder;
 
@@ -46,10 +47,10 @@ public class GitHubAuthenticator {
         final LoggedInUserInfo loggedInUserInfo = new LoggedInUserInfo(gitHub);
 
         if (allowedOrganizations.isEmpty()) {
-            LOG.info("[Authenticate] User `{}` authenticated successfully, organisation membership not required.", loggedInUserInfo.getUser().username());
+            LOG.info("User `{}` authenticated successfully, organisation membership not required.", loggedInUserInfo.getUser().username());
             return loggedInUserInfo;
         } else if (membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo.getGitHubUser(), authConfig, allowedOrganizations)) {
-            LOG.info("[Authenticate] User `{}` authenticated successfully as member of an allowed organisation.", loggedInUserInfo.getUser().username());
+            LOG.info("User `{}` authenticated successfully as member of an allowed organisation.", loggedInUserInfo.getUser().username());
             return loggedInUserInfo;
         }
 

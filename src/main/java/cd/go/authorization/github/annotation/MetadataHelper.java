@@ -23,9 +23,9 @@ import java.util.List;
 
 public class MetadataHelper {
 
-    public static List<ProfileMetadata> getMetadata(Class<?> clazz) {
+    public static List<ProfileMetadata<?>> getMetadata(Class<?> clazz) {
         Field[] fields = clazz.getDeclaredFields();
-        List<ProfileMetadata> metadata = new ArrayList<>();
+        List<ProfileMetadata<?>> metadata = new ArrayList<>();
         for (Field field : fields) {
             ProfileField profileField = field.getAnnotation(ProfileField.class);
             if (profileField != null) {

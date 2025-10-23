@@ -41,7 +41,7 @@ public class VerifyConnectionRequestExecutor implements RequestExecutor {
     }
 
     @Override
-    public GoPluginApiResponse execute() throws Exception {
+    public GoPluginApiResponse execute() {
         final ValidationResult validationResult = validate();
         if (validationResult.hasErrors()) {
             return validationFailureResponse(validationResult);

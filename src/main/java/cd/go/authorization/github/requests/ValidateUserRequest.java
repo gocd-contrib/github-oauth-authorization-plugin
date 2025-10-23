@@ -21,9 +21,12 @@ import cd.go.authorization.github.executors.ValidateUserRequestExecutor;
 import cd.go.authorization.github.models.AuthConfig;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 
 public class ValidateUserRequest extends Request {
+    public static final Logger LOG = Logger.getLoggerFor(ValidateUserRequest.class);
+
     @Expose
     @SerializedName("auth_config")
     private AuthConfig authConfig;

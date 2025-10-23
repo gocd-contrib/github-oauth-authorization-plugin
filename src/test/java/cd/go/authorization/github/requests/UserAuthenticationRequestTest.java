@@ -36,42 +36,43 @@ public class UserAuthenticationRequestTest {
     private GoPluginApiRequest request;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         openMocks(this);
     }
 
     @Test
-    public void shouldDeserializeGoPluginApiRequestToUserAuthenticationRequest() throws Exception {
-        String responseBody = "{\n" +
-                "  \"credentials\": {\n" +
-                "    \"access_token\": \"access-token\",\n" +
-                "    \"token_type\": \"token\",\n" +
-                "    \"scope\": \"profile\"\n" +
-                "  },\n" +
-                "  \"auth_configs\": [\n" +
-                "    {\n" +
-                "      \"id\": \"github-config\",\n" +
-                "      \"configuration\": {\n" +
-                "        \"PersonalAccessToken\": \"personal-access-token\",\n" +
-                "        \"AuthenticateWith\": \"GitHub\",\n" +
-                "        \"AllowedOrganizations\": \"org1,org2\",\n" +
-                "        \"ClientId\": \"client-id\",\n" +
-                "        \"ClientSecret\": \"client-secret\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"role_configs\": [\n" +
-                "    {\n" +
-                "      \"name\": \"admin\",\n" +
-                "      \"auth_config_id\": \"github-config\",\n" +
-                "      \"configuration\": {\n" +
-                "        \"Organizations\": \"OrganizationFoo,OrganizationBar\",\n" +
-                "        \"Teams\": \"OrganizationFoo:TeamX,TeamY\\nOrganizationBar:TeamA,TeamB\",\n" +
-                "        \"Users\": \"bob,alice\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
+    public void shouldDeserializeGoPluginApiRequestToUserAuthenticationRequest() {
+        String responseBody = """
+                {
+                  "credentials": {
+                    "access_token": "access-token",
+                    "token_type": "token",
+                    "scope": "profile"
+                  },
+                  "auth_configs": [
+                    {
+                      "id": "github-config",
+                      "configuration": {
+                        "PersonalAccessToken": "personal-access-token",
+                        "AuthenticateWith": "GitHub",
+                        "AllowedOrganizations": "org1,org2",
+                        "ClientId": "client-id",
+                        "ClientSecret": "client-secret"
+                      }
+                    }
+                  ],
+                  "role_configs": [
+                    {
+                      "name": "admin",
+                      "auth_config_id": "github-config",
+                      "configuration": {
+                        "Organizations": "OrganizationFoo,OrganizationBar",
+                        "Teams": "OrganizationFoo:TeamX,TeamY\\nOrganizationBar:TeamA,TeamB",
+                        "Users": "bob,alice"
+                      }
+                    }
+                  ]
+                }""";
 
         when(request.requestBody()).thenReturn(responseBody);
 

@@ -43,7 +43,7 @@ public class UserAuthenticationRequestExecutorTest {
     private GitHubAuthenticator authenticator;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         request = mock(UserAuthenticationRequest.class);
         authConfig = mock(AuthConfig.class);
         authorizer = mock(GitHubAuthorizer.class);
@@ -68,14 +68,15 @@ public class UserAuthenticationRequestExecutorTest {
 
         final GoPluginApiResponse response = executor.execute();
 
-        String expectedJSON = "{\n" +
-                "  \"roles\": [],\n" +
-                "  \"user\": {\n" +
-                "    \"username\": \"bford\",\n" +
-                "    \"display_name\": \"Bob\",\n" +
-                "    \"email\": \"bford@example.com\"\n" +
-                "  }\n" +
-                "}";
+        String expectedJSON = """
+                {
+                  "roles": [],
+                  "user": {
+                    "username": "bford",
+                    "display_name": "Bob",
+                    "email": "bford@example.com"
+                  }
+                }""";
 
         assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
@@ -99,14 +100,15 @@ public class UserAuthenticationRequestExecutorTest {
 
         final GoPluginApiResponse response = executor.execute();
 
-        String expectedJSON = "{\n" +
-                "  \"roles\": [\"admin\"],\n" +
-                "  \"user\": {\n" +
-                "    \"username\": \"bford\",\n" +
-                "    \"display_name\": \"Bob\",\n" +
-                "    \"email\": \"bford@example.com\"\n" +
-                "  }\n" +
-                "}";
+        String expectedJSON = """
+                {
+                  "roles": ["admin"],
+                  "user": {
+                    "username": "bford",
+                    "display_name": "Bob",
+                    "email": "bford@example.com"
+                  }
+                }""";
 
         assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);

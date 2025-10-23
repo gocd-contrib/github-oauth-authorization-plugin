@@ -25,6 +25,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static cd.go.authorization.github.utils.Util.*;
 
@@ -69,23 +70,14 @@ public class GitHubRoleConfiguration implements Validatable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         GitHubRoleConfiguration that = (GitHubRoleConfiguration) o;
-
-        if (organizations != null ? !organizations.equals(that.organizations) : that.organizations != null)
-            return false;
-        if (teams != null ? !teams.equals(that.teams) : that.teams != null) return false;
-        return users != null ? users.equals(that.users) : that.users == null;
+        return Objects.equals(organizations, that.organizations) && Objects.equals(teams, that.teams) && Objects.equals(users, that.users);
     }
 
     @Override
     public int hashCode() {
-        int result = organizations != null ? organizations.hashCode() : 0;
-        result = 31 * result + (teams != null ? teams.hashCode() : 0);
-        result = 31 * result + (users != null ? users.hashCode() : 0);
-        return result;
+        return Objects.hash(organizations, teams, users);
     }
 
     public String toJSON() {
@@ -98,8 +90,7 @@ public class GitHubRoleConfiguration implements Validatable {
 
     @Override
     public Map<String, String> toProperties() {
-        return GSON.fromJson(toJSON(), new TypeToken<Map<String, String>>() {
-        }.getType());
+        return GSON.fromJson(toJSON(), new TypeToken<Map<String, String>>() {}.getType());
     }
 
     public boolean hasConfiguration() {

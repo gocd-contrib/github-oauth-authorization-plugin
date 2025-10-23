@@ -26,12 +26,13 @@ public class GetCapabilitiesRequestExecutorTest {
     public void shouldSupportWebAuthenticationCapabilities() throws Exception {
         GoPluginApiResponse response = new GetCapabilitiesRequestExecutor().execute();
 
-        String expectedJSON = "{\n" +
-                "    \"supported_auth_type\":\"web\",\n" +
-                "    \"can_authorize\":true,\n" +
-                "    \"can_search\":true,\n" +
-                "    \"can_get_user_roles\":true\n" +
-                "}";
+        String expectedJSON = """
+                {
+                    "supported_auth_type":"web",
+                    "can_authorize":true,
+                    "can_search":true,
+                    "can_get_user_roles":true
+                }""";
 
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
     }

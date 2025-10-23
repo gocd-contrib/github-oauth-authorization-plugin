@@ -28,22 +28,23 @@ public class GetRolesRequestTest {
     @Test
     public void shouldParseRequest() {
         GoPluginApiRequest apiRequest = mock(GoPluginApiRequest.class);
-        when(apiRequest.requestBody()).thenReturn("{\n" +
-                "  \"auth_config\": {\n" +
-                "    \"configuration\": {\n" +
-                "      \"AllowedOrganizations\": \"\",\n" +
-                "      \"AuthenticateWith\": \"GitHub\",\n" +
-                "      \"AuthorizeUsing\": \"PersonalAccessToken\",\n" +
-                "      \"ClientId\": \"Foo\",\n" +
-                "      \"ClientSecret\": \"bar\",\n" +
-                "      \"GitHubEnterpriseUrl\": \"\",\n" +
-                "      \"PersonalAccessToken\": \"Baz\"\n" +
-                "    },\n" +
-                "    \"id\": \"GitHub\"\n" +
-                "  },\n" +
-                "   \"role_configs\": [],\n" +
-                "  \"username\": \"bob\"\n" +
-                "}");
+        when(apiRequest.requestBody()).thenReturn("""
+                {
+                  "auth_config": {
+                    "configuration": {
+                      "AllowedOrganizations": "",
+                      "AuthenticateWith": "GitHub",
+                      "AuthorizeUsing": "PersonalAccessToken",
+                      "ClientId": "Foo",
+                      "ClientSecret": "bar",
+                      "GitHubEnterpriseUrl": "",
+                      "PersonalAccessToken": "Baz"
+                    },
+                    "id": "GitHub"
+                  },
+                   "role_configs": [],
+                  "username": "bob"
+                }""");
 
         GetRolesRequest request = (GetRolesRequest) GetRolesRequest.from(apiRequest);
 
@@ -55,22 +56,23 @@ public class GetRolesRequestTest {
     @Test
     public void shouldReturnValidExecutor() {
         GoPluginApiRequest apiRequest = mock(GoPluginApiRequest.class);
-        when(apiRequest.requestBody()).thenReturn("{\n" +
-                "  \"auth_config\": {\n" +
-                "    \"configuration\": {\n" +
-                "      \"AllowedOrganizations\": \"\",\n" +
-                "      \"AuthenticateWith\": \"GitHub\",\n" +
-                "      \"AuthorizeUsing\": \"PersonalAccessToken\",\n" +
-                "      \"ClientId\": \"Foo\",\n" +
-                "      \"ClientSecret\": \"bar\",\n" +
-                "      \"GitHubEnterpriseUrl\": \"\",\n" +
-                "      \"PersonalAccessToken\": \"Baz\"\n" +
-                "    },\n" +
-                "    \"id\": \"GitHub\"\n" +
-                "  },\n" +
-                "   \"role_configs\": [],\n" +
-                "  \"username\": \"bob\"\n" +
-                "}");
+        when(apiRequest.requestBody()).thenReturn("""
+                {
+                  "auth_config": {
+                    "configuration": {
+                      "AllowedOrganizations": "",
+                      "AuthenticateWith": "GitHub",
+                      "AuthorizeUsing": "PersonalAccessToken",
+                      "ClientId": "Foo",
+                      "ClientSecret": "bar",
+                      "GitHubEnterpriseUrl": "",
+                      "PersonalAccessToken": "Baz"
+                    },
+                    "id": "GitHub"
+                  },
+                   "role_configs": [],
+                  "username": "bob"
+                }""");
 
         GetRolesRequest request = (GetRolesRequest) GetRolesRequest.from(apiRequest);
         assertThat(request.executor() instanceof GetRolesExecutor).isEqualTo(true);

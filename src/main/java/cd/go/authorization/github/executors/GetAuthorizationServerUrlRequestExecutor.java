@@ -27,7 +27,7 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
 import java.util.Map;
 
-import static cd.go.authorization.github.GitHubPlugin.LOG;
+import static cd.go.authorization.github.requests.GetAuthorizationServerUrlRequest.LOG;
 import static cd.go.authorization.github.utils.Util.GSON;
 
 public class GetAuthorizationServerUrlRequestExecutor implements RequestExecutor {
@@ -43,14 +43,12 @@ public class GetAuthorizationServerUrlRequestExecutor implements RequestExecutor
         this.gitHubClientBuilder = gitHubClientBuilder;
     }
 
-    public GoPluginApiResponse execute() throws Exception {
+    public GoPluginApiResponse execute() {
         final AuthConfig authConfig = request.firstAuthConfig();
-        LOG.debug("[%s] Getting authorization server url from auth config.", getClass().getSimpleName());
+        LOG.info("Initiating GitHub OAuth authentication from auth config `{}`", authConfig.getId());
         final GitHubConfiguration gitHubConfiguration = authConfig.gitHubConfiguration();
 
         AuthorizationServerArgs result = gitHubClientBuilder.authorizationServerArgs(gitHubConfiguration, request.callbackUrl());
-
-        LOG.info("[%s] Initiating GitHub OAuth authentication from auth config `{}`", getClass().getSimpleName(), authConfig.getId());
 
         return DefaultGoPluginApiResponse.success(GSON.toJson(Map.of(
                 "authorization_server_url", result.url(),

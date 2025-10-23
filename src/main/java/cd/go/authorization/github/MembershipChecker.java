@@ -18,6 +18,7 @@ package cd.go.authorization.github;
 
 import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.models.AuthConfig;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import org.kohsuke.github.GHOrganization;
 import org.kohsuke.github.GHTeam;
 import org.kohsuke.github.GHUser;
@@ -27,9 +28,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static cd.go.authorization.github.GitHubPlugin.LOG;
 
 public class MembershipChecker {
+    public static final Logger LOG = Logger.getLoggerFor(MembershipChecker.class);
+
     private final GitHubClientBuilder clientBuilder;
 
     public MembershipChecker() {
@@ -43,7 +45,7 @@ public class MembershipChecker {
 
     public boolean isAMemberOfAtLeastOneOrganization(GHUser ghUser, AuthConfig authConfig, List<String> organizationsAllowed) throws IOException {
         if (organizationsAllowed.isEmpty()) {
-            LOG.debug("[MembershipChecker] No organizations provided - not allowed.");
+            LOG.debug("No organizations provided - not allowed.");
             return false;
         }
 
@@ -56,7 +58,7 @@ public class MembershipChecker {
         for (String organizationName : organizationsAllowed) {
             final GHOrganization organization = gitHubForPersonalAccessToken.getOrganization(organizationName);
             if (organization != null && organization.hasMember(ghUser)) {
-                LOG.info("[MembershipChecker] User `{}` is a member of allowed `{}` organization.", ghUser.getLogin(), organizationName);
+                LOG.info("User `{}` is a member of allowed `{}` organization.", ghUser.getLogin(), organizationName);
                 return true;
             }
         }
@@ -66,7 +68,7 @@ public class MembershipChecker {
 
     public boolean isAMemberOfAtLeastOneTeamOfOrganization(GHUser ghUser, AuthConfig authConfig, Map<String, List<String>> organizationAndTeamsAllowed) throws IOException {
         if (organizationAndTeamsAllowed.isEmpty()) {
-            LOG.debug("[MembershipChecker] No teams provided - not allowed.");
+            LOG.debug("No teams provided - not allowed.");
             return false;
         }
 
@@ -85,7 +87,7 @@ public class MembershipChecker {
 
                 for (GHTeam team : teamsFromGitHub.values()) {
                     if (allowedTeamsFromRole.contains(team.getName().toLowerCase()) && team.hasMember(ghUser)) {
-                        LOG.info("[MembershipChecker] User `{}` is a member of allowed `{}` team.", ghUser.getLogin(), team.getName());
+                        LOG.info("User `{}` is a member of allowed `{}` team.", ghUser.getLogin(), team.getName());
                         return true;
                     }
                 }

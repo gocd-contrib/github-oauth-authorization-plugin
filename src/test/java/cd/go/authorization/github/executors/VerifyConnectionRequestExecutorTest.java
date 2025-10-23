@@ -48,24 +48,25 @@ public class VerifyConnectionRequestExecutorTest {
 
         GoPluginApiResponse response = executor.execute();
 
-        String expectedJSON = "{\n" +
-                "  \"errors\": [\n" +
-                "    {\n" +
-                "      \"key\": \"PersonalAccessToken\",\n" +
-                "      \"message\": \"PersonalAccessToken must not be blank.\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"key\": \"ClientId\",\n" +
-                "      \"message\": \"ClientId must not be blank.\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"key\": \"ClientSecret\",\n" +
-                "      \"message\": \"ClientSecret must not be blank.\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"message\": \"Validation failed for the given Auth Config\",\n" +
-                "  \"status\": \"validation-failed\"\n" +
-                "}";
+        String expectedJSON = """
+                {
+                  "errors": [
+                    {
+                      "key": "PersonalAccessToken",
+                      "message": "PersonalAccessToken must not be blank."
+                    },
+                    {
+                      "key": "ClientId",
+                      "message": "ClientId must not be blank."
+                    },
+                    {
+                      "key": "ClientSecret",
+                      "message": "ClientSecret must not be blank."
+                    }
+                  ],
+                  "message": "Validation failed for the given Auth Config",
+                  "status": "validation-failed"
+                }""";
 
         assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), JSONCompareMode.NON_EXTENSIBLE);
@@ -79,10 +80,11 @@ public class VerifyConnectionRequestExecutorTest {
 
         GoPluginApiResponse response = executor.execute();
 
-        String expectedJSON = "{\n" +
-                "  \"message\": \"Connection ok\",\n" +
-                "  \"status\": \"success\"\n" +
-                "}";
+        String expectedJSON = """
+                {
+                  "message": "Connection ok",
+                  "status": "success"
+                }""";
 
         assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), JSONCompareMode.NON_EXTENSIBLE);

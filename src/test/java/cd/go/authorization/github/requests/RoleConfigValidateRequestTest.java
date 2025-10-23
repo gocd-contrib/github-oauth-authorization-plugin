@@ -34,17 +34,18 @@ public class RoleConfigValidateRequestTest {
     private GoPluginApiRequest apiRequest;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         openMocks(this);
     }
 
     @Test
-    public void shouldDeserializeGoPluginApiRequestToRoleConfigValidateRequest() throws Exception {
-        String responseBody = "{\n" +
-                "  \"Organizations\": \"Org1,Org2,Org3\",\n" +
-                "  \"Teams\": \"Org4:team-1,team-2\",\n" +
-                "  \"Users\": \"bob,alice\"\n" +
-                "}";
+    public void shouldDeserializeGoPluginApiRequestToRoleConfigValidateRequest() {
+        String responseBody = """
+                {
+                  "Organizations": "Org1,Org2,Org3",
+                  "Teams": "Org4:team-1,team-2",
+                  "Users": "bob,alice"
+                }""";
 
         when(apiRequest.requestBody()).thenReturn(responseBody);
 

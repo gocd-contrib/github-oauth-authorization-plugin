@@ -28,8 +28,8 @@ import static cd.go.authorization.github.utils.Util.GSON;
 
 public class GetAuthConfigMetadataRequestExecutor implements RequestExecutor {
 
-    public GoPluginApiResponse execute() throws Exception {
-        final List<ProfileMetadata> authConfigMetadata = MetadataHelper.getMetadata(GitHubConfiguration.class);
+    public GoPluginApiResponse execute() {
+        final List<ProfileMetadata<?>> authConfigMetadata = MetadataHelper.getMetadata(GitHubConfiguration.class);
         return DefaultGoPluginApiResponse.success( GSON.toJson(authConfigMetadata));
     }
 }

@@ -34,7 +34,7 @@ public class RoleConfigValidateRequestExecutorTest {
     private GoPluginApiRequest request;
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         request = mock(GoPluginApiRequest.class);
     }
 
@@ -45,20 +45,21 @@ public class RoleConfigValidateRequestExecutorTest {
         GoPluginApiResponse response = RoleConfigValidateRequest.from(request).execute();
         String json = response.responseBody();
 
-        String expectedJSON = "[\n" +
-                "  {\n" +
-                "    \"key\": \"Users\",\n" +
-                "    \"message\": \"At least one of the fields(organizations,teams or users) should be specified.\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Teams\",\n" +
-                "    \"message\": \"At least one of the fields(organizations,teams or users) should be specified.\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"Organizations\",\n" +
-                "    \"message\": \"At least one of the fields(organizations,teams or users) should be specified.\"\n" +
-                "  }\n" +
-                "]";
+        String expectedJSON = """
+                [
+                  {
+                    "key": "Users",
+                    "message": "At least one of the fields(organizations,teams or users) should be specified."
+                  },
+                  {
+                    "key": "Teams",
+                    "message": "At least one of the fields(organizations,teams or users) should be specified."
+                  },
+                  {
+                    "key": "Organizations",
+                    "message": "At least one of the fields(organizations,teams or users) should be specified."
+                  }
+                ]""";
 
         JSONAssert.assertEquals(expectedJSON, json, JSONCompareMode.NON_EXTENSIBLE);
     }
@@ -70,12 +71,13 @@ public class RoleConfigValidateRequestExecutorTest {
         GoPluginApiResponse response = RoleConfigValidateRequest.from(request).execute();
         String json = response.responseBody();
 
-        String expectedJSON = "[\n" +
-                "  {\n" +
-                "    \"key\": \"Teams\",\n" +
-                "    \"message\": \"Invalid format. It should be in <organization>:<team-1>,<team-2> format.\"\n" +
-                "  }\n" +
-                "]";
+        String expectedJSON = """
+                [
+                  {
+                    "key": "Teams",
+                    "message": "Invalid format. It should be in <organization>:<team-1>,<team-2> format."
+                  }
+                ]""";
 
         JSONAssert.assertEquals(expectedJSON, json, JSONCompareMode.NON_EXTENSIBLE);
     }

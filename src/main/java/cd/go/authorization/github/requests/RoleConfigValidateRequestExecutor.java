@@ -30,7 +30,7 @@ public class RoleConfigValidateRequestExecutor implements RequestExecutor {
     }
 
     @Override
-    public GoPluginApiResponse execute() throws Exception {
+    public GoPluginApiResponse execute() {
         final ValidationResult validationResult = new MetadataValidator().validate(request.gitHubRoleConfiguration());
 
         if (!request.gitHubRoleConfiguration().hasConfiguration()) {

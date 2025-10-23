@@ -22,11 +22,14 @@ import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.Role;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 
 import java.util.List;
 
 public class GetRolesRequest extends Request {
+    public static final Logger LOG = Logger.getLoggerFor(GetRolesRequest.class);
+
     @Expose
     @SerializedName("auth_config")
     private AuthConfig authConfig;

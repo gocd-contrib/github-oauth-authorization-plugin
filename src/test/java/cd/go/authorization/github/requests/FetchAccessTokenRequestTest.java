@@ -55,7 +55,7 @@ public class FetchAccessTokenRequestTest {
     private GoPluginApiRequest apiRequest;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         openMocks(this);
         when(apiRequest.requestParameters()).thenReturn(Map.of("code", "authorization-code", "state", "some-state-value"));
         when(apiRequest.requestBody()).thenReturn("""
@@ -78,7 +78,7 @@ public class FetchAccessTokenRequestTest {
     }
 
     @Test
-    public void shouldDeserializeGoPluginApiRequestToFetchAccessTokenRequest() throws Exception {
+    public void shouldDeserializeGoPluginApiRequestToFetchAccessTokenRequest() {
         final FetchAccessTokenRequest request = FetchAccessTokenRequest.from(apiRequest);
 
         assertThat(request.authConfigs()).hasSize(1);
@@ -141,7 +141,7 @@ public class FetchAccessTokenRequestTest {
         when(apiRequest.requestParameters()).thenReturn(Collections.emptyMap());
         assertThatThrownBy(() -> FetchAccessTokenRequest.from(apiRequest).authorizationCode())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("[Fetch Access Token] Expecting `code` in request params, but not received.");
+                .hasMessage("Expecting `code` in request params, but not received.");
     }
 
     @Test
@@ -169,6 +169,6 @@ public class FetchAccessTokenRequestTest {
                 """);
         assertThatThrownBy(() -> FetchAccessTokenRequest.from(apiRequest).codeVerifierEncoded())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("[Fetch Access Token] OAuth2 code verifier is missing from session");
+                .hasMessage("OAuth2 code verifier is missing from session");
     }
 }

@@ -43,7 +43,6 @@ import static org.mockito.Mockito.*;
 public class FetchAccessTokenRequestExecutorTest {
     private FetchAccessTokenRequest fetchAccessTokenRequest;
     private AuthConfig authConfig;
-    private GitHubConfiguration gitHubConfiguration;
     private FetchAccessTokenRequestExecutor executor;
     private MockWebServer mockWebServer;
 
@@ -54,7 +53,7 @@ public class FetchAccessTokenRequestExecutorTest {
 
         fetchAccessTokenRequest = mock(FetchAccessTokenRequest.class);
         authConfig = mock(AuthConfig.class);
-        gitHubConfiguration = new GitHubConfiguration("my-client", "my-secret", AuthenticateWith.GITHUB_ENTERPRISE,
+        GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("my-client", "my-secret", AuthenticateWith.GITHUB_ENTERPRISE,
                 mockWebServer.url("/").toString(), "");
 
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
@@ -63,7 +62,7 @@ public class FetchAccessTokenRequestExecutorTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         mockWebServer.close();
     }
 
@@ -92,11 +91,12 @@ public class FetchAccessTokenRequestExecutorTest {
 
         final GoPluginApiResponse response = executor.execute();
 
-        String expectedJSON = "{\n" +
-                "  \"access_token\": \"token-444248275346-5758603453985735\",\n" +
-                "  \"token_type\": \"bearer\",\n" +
-                "  \"scope\": \"user:email,read:org\"\n" +
-                "}";
+        String expectedJSON = """
+                {
+                  "access_token": "token-444248275346-5758603453985735",
+                  "token_type": "bearer",
+                  "scope": "user:email,read:org"
+                }""";
 
         assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
@@ -110,7 +110,7 @@ public class FetchAccessTokenRequestExecutorTest {
     }
 
     @Test
-    public void fetchAccessToken_shouldErrorOutIfResponseCodeIsNot200() throws Exception {
+    public void fetchAccessToken_shouldErrorOutIfResponseCodeIsNot200() {
         mockWebServer.enqueue(new MockResponse.Builder()
                 .code(404)
                 .build());
@@ -121,13 +121,13 @@ public class FetchAccessTokenRequestExecutorTest {
 
 
         Exception exception = assertThrows(AuthenticationException.class, executor::execute);
-        assertThat(exception.getMessage()).isEqualTo("[Fetch Access Token] Client Error");
+        assertThat(exception.getMessage()).isEqualTo("Client Error");
 
         verify(fetchAccessTokenRequest).validateState();
     }
 
     @Test
-    public void fetchAccessToken_shouldErrorIfStateDoesNotMatch() throws Exception {
+    public void fetchAccessToken_shouldErrorIfStateDoesNotMatch() {
         when(fetchAccessTokenRequest.firstAuthConfig()).thenReturn(authConfig);
         when(fetchAccessTokenRequest.authSession()).thenReturn(Map.of(Constants.AUTH_SESSION_STATE, "some-value"));
         when(fetchAccessTokenRequest.authorizationCode()).thenReturn("code-received-in-previous-step");

@@ -20,11 +20,14 @@ import cd.go.authorization.github.executors.SearchUsersRequestExecutor;
 import cd.go.authorization.github.models.AuthConfig;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 
 import java.util.List;
 
 public class SearchUsersRequest extends Request implements AuthConfigurable {
+    public static final Logger LOG = Logger.getLoggerFor(SearchUsersRequest.class);
+
     @Expose
     @SerializedName("auth_configs")
     private List<AuthConfig> authConfigs;

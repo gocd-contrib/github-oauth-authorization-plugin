@@ -17,24 +17,25 @@
 package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.annotation.MetadataHelper;
+import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.GitHubConfiguration;
-import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.List;
 
+import static cd.go.authorization.github.utils.Util.GSON;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetAuthConfigMetadataRequestExecutorTest {
 
     @Test
     public void shouldSerializeAllFields() throws Exception {
         GoPluginApiResponse response = new GetAuthConfigMetadataRequestExecutor().execute();
-        List list = new Gson().fromJson(response.responseBody(), List.class);
-        assertEquals(list.size(), MetadataHelper.getMetadata(GitHubConfiguration.class).size());
+        List<AuthConfig> list = GSON.fromJson(response.responseBody(), new TypeToken<>() {}.getType());
+        assertThat(list).hasSameSizeAs(MetadataHelper.getMetadata(GitHubConfiguration.class));
     }
 
     @Test
@@ -42,50 +43,51 @@ public class GetAuthConfigMetadataRequestExecutorTest {
         GoPluginApiResponse response = new GetAuthConfigMetadataRequestExecutor().execute();
 
         assertThat(response.responseCode()).isEqualTo(200);
-        String expectedJSON = "[\n" +
-                "  {\n" +
-                "    \"key\": \"ClientId\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": true,\n" +
-                "      \"secure\": true\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"ClientSecret\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": true,\n" +
-                "      \"secure\": true\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"AuthenticateWith\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"GitHubEnterpriseUrl\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"AllowedOrganizations\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": false,\n" +
-                "      \"secure\": false\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"PersonalAccessToken\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"required\": true,\n" +
-                "      \"secure\": true\n" +
-                "    }\n" +
-                "  }\n" +
-                "]";
+        String expectedJSON = """
+                [
+                  {
+                    "key": "ClientId",
+                    "metadata": {
+                      "required": true,
+                      "secure": true
+                    }
+                  },
+                  {
+                    "key": "ClientSecret",
+                    "metadata": {
+                      "required": true,
+                      "secure": true
+                    }
+                  },
+                  {
+                    "key": "AuthenticateWith",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "GitHubEnterpriseUrl",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "AllowedOrganizations",
+                    "metadata": {
+                      "required": false,
+                      "secure": false
+                    }
+                  },
+                  {
+                    "key": "PersonalAccessToken",
+                    "metadata": {
+                      "required": true,
+                      "secure": true
+                    }
+                  }
+                ]""";
 
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
     }

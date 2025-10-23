@@ -36,7 +36,7 @@ class GitHubClientBuilderTest {
     private GitHubClientBuilder builder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         openMocks(this);
 
         when(gitHubConfiguration.clientId()).thenReturn("client-id");

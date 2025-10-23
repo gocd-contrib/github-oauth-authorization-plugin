@@ -27,7 +27,7 @@ import org.kohsuke.github.GitHub;
 import java.io.IOException;
 import java.util.List;
 
-import static cd.go.authorization.github.GitHubPlugin.LOG;
+import static cd.go.authorization.github.requests.GetRolesRequest.LOG;
 import static cd.go.authorization.github.utils.Util.GSON;
 
 public class GetRolesExecutor implements RequestExecutor {
@@ -48,7 +48,7 @@ public class GetRolesExecutor implements RequestExecutor {
     @Override
     public GoPluginApiResponse execute() throws IOException {
         if (request.getRoles().isEmpty()) {
-            LOG.debug("[Get User Roles] Server sent empty roles config. Nothing to do!.");
+            LOG.debug("Server sent empty roles config. Nothing to do!.");
             return DefaultGoPluginApiResponse.success("[]");
         }
 
@@ -56,13 +56,13 @@ public class GetRolesExecutor implements RequestExecutor {
         GHUser user = gitHub.getUser(request.getUsername());
 
         if (user == null) {
-            LOG.error("[Get User Roles] User `{}` does not exist in GitHub.", request.getUsername());
+            LOG.error("User `{}` does not exist in GitHub.", request.getUsername());
             return DefaultGoPluginApiResponse.error("");
         }
 
         List<String> roles = gitHubAuthorizer.authorize(user, request.getAuthConfig(), request.getRoles());
 
-        LOG.debug("[Get User Roles] User `{}` has `{}` roles.", request.getUsername(), roles);
+        LOG.debug("User `{}` has `{}` roles.", request.getUsername(), roles);
         return DefaultGoPluginApiResponse.success(GSON.toJson(roles));
     }
 }

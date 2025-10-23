@@ -26,7 +26,7 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import okhttp3.Call;
 import okhttp3.Response;
 
-import static cd.go.authorization.github.GitHubPlugin.LOG;
+import static cd.go.authorization.github.requests.FetchAccessTokenRequest.LOG;
 import static java.lang.String.format;
 
 public class FetchAccessTokenRequestExecutor implements RequestExecutor {
@@ -51,10 +51,10 @@ public class FetchAccessTokenRequestExecutor implements RequestExecutor {
             if (response.isSuccessful()) {
                 String responseString = response.body().string();
                 final OAuthTokenInfo tokenInfo = OAuthTokenInfo.fromJSON(responseString);
-                LOG.info("[Fetch Access Token] GitHub OAuth access token for user fetched successfully with scope `%s`.", tokenInfo.scope());
+                LOG.info("GitHub OAuth access token for user fetched successfully with scope `{}`.", tokenInfo.scope());
                 return DefaultGoPluginApiResponse.success(tokenInfo.toJSON());
             }
-            throw new AuthenticationException(format("[Fetch Access Token] %s", response.message()));
+            throw new AuthenticationException(format("%s", response.message()));
         }
     }
 

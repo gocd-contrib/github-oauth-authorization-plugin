@@ -32,25 +32,26 @@ public class GetAuthorizationServerUrlRequestTest {
     private GoPluginApiRequest apiRequest;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         openMocks(this);
     }
 
     @Test
-    public void shouldDeserializeGoPluginApiRequestToGetAuthorizationServerUrlRequest() throws Exception {
-        String responseBody = "{\n" +
-                "  \"authorization_server_callback_url\": \"https://redirect.url\",\n" +
-                "  \"auth_configs\": [\n" +
-                "    {\n" +
-                "      \"id\": \"github-config\",\n" +
-                "      \"configuration\": {\n" +
-                "        \"GoServerUrl\": \"https://your.go.server.url\",\n" +
-                "        \"ClientId\": \"client-id\",\n" +
-                "        \"ClientSecret\": \"client-secret\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
+    public void shouldDeserializeGoPluginApiRequestToGetAuthorizationServerUrlRequest() {
+        String responseBody = """
+                {
+                  "authorization_server_callback_url": "https://redirect.url",
+                  "auth_configs": [
+                    {
+                      "id": "github-config",
+                      "configuration": {
+                        "GoServerUrl": "https://your.go.server.url",
+                        "ClientId": "client-id",
+                        "ClientSecret": "client-secret"
+                      }
+                    }
+                  ]
+                }""";
 
         when(apiRequest.requestBody()).thenReturn(responseBody);
 

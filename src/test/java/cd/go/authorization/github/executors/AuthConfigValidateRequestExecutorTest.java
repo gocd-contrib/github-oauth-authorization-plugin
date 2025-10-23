@@ -46,66 +46,71 @@ public class AuthConfigValidateRequestExecutorTest {
         GoPluginApiResponse response = AuthConfigValidateRequest.from(request).execute();
         String json = response.responseBody();
 
-        String expectedJSON = "[\n" +
-                "  {\n" +
-                "    \"key\": \"ClientId\",\n" +
-                "    \"message\": \"ClientId must not be blank.\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"ClientSecret\",\n" +
-                "    \"message\": \"ClientSecret must not be blank.\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"PersonalAccessToken\",\n" +
-                "    \"message\": \"PersonalAccessToken must not be blank.\"\n" +
-                "  }\n" +
-                "]";
+        String expectedJSON = """
+                [
+                  {
+                    "key": "ClientId",
+                    "message": "ClientId must not be blank."
+                  },
+                  {
+                    "key": "ClientSecret",
+                    "message": "ClientSecret must not be blank."
+                  },
+                  {
+                    "key": "PersonalAccessToken",
+                    "message": "PersonalAccessToken must not be blank."
+                  }
+                ]""";
 
         JSONAssert.assertEquals(expectedJSON, json, JSONCompareMode.NON_EXTENSIBLE);
     }
 
     @Test
     public void shouldValidateGitHubEnterpriseUrl() throws Exception {
-        when(request.requestBody()).thenReturn("{\n" +
-                "  \"ClientId\": \"client-id\",\n" +
-                "  \"AllowedOrganizations\": \"example-1,example-2\",\n" +
-                "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
-                "  \"ClientSecret\": \"client-secret\",\n" +
-                "  \"PersonalAccessToken\": \"Foobar\"\n" +
-                "}");
+        when(request.requestBody()).thenReturn("""
+                {
+                  "ClientId": "client-id",
+                  "AllowedOrganizations": "example-1,example-2",
+                  "AuthenticateWith": "GitHubEnterprise",
+                  "ClientSecret": "client-secret",
+                  "PersonalAccessToken": "Foobar"
+                }""");
 
         GoPluginApiResponse response = AuthConfigValidateRequest.from(request).execute();
 
-        String expectedJSON = "[\n" +
-                "  {\n" +
-                "    \"key\": \"GitHubEnterpriseUrl\",\n" +
-                "    \"message\": \"GitHubEnterpriseUrl must not be blank.\"\n" +
-                "  }\n" +
-                "]";
+        String expectedJSON = """
+                [
+                  {
+                    "key": "GitHubEnterpriseUrl",
+                    "message": "GitHubEnterpriseUrl must not be blank."
+                  }
+                ]""";
 
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), JSONCompareMode.NON_EXTENSIBLE);
     }
 
     @Test
     public void shouldValidatePersonalAccessToken() throws Exception {
-        final GitHubConfiguration gitHubConfiguration = GitHubConfiguration.fromJSON("{\n" +
-                "  \"ClientId\": \"client-id\",\n" +
-                "  \"AllowedOrganizations\": \"example-1,example-2\",\n" +
-                "  \"AuthenticateWith\": \"GitHubEnterprise\",\n" +
-                "  \"GitHubEnterpriseUrl\": \"https://enterprise.url\",\n" +
-                "  \"ClientSecret\": \"client-secret\"" +
-                "}");
+        final GitHubConfiguration gitHubConfiguration = GitHubConfiguration.fromJSON("""
+                {
+                  "ClientId": "client-id",
+                  "AllowedOrganizations": "example-1,example-2",
+                  "AuthenticateWith": "GitHubEnterprise",
+                  "GitHubEnterpriseUrl": "https://enterprise.url",
+                  "ClientSecret": "client-secret"\
+                }""");
 
         when(request.requestBody()).thenReturn(gitHubConfiguration.toJSON());
 
         GoPluginApiResponse response = AuthConfigValidateRequest.from(request).execute();
 
-        String expectedJSON = "[\n" +
-                "  {\n" +
-                "    \"key\": \"PersonalAccessToken\",\n" +
-                "    \"message\": \"PersonalAccessToken must not be blank.\"\n" +
-                "  }\n" +
-                "]";
+        String expectedJSON = """
+                [
+                  {
+                    "key": "PersonalAccessToken",
+                    "message": "PersonalAccessToken must not be blank."
+                  }
+                ]""";
 
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), JSONCompareMode.NON_EXTENSIBLE);
     }

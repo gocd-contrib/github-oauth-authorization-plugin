@@ -25,16 +25,17 @@ public class MetadataValidator {
         Map<String, String> properties = configuration.toProperties();
 
         List<String> knownFields = new ArrayList<>();
-        for (ProfileMetadata field : MetadataHelper.getMetadata(configuration.getClass())) {
+        for (ProfileMetadata<?> field : MetadataHelper.getMetadata(configuration.getClass())) {
             knownFields.add(field.getKey());
-            validationResult.addError(field.validate(properties.get(field.getKey())));
+            field.validate(properties.get(field.getKey()))
+                    .ifPresent(validationResult::addError);
         }
 
 
-        Set<String> set = new HashSet<>(properties.keySet());
-        set.removeAll(knownFields);
+        Set<String> knownKeys = new HashSet<>(properties.keySet());
+        knownFields.forEach(knownKeys::remove);
 
-        for (String key : set) {
+        for (String key : knownKeys) {
             validationResult.addError(key, "Is an unknown property");
         }
         return validationResult;

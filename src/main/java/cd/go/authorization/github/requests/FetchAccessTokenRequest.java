@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class FetchAccessTokenRequest extends Request implements AuthConfigurable {
-    private static final Logger LOGGER = Logger.getLoggerFor(FetchAccessTokenRequest.class);
+    public static final Logger LOG = Logger.getLoggerFor(FetchAccessTokenRequest.class);
 
     @Expose
     @SerializedName("auth_configs")
@@ -63,7 +63,7 @@ public class FetchAccessTokenRequest extends Request implements AuthConfigurable
     public void validateState() {
         // GoCD versions prior to 23.2.0 don't return state, so we can't validate it, this is for backward compatibility
         if (authSession == null) {
-            LOGGER.info("Skipped OAuth2 `state` validation, GoCD server < 23.2.0 does not support propagating auth_session parameters");
+            LOG.info("Skipped OAuth2 `state` validation, GoCD server < 23.2.0 does not support propagating auth_session parameters");
             return;
         }
 
@@ -75,10 +75,10 @@ public class FetchAccessTokenRequest extends Request implements AuthConfigurable
     }
 
     public String authorizationCode() {
-        return Objects.requireNonNullElseGet(requestParameters().get("code"), () -> { throw new IllegalArgumentException("[Fetch Access Token] Expecting `code` in request params, but not received."); });
+        return Objects.requireNonNullElseGet(requestParameters().get("code"), () -> { throw new IllegalArgumentException("Expecting `code` in request params, but not received."); });
     }
 
     public String codeVerifierEncoded() {
-        return Objects.requireNonNullElseGet(authSession.get(Constants.AUTH_CODE_VERIFIER_ENCODED), () -> { throw new IllegalArgumentException("[Fetch Access Token] OAuth2 code verifier is missing from session"); });
+        return Objects.requireNonNullElseGet(authSession.get(Constants.AUTH_CODE_VERIFIER_ENCODED), () -> { throw new IllegalArgumentException("OAuth2 code verifier is missing from session"); });
     }
 }

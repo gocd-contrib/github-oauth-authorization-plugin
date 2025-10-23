@@ -18,6 +18,7 @@ package cd.go.authorization.github.client;
 
 import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import okhttp3.*;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
@@ -27,9 +28,9 @@ import org.kohsuke.github.extras.okhttp3.OkHttpGitHubConnector;
 
 import java.io.IOException;
 
-import static cd.go.authorization.github.GitHubPlugin.LOG;
-
 public class GitHubClientBuilder {
+    private static final Logger LOG = Logger.getLoggerFor(GitHubClientBuilder.class);
+
     public static final OkHttpClient HTTP_CLIENT = new OkHttpClient.Builder().build();
     private static final int OKHTTP_CACHE_MAX_AGE_SECONDS = 60;
     private static final GitHubConnector GITHUB_CONNECTOR = new OkHttpGitHubConnector(HTTP_CLIENT, OKHTTP_CACHE_MAX_AGE_SECONDS);

@@ -35,7 +35,7 @@ class AbstractRequestTest {
     private GoPluginApiRequest mockRequest;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         openMocks(this);
     }
 

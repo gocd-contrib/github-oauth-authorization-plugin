@@ -25,12 +25,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GitHubRoleConfigurationTest {
 
     @Test
-    public void shouldDeserializeFromJson() throws Exception {
-        final String json = "{\n" +
-                "  \"Organizations\": \"OrganizationFoo,OrganizationBar\",\n" +
-                "  \"Teams\": \"OrganizationFoo:TeamX,TeamY\\nOrganizationBar:TeamA,TeamB\",\n" +
-                "  \"Users\": \"bob,alice\"\n" +
-                "}";
+    public void shouldDeserializeFromJson() {
+        final String json = """
+                {
+                  "Organizations": "OrganizationFoo,OrganizationBar",
+                  "Teams": "OrganizationFoo:TeamX,TeamY\\nOrganizationBar:TeamA,TeamB",
+                  "Users": "bob,alice"
+                }""";
 
         final GitHubRoleConfiguration gitHubRoleConfiguration = GitHubRoleConfiguration.fromJSON(json);
 
