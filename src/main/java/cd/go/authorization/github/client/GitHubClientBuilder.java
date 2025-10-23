@@ -20,10 +20,13 @@ import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.kohsuke.github.GitHubRateLimitHandler;
+import org.kohsuke.github.connector.GitHubConnector;
+import org.kohsuke.github.extras.okhttp3.OkHttpGitHubConnector;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,11 +35,17 @@ import static cd.go.authorization.github.GitHubPlugin.LOG;
 
 public class GitHubClientBuilder {
 
-    public GitHub from(GitHubConfiguration gitHubConfiguration) throws IOException {
+    private static final int OKHTTP_CACHE_MAX_AGE_SECONDS = 60;
+    private static final GitHubConnector GITHUB_CONNECTOR = new OkHttpGitHubConnector(
+            new OkHttpClient.Builder().build(),
+            OKHTTP_CACHE_MAX_AGE_SECONDS
+    );
+
+    public GitHub fromServerPersonalAccessToken(GitHubConfiguration gitHubConfiguration) throws IOException {
         return clientFor(gitHubConfiguration.personalAccessToken(), gitHubConfiguration);
     }
 
-    public GitHub fromAccessToken(String accessToken, GitHubConfiguration gitHubConfiguration) throws IOException {
+    public GitHub fromUserOAuthAccessToken(String accessToken, GitHubConfiguration gitHubConfiguration) throws IOException {
         return clientFor(accessToken, gitHubConfiguration);
     }
 
@@ -47,6 +56,7 @@ public class GitHubClientBuilder {
         } else {
             LOG.debug("Create GitHub connection to public GitHub with token");
             return new GitHubBuilder()
+                    .withConnector(GITHUB_CONNECTOR)
                     .withOAuthToken(personalAccessTokenOrUsersAccessToken)
                     .withRateLimitHandler(GitHubRateLimitHandler.FAIL)
                     .build();

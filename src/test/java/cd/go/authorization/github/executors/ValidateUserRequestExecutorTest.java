@@ -52,7 +52,7 @@ public class ValidateUserRequestExecutorTest {
     @Test
     public void shouldReturnSuccessResponseWhenUserIsAValidUser() throws Exception {
         GitHub gitHub = mock(GitHub.class);
-        when(clientBuilder.from(request.getAuthConfig().gitHubConfiguration()))
+        when(clientBuilder.fromServerPersonalAccessToken(request.getAuthConfig().gitHubConfiguration()))
                 .thenReturn(gitHub);
         when(request.getUsername()).thenReturn("bob");
         when(gitHub.getUser("bob")).thenReturn(mock(GHUser.class));
@@ -66,7 +66,7 @@ public class ValidateUserRequestExecutorTest {
     @Test
     public void shouldReturnErrorResponseWhenUserIsNotAValidUser() throws Exception {
         GitHub gitHub = mock(GitHub.class);
-        when(clientBuilder.from(request.getAuthConfig().gitHubConfiguration()))
+        when(clientBuilder.fromServerPersonalAccessToken(request.getAuthConfig().gitHubConfiguration()))
                 .thenReturn(gitHub);
         when(request.getUsername()).thenReturn("bob");
         when(gitHub.getUser("bob")).thenReturn(null);

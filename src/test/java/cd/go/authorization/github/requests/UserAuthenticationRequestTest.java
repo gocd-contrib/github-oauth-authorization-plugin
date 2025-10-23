@@ -18,8 +18,8 @@ package cd.go.authorization.github.requests;
 
 import cd.go.authorization.github.executors.UserAuthenticationRequestExecutor;
 import cd.go.authorization.github.models.AuthConfig;
+import cd.go.authorization.github.models.OAuthTokenInfo;
 import cd.go.authorization.github.models.Role;
-import cd.go.authorization.github.models.TokenInfo;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,7 +82,7 @@ public class UserAuthenticationRequestTest {
         assertThat(request.executor()).isInstanceOf(UserAuthenticationRequestExecutor.class);
 
         assertAuthConfig(request.authConfigs().get(0));
-        assertTokenInfo(request.tokenInfo());
+        assertTokenInfo(request.oauthTokenInfo());
         assertRole(request.roles().get(0));
     }
 
@@ -95,8 +95,8 @@ public class UserAuthenticationRequestTest {
         assertThat(role.roleConfiguration().teams()).containsEntry("organizationbar", List.of("teama", "teamb"));
     }
 
-    private void assertTokenInfo(TokenInfo tokenInfo) {
-        assertThat(tokenInfo.accessToken()).isEqualTo("access-token");
+    private void assertTokenInfo(OAuthTokenInfo tokenInfo) {
+        assertThat(tokenInfo.oauthAccessToken()).isEqualTo("access-token");
         assertThat(tokenInfo.tokenType()).isEqualTo("token");
         assertThat(tokenInfo.scope()).isEqualTo("profile");
     }

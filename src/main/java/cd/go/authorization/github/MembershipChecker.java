@@ -31,7 +31,7 @@ import static cd.go.authorization.github.GitHubPlugin.LOG;
 import static java.text.MessageFormat.format;
 
 public class MembershipChecker {
-    private GitHubClientBuilder clientBuilder;
+    private final GitHubClientBuilder clientBuilder;
 
     public MembershipChecker() {
         this(new GitHubClientBuilder());
@@ -52,7 +52,7 @@ public class MembershipChecker {
     }
 
     private boolean checkMembershipUsingPersonalAccessToken(GHUser ghUser, AuthConfig authConfig, List<String> organizationsAllowed) throws IOException {
-        final GitHub gitHubForPersonalAccessToken = clientBuilder.from(authConfig.gitHubConfiguration());
+        final GitHub gitHubForPersonalAccessToken = clientBuilder.fromServerPersonalAccessToken(authConfig.gitHubConfiguration());
 
         for (String organizationName : organizationsAllowed) {
             final GHOrganization organization = gitHubForPersonalAccessToken.getOrganization(organizationName);

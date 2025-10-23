@@ -61,7 +61,7 @@ public class GetRolesExecutorTest {
 
     @Test
     public void shouldReturnEmptyResponseIfThereAreNoRolesProvidedFromRequest() throws Exception {
-        when(clientBuilder.from(request.getAuthConfig().gitHubConfiguration())).thenReturn(mock(GitHub.class));
+        when(clientBuilder.fromServerPersonalAccessToken(request.getAuthConfig().gitHubConfiguration())).thenReturn(mock(GitHub.class));
 
         GoPluginApiResponse response = executor.execute();
 
@@ -76,7 +76,7 @@ public class GetRolesExecutorTest {
         GitHub gitHub = mock(GitHub.class);
         GHUser ghUser = mock(GHUser.class);
 
-        when(clientBuilder.from(request.getAuthConfig().gitHubConfiguration())).thenReturn(gitHub);
+        when(clientBuilder.fromServerPersonalAccessToken(request.getAuthConfig().gitHubConfiguration())).thenReturn(gitHub);
         when(gitHub.getUser("bob")).thenReturn(ghUser);
         when(request.getRoles()).thenReturn(rolesWithName("blackbird", "super-admin", "view"));
         when(authorizer.authorize(ghUser, request.getAuthConfig(), request.getRoles())).thenReturn(Arrays.asList("blackbird", "super-admin"));
@@ -87,7 +87,7 @@ public class GetRolesExecutorTest {
         JSONAssert.assertEquals("[\"blackbird\",\"super-admin\"]", response.responseBody(), true);
 
         InOrder inOrder = inOrder(clientBuilder, gitHub, authorizer);
-        inOrder.verify(clientBuilder).from(request.getAuthConfig().gitHubConfiguration());
+        inOrder.verify(clientBuilder).fromServerPersonalAccessToken(request.getAuthConfig().gitHubConfiguration());
         inOrder.verify(gitHub).getUser(request.getUsername());
         inOrder.verify(authorizer).authorize(ghUser, request.getAuthConfig(), request.getRoles());
     }
@@ -96,7 +96,7 @@ public class GetRolesExecutorTest {
     public void shouldReturnErrorResponseWhenUserWithProvidedUsernameNotFound() throws IOException {
         GitHub gitHub = mock(GitHub.class);
 
-        when(clientBuilder.from(request.getAuthConfig().gitHubConfiguration())).thenReturn(gitHub);
+        when(clientBuilder.fromServerPersonalAccessToken(request.getAuthConfig().gitHubConfiguration())).thenReturn(gitHub);
         when(gitHub.getUser("bob")).thenReturn(null);
         when(request.getRoles()).thenReturn(rolesWithName("blackbird", "super-admin", "view"));
 
@@ -105,7 +105,7 @@ public class GetRolesExecutorTest {
         assertThat(response.responseCode()).isEqualTo(500);
 
         InOrder inOrder = inOrder(clientBuilder, gitHub);
-        inOrder.verify(clientBuilder).from(request.getAuthConfig().gitHubConfiguration());
+        inOrder.verify(clientBuilder).fromServerPersonalAccessToken(request.getAuthConfig().gitHubConfiguration());
         inOrder.verify(gitHub).getUser(request.getUsername());
         verifyNoMoreInteractions(authorizer);
     }

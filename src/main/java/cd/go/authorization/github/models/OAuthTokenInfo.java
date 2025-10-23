@@ -21,11 +21,11 @@ import com.google.gson.annotations.SerializedName;
 
 import static cd.go.authorization.github.utils.Util.GSON;
 
-public class TokenInfo {
+public class OAuthTokenInfo {
 
     @Expose
     @SerializedName("access_token")
-    private String accessToken;
+    private String oauthAccessToken;
     @Expose
     @SerializedName("token_type")
     private String tokenType;
@@ -34,23 +34,21 @@ public class TokenInfo {
     @SerializedName("scope")
     private String scope;
 
-    public TokenInfo() {
-    }
+    public OAuthTokenInfo() {}
 
-    public TokenInfo(String accessToken, String tokenType, String scope) {
-        this.accessToken = accessToken;
+    public OAuthTokenInfo(String oauthAccessToken, String tokenType, String scope) {
+        this.oauthAccessToken = oauthAccessToken;
         this.tokenType = tokenType;
         this.scope = scope;
     }
 
-    public String accessToken() {
-        return accessToken;
+    public String oauthAccessToken() {
+        return oauthAccessToken;
     }
 
     public String tokenType() {
         return tokenType;
     }
-
 
     public String scope() {
         return scope;
@@ -60,7 +58,7 @@ public class TokenInfo {
         return GSON.toJson(this);
     }
 
-    public static TokenInfo fromJSON(String json) {
-        return GSON.fromJson(json, TokenInfo.class);
+    public static OAuthTokenInfo fromJSON(String json) {
+        return GSON.fromJson(json, OAuthTokenInfo.class);
     }
 }

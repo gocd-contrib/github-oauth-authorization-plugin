@@ -20,7 +20,7 @@ import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.exceptions.AuthenticationException;
 import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
-import cd.go.authorization.github.models.TokenInfo;
+import cd.go.authorization.github.models.OAuthTokenInfo;
 import cd.go.authorization.github.requests.FetchAccessTokenRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;

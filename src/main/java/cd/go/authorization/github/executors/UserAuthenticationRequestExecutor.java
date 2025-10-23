@@ -52,7 +52,7 @@ public class UserAuthenticationRequestExecutor implements RequestExecutor {
         }
 
         final AuthConfig authConfig = request.authConfigs().get(0);
-        final LoggedInUserInfo loggedInUserInfo = gitHubAuthenticator.authenticate(request.tokenInfo(), authConfig);
+        final LoggedInUserInfo loggedInUserInfo = gitHubAuthenticator.authenticate(request.oauthTokenInfo(), authConfig);
 
         Map<String, Object> userMap = new HashMap<>();
         if (loggedInUserInfo != null) {

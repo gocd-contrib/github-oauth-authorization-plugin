@@ -18,8 +18,8 @@ package cd.go.authorization.github.requests;
 
 import cd.go.authorization.github.executors.UserAuthenticationRequestExecutor;
 import cd.go.authorization.github.models.AuthConfig;
+import cd.go.authorization.github.models.OAuthTokenInfo;
 import cd.go.authorization.github.models.Role;
-import cd.go.authorization.github.models.TokenInfo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
@@ -33,7 +33,7 @@ public class UserAuthenticationRequest extends Request {
 
     @Expose
     @SerializedName("credentials")
-    private TokenInfo tokenInfo;
+    private OAuthTokenInfo oauthTokenInfo;
 
     @Expose
     @SerializedName("role_configs")
@@ -51,8 +51,8 @@ public class UserAuthenticationRequest extends Request {
         return roles;
     }
 
-    public TokenInfo tokenInfo() {
-        return tokenInfo;
+    public OAuthTokenInfo oauthTokenInfo() {
+        return oauthTokenInfo;
     }
 
     @Override

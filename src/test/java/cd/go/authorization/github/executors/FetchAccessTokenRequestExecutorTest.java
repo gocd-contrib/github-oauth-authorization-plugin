@@ -22,7 +22,7 @@ import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationExcepti
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
-import cd.go.authorization.github.models.TokenInfo;
+import cd.go.authorization.github.models.OAuthTokenInfo;
 import cd.go.authorization.github.requests.FetchAccessTokenRequest;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
@@ -84,7 +84,7 @@ public class FetchAccessTokenRequestExecutorTest {
     public void shouldFetchAccessToken() throws Exception {
         mockWebServer.enqueue(new MockResponse.Builder()
                 .code(200)
-                .body(new TokenInfo("token-444248275346-5758603453985735", "bearer", "user:email,read:org").toJSON())
+                .body(new OAuthTokenInfo("token-444248275346-5758603453985735", "bearer", "user:email,read:org").toJSON())
                 .build());
 
         when(fetchAccessTokenRequest.authConfigs()).thenReturn(Collections.singletonList(authConfig));

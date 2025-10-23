@@ -42,7 +42,7 @@ public class SearchUsersRequestExecutorTest {
 
         when(request.getSearchTerm()).thenReturn("tom");
         when(request.getAuthConfigs()).thenReturn(singletonList(authConfig));
-        when(clientBuilder.from(request.getAuthConfigs().get(0).gitHubConfiguration()))
+        when(clientBuilder.fromServerPersonalAccessToken(request.getAuthConfigs().get(0).gitHubConfiguration()))
                 .thenReturn(gitHub);
         when(gitHub.searchUsers()).thenReturn(userSearchBuilder);
         when(userSearchBuilder.q("tom")).thenReturn(userSearchBuilder);
@@ -69,7 +69,7 @@ public class SearchUsersRequestExecutorTest {
 
         GoPluginApiResponse response = executor.execute();
 
-        verify(clientBuilder, never()).from(any());
+        verify(clientBuilder, never()).fromServerPersonalAccessToken(any());
         assertThat(response.responseCode()).isEqualTo(200);
         JSONAssert.assertEquals("[]", response.responseBody(), false);
     }

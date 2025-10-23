@@ -68,13 +68,13 @@ public class UserAuthenticationRequestExecutorTest {
     public void shouldAuthenticateUser() throws Exception {
         final User user = new User("bford", "Bob", "bford@example.com");
         final LoggedInUserInfo loggedInUserInfo = mock(LoggedInUserInfo.class);
-        final TokenInfo tokenInfo = new TokenInfo("access-token", "token-type", "user:email,org:read");
+        final OAuthTokenInfo tokenInfo = new OAuthTokenInfo("access-token", "token-type", "user:email,org:read");
         final GHMyself ghUser = mock(GHMyself.class);
 
         when(loggedInUserInfo.getUser()).thenReturn(user);
         when(loggedInUserInfo.getGitHubUser()).thenReturn(ghUser);
         when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
-        when(request.tokenInfo()).thenReturn(tokenInfo);
+        when(request.oauthTokenInfo()).thenReturn(tokenInfo);
         when(authenticator.authenticate(tokenInfo, authConfig)).thenReturn(loggedInUserInfo);
         when(authorizer.authorize(eq(ghUser), eq(authConfig), anyList())).thenReturn(Collections.emptyList());
 
@@ -95,7 +95,7 @@ public class UserAuthenticationRequestExecutorTest {
 
     @Test
     public void shouldAuthorizeUser() throws Exception {
-        final TokenInfo tokenInfo = new TokenInfo("access-token", "token-type", "user:email,org:read");
+        final OAuthTokenInfo tokenInfo = new OAuthTokenInfo("access-token", "token-type", "user:email,org:read");
         final LoggedInUserInfo loggedInUserInfo = mock(LoggedInUserInfo.class);
         final User user = new User("bford", "Bob", "bford@example.com");
         final Role role = mock(Role.class);
@@ -104,7 +104,7 @@ public class UserAuthenticationRequestExecutorTest {
         when(loggedInUserInfo.getUser()).thenReturn(user);
         when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
         when(request.roles()).thenReturn(Collections.singletonList(role));
-        when(request.tokenInfo()).thenReturn(tokenInfo);
+        when(request.oauthTokenInfo()).thenReturn(tokenInfo);
         when(authenticator.authenticate(tokenInfo, authConfig)).thenReturn(loggedInUserInfo);
         when(loggedInUserInfo.getGitHubUser()).thenReturn(ghUser);
         when(authorizer.authorize(ghUser, authConfig, request.roles())).thenReturn(Collections.singletonList("admin"));

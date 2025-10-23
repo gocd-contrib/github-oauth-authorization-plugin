@@ -40,20 +40,20 @@ public class GitHubAuthenticatorTest {
     private MembershipChecker membershipChecker;
     private AuthConfig authConfig;
     private GitHubConfiguration gitHubConfiguration;
-    private TokenInfo tokenInfo;
+    private OAuthTokenInfo tokenInfo;
 
     @BeforeEach
     public void setUp() throws Exception {
         gitHub = mock(GitHub.class);
         authConfig = mock(AuthConfig.class);
         gitHubConfiguration = mock(GitHubConfiguration.class);
-        tokenInfo = mock(TokenInfo.class);
+        tokenInfo = mock(OAuthTokenInfo.class);
         membershipChecker = mock(MembershipChecker.class);
         GitHubClientBuilder gitHubClientBuilder = mock(GitHubClientBuilder.class);
 
-        when(tokenInfo.accessToken()).thenReturn("some-token");
+        when(tokenInfo.oauthAccessToken()).thenReturn("some-token");
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
-        when(gitHubClientBuilder.fromAccessToken(tokenInfo.accessToken(), gitHubConfiguration)).thenReturn(gitHub);
+        when(gitHubClientBuilder.fromUserOAuthAccessToken(tokenInfo.oauthAccessToken(), gitHubConfiguration)).thenReturn(gitHub);
 
         authenticator = new GitHubAuthenticator(membershipChecker, gitHubClientBuilder);
     }

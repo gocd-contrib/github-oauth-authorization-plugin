@@ -19,7 +19,7 @@ package cd.go.authorization.github;
 import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.LoggedInUserInfo;
-import cd.go.authorization.github.models.TokenInfo;
+import cd.go.authorization.github.models.OAuthTokenInfo;
 import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
@@ -41,8 +41,8 @@ public class GitHubAuthenticator {
         this.gitHubClientBuilder = gitHubClientBuilder;
     }
 
-    public LoggedInUserInfo authenticate(TokenInfo tokenInfo, AuthConfig authConfig) throws IOException {
-        final GitHub gitHub = gitHubClientBuilder.fromAccessToken(tokenInfo.accessToken(),authConfig.gitHubConfiguration());
+    public LoggedInUserInfo authenticate(OAuthTokenInfo tokenInfo, AuthConfig authConfig) throws IOException {
+        final GitHub gitHub = gitHubClientBuilder.fromUserOAuthAccessToken(tokenInfo.oauthAccessToken(),authConfig.gitHubConfiguration());
         final List<String> allowedOrganizations = authConfig.gitHubConfiguration().organizationsAllowed();
         final LoggedInUserInfo loggedInUserInfo = new LoggedInUserInfo(gitHub);
 
