@@ -26,7 +26,7 @@ import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 
 import java.util.List;
 
-public class UserAuthenticationRequest extends Request {
+public class UserAuthenticationRequest extends Request implements AuthConfigurable {
     @Expose
     @SerializedName("auth_configs")
     private List<AuthConfig> authConfigs;
@@ -43,6 +43,7 @@ public class UserAuthenticationRequest extends Request {
         return Request.from(apiRequest, UserAuthenticationRequest.class);
     }
 
+    @Override
     public List<AuthConfig> authConfigs() {
         return authConfigs;
     }

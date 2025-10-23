@@ -18,10 +18,7 @@ package cd.go.authorization.github.client;
 
 import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+import okhttp3.*;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.kohsuke.github.GitHubRateLimitHandler;
@@ -29,17 +26,13 @@ import org.kohsuke.github.connector.GitHubConnector;
 import org.kohsuke.github.extras.okhttp3.OkHttpGitHubConnector;
 
 import java.io.IOException;
-import java.util.List;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
 
 public class GitHubClientBuilder {
-
+    public static final OkHttpClient HTTP_CLIENT = new OkHttpClient.Builder().build();
     private static final int OKHTTP_CACHE_MAX_AGE_SECONDS = 60;
-    private static final GitHubConnector GITHUB_CONNECTOR = new OkHttpGitHubConnector(
-            new OkHttpClient.Builder().build(),
-            OKHTTP_CACHE_MAX_AGE_SECONDS
-    );
+    private static final GitHubConnector GITHUB_CONNECTOR = new OkHttpGitHubConnector(HTTP_CLIENT, OKHTTP_CACHE_MAX_AGE_SECONDS);
 
     public GitHub fromServerPersonalAccessToken(GitHubConfiguration gitHubConfiguration) throws IOException {
         return clientFor(gitHubConfiguration.personalAccessToken(), gitHubConfiguration);
@@ -63,7 +56,7 @@ public class GitHubClientBuilder {
         }
     }
 
-    public List<String> authorizationServerArgs(GitHubConfiguration config, String callbackUrl) {
+    public AuthorizationServerArgs authorizationServerArgs(GitHubConfiguration config, String callbackUrl) {
         String state = StateGenerator.generate();
         ProofKey proofKey = new ProofKey();
         String authorizationServerUrl = HttpUrl.parse(config.authenticateWith() == AuthenticateWith.GITHUB ? GitHubConfiguration.GITHUB_URL : config.gitHubEnterpriseUrl())
@@ -79,10 +72,10 @@ public class GitHubClientBuilder {
                 .addQueryParameter("code_challenge_method", "S256")
                 .addEncodedQueryParameter("code_challenge", proofKey.codeChallengeEncoded())
                 .build().toString();
-        return List.of(authorizationServerUrl, state, proofKey.codeVerifierEncoded());
+        return new AuthorizationServerArgs(authorizationServerUrl, state, proofKey.codeVerifierEncoded());
     }
 
-    public Request accessTokenRequestFrom(GitHubConfiguration config, String authorizationCode, String codeVerifierEncoded) {
+    public Call accessTokenRequestFrom(GitHubConfiguration config, String authorizationCode, String codeVerifierEncoded) {
         HttpUrl accessTokenUrl = HttpUrl.parse(config.authenticateWith() == AuthenticateWith.GITHUB ? GitHubConfiguration.GITHUB_URL : config.gitHubEnterpriseUrl())
                 .newBuilder()
                 .addPathSegment("login")
@@ -90,7 +83,7 @@ public class GitHubClientBuilder {
                 .addPathSegment("access_token")
                 .build();
 
-        return new Request.Builder()
+        return HTTP_CLIENT.newCall(new Request.Builder()
                 .url(accessTokenUrl)
                 .addHeader("Accept", "application/json")
                 .post(new FormBody.Builder()
@@ -99,7 +92,7 @@ public class GitHubClientBuilder {
                         .add("code", authorizationCode)
                         .add("code_verifier", codeVerifierEncoded)
                         .build())
-                .build();
+                .build());
     }
 
 }

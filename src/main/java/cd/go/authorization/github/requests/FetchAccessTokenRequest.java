@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class FetchAccessTokenRequest extends Request {
+public class FetchAccessTokenRequest extends Request implements AuthConfigurable {
     private static final Logger LOGGER = Logger.getLoggerFor(FetchAccessTokenRequest.class);
 
     @Expose
@@ -46,6 +46,7 @@ public class FetchAccessTokenRequest extends Request {
         return Request.from(apiRequest, FetchAccessTokenRequest.class);
     }
 
+    @Override
     public List<AuthConfig> authConfigs() {
         return authConfigs;
     }
@@ -74,10 +75,10 @@ public class FetchAccessTokenRequest extends Request {
     }
 
     public String authorizationCode() {
-        return Objects.requireNonNullElseGet(requestParameters().get("code"), () -> { throw new IllegalArgumentException("[Get Access Token] Expecting `code` in request params, but not received."); });
+        return Objects.requireNonNullElseGet(requestParameters().get("code"), () -> { throw new IllegalArgumentException("[Fetch Access Token] Expecting `code` in request params, but not received."); });
     }
 
     public String codeVerifierEncoded() {
-        return Objects.requireNonNullElseGet(authSession.get(Constants.AUTH_CODE_VERIFIER_ENCODED), () -> { throw new IllegalArgumentException("[Get Access Token] OAuth2 code verifier is missing from session"); });
+        return Objects.requireNonNullElseGet(authSession.get(Constants.AUTH_CODE_VERIFIER_ENCODED), () -> { throw new IllegalArgumentException("[Fetch Access Token] OAuth2 code verifier is missing from session"); });
     }
 }

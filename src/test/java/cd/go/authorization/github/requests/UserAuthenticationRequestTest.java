@@ -81,7 +81,7 @@ public class UserAuthenticationRequestTest {
         assertThat(request.roles()).hasSize(1);
         assertThat(request.executor()).isInstanceOf(UserAuthenticationRequestExecutor.class);
 
-        assertAuthConfig(request.authConfigs().get(0));
+        assertAuthConfig(request.firstAuthConfig());
         assertTokenInfo(request.oauthTokenInfo());
         assertRole(request.roles().get(0));
     }

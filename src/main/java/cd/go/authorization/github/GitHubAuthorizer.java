@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
-import static java.text.MessageFormat.format;
 
 public class GitHubAuthorizer {
     private final MembershipChecker membershipChecker;
@@ -41,34 +40,35 @@ public class GitHubAuthorizer {
 
     public List<String> authorize(GHUser user, AuthConfig authConfig, List<Role> roles) throws IOException {
         if (roles == null || roles.isEmpty()) {
+            LOG.debug("[Authorize] User `{}` is authorized for no specific GoCD roles. No role configurations defined for plugin; so no authorizations can be inferred.", user.getLogin());
             return Collections.emptyList();
         }
 
         final List<String> assignedRoles = new ArrayList<>();
 
-        LOG.debug(format("[Authorize] Authorizing user {0}", user.getLogin()));
+        LOG.debug("[Authorize] Authorizing user `{}`", user.getLogin());
 
         for (Role role : roles) {
             final List<String> allowedUsers = role.roleConfiguration().users();
             if (!allowedUsers.isEmpty() && allowedUsers.contains(user.getLogin().toLowerCase())) {
-                LOG.info(format("[Authorize] Assigning role `{0}` to user `{1}`. As user belongs to allowed users list.", role.name(), user.getLogin()));
+                LOG.info("[Authorize] Assigning GoCD role `{}` to user `{}` as user belongs to allowed users list.", role.name(), user.getLogin());
                 assignedRoles.add(role.name());
                 continue;
             }
 
             if (membershipChecker.isAMemberOfAtLeastOneOrganization(user, authConfig, role.roleConfiguration().organizations())) {
-                LOG.info(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one organization.", role.name(), user.getLogin()));
+                LOG.info("[Authorize] Assigning GoCD role `{}` to user `{}` as user is a member of at least one allowed organization.", role.name(), user.getLogin());
                 assignedRoles.add(role.name());
                 continue;
             }
 
             if (membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(user, authConfig, role.roleConfiguration().teams())) {
-                LOG.info(format("[Authorize] Assigning role `{0}` to user `{1}`. As user is a member of at least one team of the organization.", role.name(), user.getLogin()));
+                LOG.info("[Authorize] Assigning role GoCD `{}` to user `{}` as user is a member of at least one allowed team + organisation combination.", role.name(), user.getLogin());
                 assignedRoles.add(role.name());
             }
         }
 
-        LOG.debug(format("[Authorize] User `{0}` is authorized with `{1}` role(s).", user.getLogin(), assignedRoles));
+        LOG.debug("[Authorize] User `{}` is authorized with `{}` GoCD role(s).", user.getLogin(), assignedRoles);
 
         return assignedRoles;
     }

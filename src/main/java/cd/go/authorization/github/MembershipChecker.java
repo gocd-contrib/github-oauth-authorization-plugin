@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
-import static java.text.MessageFormat.format;
 
 public class MembershipChecker {
     private final GitHubClientBuilder clientBuilder;
@@ -44,7 +43,7 @@ public class MembershipChecker {
 
     public boolean isAMemberOfAtLeastOneOrganization(GHUser ghUser, AuthConfig authConfig, List<String> organizationsAllowed) throws IOException {
         if (organizationsAllowed.isEmpty()) {
-            LOG.debug("[MembershipChecker] No organizations provided.");
+            LOG.debug("[MembershipChecker] No organizations provided - not allowed.");
             return false;
         }
 
@@ -57,7 +56,7 @@ public class MembershipChecker {
         for (String organizationName : organizationsAllowed) {
             final GHOrganization organization = gitHubForPersonalAccessToken.getOrganization(organizationName);
             if (organization != null && organization.hasMember(ghUser)) {
-                LOG.info(format("[MembershipChecker] User `{0}` is a member of `{1}` organization.", ghUser.getLogin(), organizationName));
+                LOG.info("[MembershipChecker] User `{}` is a member of allowed `{}` organization.", ghUser.getLogin(), organizationName);
                 return true;
             }
         }
@@ -67,7 +66,7 @@ public class MembershipChecker {
 
     public boolean isAMemberOfAtLeastOneTeamOfOrganization(GHUser ghUser, AuthConfig authConfig, Map<String, List<String>> organizationAndTeamsAllowed) throws IOException {
         if (organizationAndTeamsAllowed.isEmpty()) {
-            LOG.debug("[MembershipChecker] No teams provided.");
+            LOG.debug("[MembershipChecker] No teams provided - not allowed.");
             return false;
         }
 
@@ -75,7 +74,7 @@ public class MembershipChecker {
     }
 
     private boolean checkTeamMembershipUsingPersonalAccessToken(GHUser ghUser, AuthConfig authConfig, Map<String, List<String>> organizationAndTeamsAllowed) throws IOException {
-        final GitHub gitHubForPersonalAccessToken = clientBuilder.from(authConfig.gitHubConfiguration());
+        final GitHub gitHubForPersonalAccessToken = clientBuilder.fromServerPersonalAccessToken(authConfig.gitHubConfiguration());
 
         for (String organizationName : organizationAndTeamsAllowed.keySet()) {
             final GHOrganization organization = gitHubForPersonalAccessToken.getOrganization(organizationName);
@@ -86,7 +85,7 @@ public class MembershipChecker {
 
                 for (GHTeam team : teamsFromGitHub.values()) {
                     if (allowedTeamsFromRole.contains(team.getName().toLowerCase()) && team.hasMember(ghUser)) {
-                        LOG.info(format("[MembershipChecker] User `{0}` is a member of `{1}` team.", ghUser.getLogin(), team.getName()));
+                        LOG.info("[MembershipChecker] User `{}` is a member of allowed `{}` team.", ghUser.getLogin(), team.getName());
                         return true;
                     }
                 }

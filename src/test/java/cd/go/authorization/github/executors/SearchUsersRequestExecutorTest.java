@@ -41,13 +41,12 @@ public class SearchUsersRequestExecutorTest {
         when(authConfig.gitHubConfiguration()).thenReturn(mock(GitHubConfiguration.class));
 
         when(request.getSearchTerm()).thenReturn("tom");
-        when(request.getAuthConfigs()).thenReturn(singletonList(authConfig));
-        when(clientBuilder.fromServerPersonalAccessToken(request.getAuthConfigs().get(0).gitHubConfiguration()))
-                .thenReturn(gitHub);
+        when(request.authConfigs()).thenReturn(singletonList(authConfig));
+        when(clientBuilder.fromServerPersonalAccessToken(request.authConfigs().get(0).gitHubConfiguration())).thenReturn(gitHub);
         when(gitHub.searchUsers()).thenReturn(userSearchBuilder);
         when(userSearchBuilder.q("tom")).thenReturn(userSearchBuilder);
-        PagedSearchIterable pageSearchIterable = mock(PagedSearchIterable.class);
-        PagedIterator pagedIterator = mock(PagedIterator.class);
+        @SuppressWarnings("unchecked") PagedSearchIterable<GHUser> pageSearchIterable = mock(PagedSearchIterable.class);
+        @SuppressWarnings("unchecked") PagedIterator<GHUser> pagedIterator = mock(PagedIterator.class);
         GHUser githubUser = mock(GHUser.class);
         when(userSearchBuilder.list()).thenReturn(pageSearchIterable);
         when(pageSearchIterable.withPageSize(10)).thenReturn(pageSearchIterable);
@@ -65,7 +64,7 @@ public class SearchUsersRequestExecutorTest {
 
     @Test
     public void shouldNotPerformSearchIfAuthConfigsIsEmpty() throws Exception {
-        when(request.getAuthConfigs()).thenReturn(Collections.emptyList());
+        when(request.authConfigs()).thenReturn(Collections.emptyList());
 
         GoPluginApiResponse response = executor.execute();
 

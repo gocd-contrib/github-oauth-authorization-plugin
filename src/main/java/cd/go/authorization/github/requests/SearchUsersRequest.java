@@ -24,7 +24,7 @@ import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 
 import java.util.List;
 
-public class SearchUsersRequest extends Request {
+public class SearchUsersRequest extends Request implements AuthConfigurable {
     @Expose
     @SerializedName("auth_configs")
     private List<AuthConfig> authConfigs;
@@ -42,7 +42,8 @@ public class SearchUsersRequest extends Request {
         return new SearchUsersRequestExecutor(this);
     }
 
-    public List<AuthConfig> getAuthConfigs() {
+    @Override
+    public List<AuthConfig> authConfigs() {
         return authConfigs;
     }
 

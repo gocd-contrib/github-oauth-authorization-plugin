@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
-import static java.text.MessageFormat.format;
 
 public class GitHubAuthenticator {
     private final MembershipChecker membershipChecker;
@@ -46,8 +45,11 @@ public class GitHubAuthenticator {
         final List<String> allowedOrganizations = authConfig.gitHubConfiguration().organizationsAllowed();
         final LoggedInUserInfo loggedInUserInfo = new LoggedInUserInfo(gitHub);
 
-        if (allowedOrganizations.isEmpty() || membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo.getGitHubUser(), authConfig, allowedOrganizations)) {
-            LOG.info(format("[Authenticate] User `{0}` authenticated successfully.", loggedInUserInfo.getUser().username()));
+        if (allowedOrganizations.isEmpty()) {
+            LOG.info("[Authenticate] User `{}` authenticated successfully, organisation membership not required.", loggedInUserInfo.getUser().username());
+            return loggedInUserInfo;
+        } else if (membershipChecker.isAMemberOfAtLeastOneOrganization(loggedInUserInfo.getGitHubUser(), authConfig, allowedOrganizations)) {
+            LOG.info("[Authenticate] User `{}` authenticated successfully as member of an allowed organisation.", loggedInUserInfo.getUser().username());
             return loggedInUserInfo;
         }
 

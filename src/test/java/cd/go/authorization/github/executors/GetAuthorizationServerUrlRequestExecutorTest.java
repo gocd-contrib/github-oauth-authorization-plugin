@@ -16,8 +16,8 @@
 
 package cd.go.authorization.github.executors;
 
+import cd.go.authorization.github.client.AuthorizationServerArgs;
 import cd.go.authorization.github.client.GitHubClientBuilder;
-import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.AuthenticateWith;
 import cd.go.authorization.github.models.GitHubConfiguration;
@@ -29,16 +29,11 @@ import org.mockito.Mock;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-import java.util.Collections;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 public class GetAuthorizationServerUrlRequestExecutorTest {
-    public static final String DUMMY_STATE_VALUE = "some-state-value";
     @Mock
     private GetAuthorizationServerUrlRequest request;
     @Mock
@@ -56,20 +51,13 @@ public class GetAuthorizationServerUrlRequestExecutorTest {
     }
 
     @Test
-    public void shouldErrorOutIfAuthConfigIsNotProvided() throws Exception {
-        when(request.authConfigs()).thenReturn(Collections.emptyList());
-
-        assertThrows(NoAuthorizationConfigurationException.class, executor::execute, "[Authorization Server Url] No authorization configuration found.");
-    }
-
-    @Test
     public void shouldReturnAuthorizationServerUrlForGitHub() throws Exception {
         GitHubConfiguration gitHubConfiguration = new GitHubConfiguration("client-id", "client-secret", AuthenticateWith.GITHUB, null, "example-1");
 
-        when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+        when(request.firstAuthConfig()).thenReturn(authConfig);
         when(authConfig.gitHubConfiguration()).thenReturn(gitHubConfiguration);
         when(request.callbackUrl()).thenReturn("call-back-url");
-        when(gitHubClientBuilder.authorizationServerArgs(gitHubConfiguration, "call-back-url")).thenReturn(List.of("foo-url", "foo-state", "foo-code-verifier"));
+        when(gitHubClientBuilder.authorizationServerArgs(gitHubConfiguration, "call-back-url")).thenReturn(new AuthorizationServerArgs("foo-url", "foo-state", "foo-code-verifier"));
 
         final GoPluginApiResponse response = executor.execute();
 

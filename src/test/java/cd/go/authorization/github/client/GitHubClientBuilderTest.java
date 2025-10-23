@@ -24,7 +24,6 @@ import org.mockito.Mock;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -50,11 +49,10 @@ class GitHubClientBuilderTest {
 
     @Test
     public void shouldReturnAuthorizationServerArgsForGitHub() {
-        final List<String> authorizationServerArgs = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
+        final AuthorizationServerArgs authorizationServerArgs = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
 
         assertThat(authorizationServerArgs).satisfies(args -> {
-            assertThat(args).hasSize(3);
-            assertThat(args.get(0)).startsWith("https://github.com/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.get(1), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
+            assertThat(args.url()).startsWith("https://github.com/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.state(), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
         });
     }
 
@@ -63,11 +61,10 @@ class GitHubClientBuilderTest {
         when(gitHubConfiguration.authenticateWith()).thenReturn(AuthenticateWith.GITHUB_ENTERPRISE);
         when(gitHubConfiguration.gitHubEnterpriseUrl()).thenReturn("http://enterprise.url");
 
-        final List<String> authorizationServerArgs = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
+        final AuthorizationServerArgs authorizationServerArgs = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
 
         assertThat(authorizationServerArgs).satisfies(args -> {
-            assertThat(args).hasSize(3);
-            assertThat(args.get(0)).startsWith("http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.get(1), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
+            assertThat(args.url()).startsWith("http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.state(), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
         });
     }
 
@@ -76,11 +73,10 @@ class GitHubClientBuilderTest {
         when(gitHubConfiguration.authenticateWith()).thenReturn(AuthenticateWith.GITHUB_ENTERPRISE);
         when(gitHubConfiguration.gitHubEnterpriseUrl()).thenReturn("http://enterprise.url/");
 
-        final List<String> authorizationServerArgs = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
+        final AuthorizationServerArgs authorizationServerArgs = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
 
         assertThat(authorizationServerArgs).satisfies(args -> {
-            assertThat(args).hasSize(3);
-            assertThat(args.get(0)).startsWith("http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.get(1), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
+            assertThat(args.url()).startsWith("http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.state(), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
         });
     }
 }

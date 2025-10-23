@@ -20,8 +20,8 @@ import java.util.Set;
 import static cd.go.authorization.github.GitHubPlugin.LOG;
 
 public class SearchUsersRequestExecutor implements RequestExecutor {
-    private SearchUsersRequest request;
-    private GitHubClientBuilder gitHubClientBuilder;
+    private final SearchUsersRequest request;
+    private final GitHubClientBuilder gitHubClientBuilder;
 
     public SearchUsersRequestExecutor(SearchUsersRequest request) {
         this(request, new GitHubClientBuilder());
@@ -34,7 +34,7 @@ public class SearchUsersRequestExecutor implements RequestExecutor {
 
     @Override
     public GoPluginApiResponse execute() {
-        final Set<User> users = searchUsers(request.getSearchTerm(), request.getAuthConfigs());
+        final Set<User> users = searchUsers(request.getSearchTerm(), request.authConfigs());
 
         return new DefaultGoPluginApiResponse(200, Util.GSON.toJson(users));
     }
@@ -48,11 +48,10 @@ public class SearchUsersRequestExecutor implements RequestExecutor {
 
         for (AuthConfig authConfig : authConfigs) {
             try {
-                LOG.info(String.format("[User Search] Looking up for users matching search_term: `%s`" +
-                        " using auth_config: `%s`", searchTerm, authConfig.getId()));
+                LOG.info("[User Search] Looking up for users matching search_term: `{}` using auth_config: `{}}`", searchTerm, authConfig.getId());
                 users.addAll(search(searchTerm, authConfig));
             } catch (Exception e) {
-                LOG.error(String.format("[User Search] Error while searching users with auth_config: '%s'", authConfig.getId()), e);
+                LOG.error("[User Search] Error while searching users with auth_config: '{}'", authConfig.getId(), e);
             }
         }
 

@@ -46,7 +46,7 @@ public class SearchUsersRequestTest {
         SearchUsersRequest searchUsersRequest = SearchUsersRequest.from(request);
 
         assertThat(searchUsersRequest.getSearchTerm()).isEqualTo("tom");
-        assertThat(searchUsersRequest.getAuthConfigs()).hasSize(1);
+        assertThat(searchUsersRequest.authConfigs()).hasSize(1);
     }
 
     @Test

@@ -25,7 +25,7 @@ import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 
 import java.util.List;
 
-public class GetAuthorizationServerUrlRequest extends Request {
+public class GetAuthorizationServerUrlRequest extends Request implements AuthConfigurable {
     @Expose
     @SerializedName("authorization_server_callback_url")
     private String callbackUrl;
@@ -42,6 +42,7 @@ public class GetAuthorizationServerUrlRequest extends Request {
         return callbackUrl;
     }
 
+    @Override
     public List<AuthConfig> authConfigs() {
         return authConfigs;
     }

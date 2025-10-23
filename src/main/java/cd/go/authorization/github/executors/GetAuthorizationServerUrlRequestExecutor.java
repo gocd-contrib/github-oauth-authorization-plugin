@@ -17,15 +17,14 @@
 package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.Constants;
+import cd.go.authorization.github.client.AuthorizationServerArgs;
 import cd.go.authorization.github.client.GitHubClientBuilder;
-import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.GetAuthorizationServerUrlRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.util.List;
 import java.util.Map;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
@@ -45,20 +44,15 @@ public class GetAuthorizationServerUrlRequestExecutor implements RequestExecutor
     }
 
     public GoPluginApiResponse execute() throws Exception {
-        if (request.authConfigs() == null || request.authConfigs().isEmpty()) {
-            throw new NoAuthorizationConfigurationException("[Authorization Server Url] No authorization configuration found.");
-        }
-
-        LOG.debug("[Get Authorization Server URL] Getting authorization server url from auth config.");
-
-        final AuthConfig authConfig = request.authConfigs().get(0);
+        final AuthConfig authConfig = request.firstAuthConfig();
+        LOG.debug("[%s] Getting authorization server url from auth config.", getClass().getSimpleName());
         final GitHubConfiguration gitHubConfiguration = authConfig.gitHubConfiguration();
 
-        List<String> result = gitHubClientBuilder.authorizationServerArgs(gitHubConfiguration, request.callbackUrl());
+        AuthorizationServerArgs result = gitHubClientBuilder.authorizationServerArgs(gitHubConfiguration, request.callbackUrl());
 
         return DefaultGoPluginApiResponse.success(GSON.toJson(Map.of(
-                "authorization_server_url", result.get(0),
-                "auth_session", Map.of(Constants.AUTH_SESSION_STATE, result.get(1), Constants.AUTH_CODE_VERIFIER_ENCODED, result.get(2))
+                "authorization_server_url", result.url(),
+                "auth_session", Map.of(Constants.AUTH_SESSION_STATE, result.state(), Constants.AUTH_CODE_VERIFIER_ENCODED, result.codeVerifierEncoded())
         )));
     }
 }

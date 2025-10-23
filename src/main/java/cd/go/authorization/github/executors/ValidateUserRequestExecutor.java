@@ -24,10 +24,9 @@ import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
-import static java.lang.String.format;
 
 public class ValidateUserRequestExecutor implements RequestExecutor {
-    private ValidateUserRequest request;
+    private final ValidateUserRequest request;
     private final GitHubClientBuilder clientBuilder;
 
     public ValidateUserRequestExecutor(ValidateUserRequest request) {
@@ -44,10 +43,10 @@ public class ValidateUserRequestExecutor implements RequestExecutor {
         GitHub gitHub = clientBuilder.fromServerPersonalAccessToken(request.getAuthConfig().gitHubConfiguration());
         GHUser user = gitHub.getUser(request.getUsername());
         if (user == null) {
-            LOG.error(format("[Is Valid User] User %s does not exist in GitHub.", request.getUsername()));
-            return DefaultGoPluginApiResponse.error(String.format("User '%s' does not exist in GitHub.", request.getUsername()));
+            LOG.error("[Is Valid User] User `{}` does not exist in GitHub.", request.getUsername());
+            return DefaultGoPluginApiResponse.error(String.format("User `%s` does not exist in GitHub.", request.getUsername()));
         } else {
-            LOG.debug(format("[Is Valid User] %s is valid user.", request.getUsername()));
+            LOG.debug("[Is Valid User] `{}` is a valid user.", request.getUsername());
             return DefaultGoPluginApiResponse.success("");
         }
     }

@@ -84,7 +84,7 @@ public class FetchAccessTokenRequestTest {
         assertThat(request.authConfigs()).hasSize(1);
         assertThat(request.executor()).isInstanceOf(FetchAccessTokenRequestExecutor.class);
 
-        final AuthConfig authConfig = request.authConfigs().get(0);
+        final AuthConfig authConfig = request.firstAuthConfig() ;
         assertThat(authConfig.getId()).isEqualTo("github-auth-config");
         assertThat(authConfig.gitHubConfiguration().clientId()).isEqualTo("client-id");
         assertThat(authConfig.gitHubConfiguration().clientSecret()).isEqualTo("client-secret");
@@ -141,7 +141,7 @@ public class FetchAccessTokenRequestTest {
         when(apiRequest.requestParameters()).thenReturn(Collections.emptyMap());
         assertThatThrownBy(() -> FetchAccessTokenRequest.from(apiRequest).authorizationCode())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("[Get Access Token] Expecting `code` in request params, but not received.");
+                .hasMessage("[Fetch Access Token] Expecting `code` in request params, but not received.");
     }
 
     @Test
@@ -169,6 +169,6 @@ public class FetchAccessTokenRequestTest {
                 """);
         assertThatThrownBy(() -> FetchAccessTokenRequest.from(apiRequest).codeVerifierEncoded())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("[Get Access Token] OAuth2 code verifier is missing from session");
+                .hasMessage("[Fetch Access Token] OAuth2 code verifier is missing from session");
     }
 }

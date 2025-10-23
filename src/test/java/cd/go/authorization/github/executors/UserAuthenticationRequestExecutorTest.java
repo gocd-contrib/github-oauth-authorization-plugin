@@ -18,8 +18,6 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.GitHubAuthenticator;
 import cd.go.authorization.github.GitHubAuthorizer;
-import cd.go.authorization.github.client.GitHubClientBuilder;
-import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.*;
 import cd.go.authorization.github.requests.UserAuthenticationRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
@@ -31,7 +29,6 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -43,7 +40,6 @@ public class UserAuthenticationRequestExecutorTest {
     private GitHubAuthorizer authorizer;
 
     private UserAuthenticationRequestExecutor executor;
-    private GitHubClientBuilder gitHubClientBuilder;
     private GitHubAuthenticator authenticator;
 
     @BeforeEach
@@ -52,16 +48,8 @@ public class UserAuthenticationRequestExecutorTest {
         authConfig = mock(AuthConfig.class);
         authorizer = mock(GitHubAuthorizer.class);
         authenticator = mock(GitHubAuthenticator.class);
-        gitHubClientBuilder = mock(GitHubClientBuilder.class);
 
         executor = new UserAuthenticationRequestExecutor(request, authenticator, authorizer);
-    }
-
-    @Test
-    public void shouldErrorOutIfAuthConfigIsNotProvided() throws Exception {
-        when(request.authConfigs()).thenReturn(Collections.emptyList());
-
-        assertThrows(NoAuthorizationConfigurationException.class, executor::execute, "[Authenticate] No authorization configuration found.");
     }
 
     @Test
@@ -73,7 +61,7 @@ public class UserAuthenticationRequestExecutorTest {
 
         when(loggedInUserInfo.getUser()).thenReturn(user);
         when(loggedInUserInfo.getGitHubUser()).thenReturn(ghUser);
-        when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+        when(request.firstAuthConfig()).thenReturn(authConfig);
         when(request.oauthTokenInfo()).thenReturn(tokenInfo);
         when(authenticator.authenticate(tokenInfo, authConfig)).thenReturn(loggedInUserInfo);
         when(authorizer.authorize(eq(ghUser), eq(authConfig), anyList())).thenReturn(Collections.emptyList());
@@ -102,7 +90,7 @@ public class UserAuthenticationRequestExecutorTest {
         final GHMyself ghUser = mock(GHMyself.class);
 
         when(loggedInUserInfo.getUser()).thenReturn(user);
-        when(request.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+        when(request.firstAuthConfig()).thenReturn(authConfig);
         when(request.roles()).thenReturn(Collections.singletonList(role));
         when(request.oauthTokenInfo()).thenReturn(tokenInfo);
         when(authenticator.authenticate(tokenInfo, authConfig)).thenReturn(loggedInUserInfo);

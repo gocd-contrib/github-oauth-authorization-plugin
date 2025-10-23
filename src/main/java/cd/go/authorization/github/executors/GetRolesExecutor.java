@@ -29,11 +29,10 @@ import java.util.List;
 
 import static cd.go.authorization.github.GitHubPlugin.LOG;
 import static cd.go.authorization.github.utils.Util.GSON;
-import static java.lang.String.format;
 
 public class GetRolesExecutor implements RequestExecutor {
     private final GetRolesRequest request;
-    private GitHubClientBuilder clientBuilder;
+    private final GitHubClientBuilder clientBuilder;
     private final GitHubAuthorizer gitHubAuthorizer;
 
     public GetRolesExecutor(GetRolesRequest request) {
@@ -57,13 +56,13 @@ public class GetRolesExecutor implements RequestExecutor {
         GHUser user = gitHub.getUser(request.getUsername());
 
         if (user == null) {
-            LOG.error(format("[Get User Roles] User %s does not exist in GitHub.", request.getUsername()));
+            LOG.error("[Get User Roles] User `{}` does not exist in GitHub.", request.getUsername());
             return DefaultGoPluginApiResponse.error("");
         }
 
         List<String> roles = gitHubAuthorizer.authorize(user, request.getAuthConfig(), request.getRoles());
 
-        LOG.debug(format("[Get User Roles] User %s has %s roles.", request.getUsername(), roles));
+        LOG.debug("[Get User Roles] User `{}` has `{}` roles.", request.getUsername(), roles);
         return DefaultGoPluginApiResponse.success(GSON.toJson(roles));
     }
 }

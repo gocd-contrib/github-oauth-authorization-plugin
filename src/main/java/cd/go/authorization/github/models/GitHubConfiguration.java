@@ -32,6 +32,8 @@ public class GitHubConfiguration implements Validatable {
     public static final String GITHUB_URL = "https://github.com";
     private static final String GITHUB_ENTERPRISE_API_SUFFIX = "/api/v3/";
 
+    private static final String GITHUB_OAUTH_REQUESTED_SCOPE = "user:email";
+
     @Expose
     @SerializedName("ClientId")
     @ProfileField(key = "ClientId", required = true, secure = true)
@@ -103,7 +105,7 @@ public class GitHubConfiguration implements Validatable {
     }
 
     public String scope() {
-        return "user:email";
+        return GITHUB_OAUTH_REQUESTED_SCOPE;
     }
 
     public static GitHubConfiguration fromJSON(String json) {
@@ -115,8 +117,7 @@ public class GitHubConfiguration implements Validatable {
     }
 
     public Map<String, String> toProperties() {
-        return GSON.fromJson(toJSON(), new TypeToken<Map<String, String>>() {
-        }.getType());
+        return GSON.fromJson(toJSON(), new TypeToken<Map<String, String>>() {}.getType());
     }
 
     public String personalAccessToken() {

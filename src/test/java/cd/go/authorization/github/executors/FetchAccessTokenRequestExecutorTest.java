@@ -34,7 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +86,7 @@ public class FetchAccessTokenRequestExecutorTest {
                 .body(new OAuthTokenInfo("token-444248275346-5758603453985735", "bearer", "user:email,read:org").toJSON())
                 .build());
 
-        when(fetchAccessTokenRequest.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+        when(fetchAccessTokenRequest.firstAuthConfig()).thenReturn(authConfig);
         when(fetchAccessTokenRequest.authorizationCode()).thenReturn("code-received-in-previous-step");
         when(fetchAccessTokenRequest.codeVerifierEncoded()).thenReturn( "code-verifier");
 
@@ -116,20 +115,20 @@ public class FetchAccessTokenRequestExecutorTest {
                 .code(404)
                 .build());
 
-        when(fetchAccessTokenRequest.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+        when(fetchAccessTokenRequest.firstAuthConfig()).thenReturn(authConfig);
         when(fetchAccessTokenRequest.authorizationCode()).thenReturn("code-received-in-previous-step");
         when(fetchAccessTokenRequest.codeVerifierEncoded()).thenReturn( "code-verifier");
 
 
         Exception exception = assertThrows(AuthenticationException.class, executor::execute);
-        assertThat(exception.getMessage()).isEqualTo("[Get Access Token] Client Error");
+        assertThat(exception.getMessage()).isEqualTo("[Fetch Access Token] Client Error");
 
         verify(fetchAccessTokenRequest).validateState();
     }
 
     @Test
     public void fetchAccessToken_shouldErrorIfStateDoesNotMatch() throws Exception {
-        when(fetchAccessTokenRequest.authConfigs()).thenReturn(Collections.singletonList(authConfig));
+        when(fetchAccessTokenRequest.firstAuthConfig()).thenReturn(authConfig);
         when(fetchAccessTokenRequest.authSession()).thenReturn(Map.of(Constants.AUTH_SESSION_STATE, "some-value"));
         when(fetchAccessTokenRequest.authorizationCode()).thenReturn("code-received-in-previous-step");
         when(fetchAccessTokenRequest.codeVerifierEncoded()).thenReturn( "code-verifier");

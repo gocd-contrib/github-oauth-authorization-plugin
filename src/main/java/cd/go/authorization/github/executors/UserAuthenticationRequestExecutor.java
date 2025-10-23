@@ -18,7 +18,6 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.GitHubAuthenticator;
 import cd.go.authorization.github.GitHubAuthorizer;
-import cd.go.authorization.github.exceptions.NoAuthorizationConfigurationException;
 import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.LoggedInUserInfo;
 import cd.go.authorization.github.requests.UserAuthenticationRequest;
@@ -47,11 +46,7 @@ public class UserAuthenticationRequestExecutor implements RequestExecutor {
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
-        if (request.authConfigs() == null || request.authConfigs().isEmpty()) {
-            throw new NoAuthorizationConfigurationException("[Authenticate] No authorization configuration found.");
-        }
-
-        final AuthConfig authConfig = request.authConfigs().get(0);
+        final AuthConfig authConfig = request.firstAuthConfig();
         final LoggedInUserInfo loggedInUserInfo = gitHubAuthenticator.authenticate(request.oauthTokenInfo(), authConfig);
 
         Map<String, Object> userMap = new HashMap<>();
