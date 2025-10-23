@@ -29,6 +29,4 @@ public @interface ProfileField {
     boolean required();
 
     boolean secure();
-
-    FieldType type() default FieldType.STRING;
 }

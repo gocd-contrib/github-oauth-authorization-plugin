@@ -17,11 +17,12 @@
 package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.utils.Util;
+import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.jupiter.api.Test;
 
 import java.util.Base64;
-import java.util.HashMap;
+import java.util.Map;
 
 import static cd.go.authorization.github.utils.Util.GSON;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,9 +30,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GetPluginIconRequestExecutorTest {
 
     @Test
-    public void rendersIconInBase64() throws Exception {
+    public void rendersIconInBase64() {
         GoPluginApiResponse response = new GetPluginIconRequestExecutor().execute();
-        HashMap<String, String> hashMap = GSON.fromJson(response.responseBody(), HashMap.class);
+        Map<String, String> hashMap = GSON.fromJson(response.responseBody(), new TypeToken<>() {}.getType());
         assertThat(hashMap.size()).isEqualTo(2);
         assertThat(hashMap.get("content_type")).isEqualTo("image/svg+xml");
         assertThat(Util.readResourceBytes("/logo.svg")).isEqualTo(Base64.getDecoder().decode(hashMap.get("data")));

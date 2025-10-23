@@ -28,7 +28,7 @@ public class AuthConfigValidateRequest extends Request {
         this.gitHubConfiguration = gitHubConfiguration;
     }
 
-    public static final AuthConfigValidateRequest from(GoPluginApiRequest apiRequest) {
+    public static AuthConfigValidateRequest from(GoPluginApiRequest apiRequest) {
         return new AuthConfigValidateRequest(GitHubConfiguration.fromJSON(apiRequest.requestBody()));
     }
 

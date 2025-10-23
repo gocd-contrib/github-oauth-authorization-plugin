@@ -16,7 +16,6 @@
 
 package cd.go.authorization.github.executors;
 
-import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.models.GitHubConfiguration;
 import cd.go.authorization.github.requests.VerifyConnectionRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
@@ -31,15 +30,12 @@ import static org.mockito.Mockito.when;
 
 public class VerifyConnectionRequestExecutorTest {
     private VerifyConnectionRequest request;
-    private GitHubClientBuilder providerManager;
     private VerifyConnectionRequestExecutor executor;
 
     @BeforeEach
     public void setup() {
         request = mock(VerifyConnectionRequest.class);
-        providerManager = mock(GitHubClientBuilder.class);
-
-        executor = new VerifyConnectionRequestExecutor(request, providerManager);
+        executor = new VerifyConnectionRequestExecutor(request);
     }
 
     @Test

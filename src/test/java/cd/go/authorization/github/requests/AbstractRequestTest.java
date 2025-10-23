@@ -62,7 +62,7 @@ class AbstractRequestTest {
             assertEquals("world", actual.getBar());
         }
 
-        class ExampleRequest extends Request {
+        static class ExampleRequest extends Request {
 
             @Expose
             @SerializedName("foo")

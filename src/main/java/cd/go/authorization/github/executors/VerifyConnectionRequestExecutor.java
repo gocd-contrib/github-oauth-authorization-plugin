@@ -18,7 +18,6 @@ package cd.go.authorization.github.executors;
 
 import cd.go.authorization.github.annotation.MetadataValidator;
 import cd.go.authorization.github.annotation.ValidationResult;
-import cd.go.authorization.github.client.GitHubClientBuilder;
 import cd.go.authorization.github.requests.VerifyConnectionRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
@@ -29,15 +28,9 @@ import static cd.go.authorization.github.utils.Util.GSON;
 
 public class VerifyConnectionRequestExecutor implements RequestExecutor {
     private final VerifyConnectionRequest request;
-    private final GitHubClientBuilder providerManager;
 
     public VerifyConnectionRequestExecutor(VerifyConnectionRequest request) {
-        this(request, new GitHubClientBuilder());
-    }
-
-    public VerifyConnectionRequestExecutor(VerifyConnectionRequest request, GitHubClientBuilder providerManager) {
         this.request = request;
-        this.providerManager = providerManager;
     }
 
     @Override

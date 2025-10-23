@@ -49,11 +49,10 @@ class GitHubClientBuilderTest {
 
     @Test
     public void shouldReturnAuthorizationServerArgsForGitHub() {
-        final AuthorizationServerArgs authorizationServerArgs = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
+        final AuthorizationServerArgs args = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
 
-        assertThat(authorizationServerArgs).satisfies(args -> {
-            assertThat(args.url()).startsWith("https://github.com/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.state(), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
-        });
+        assertThat(args.url())
+                .startsWith("https://github.com/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.state(), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
     }
 
     @Test
@@ -61,11 +60,10 @@ class GitHubClientBuilderTest {
         when(gitHubConfiguration.authenticateWith()).thenReturn(AuthenticateWith.GITHUB_ENTERPRISE);
         when(gitHubConfiguration.gitHubEnterpriseUrl()).thenReturn("http://enterprise.url");
 
-        final AuthorizationServerArgs authorizationServerArgs = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
+        final AuthorizationServerArgs args = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
 
-        assertThat(authorizationServerArgs).satisfies(args -> {
-            assertThat(args.url()).startsWith("http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.state(), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
-        });
+        assertThat(args.url())
+                .startsWith("http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.state(), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
     }
 
     @Test
@@ -73,10 +71,9 @@ class GitHubClientBuilderTest {
         when(gitHubConfiguration.authenticateWith()).thenReturn(AuthenticateWith.GITHUB_ENTERPRISE);
         when(gitHubConfiguration.gitHubEnterpriseUrl()).thenReturn("http://enterprise.url/");
 
-        final AuthorizationServerArgs authorizationServerArgs = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
+        final AuthorizationServerArgs args = builder.authorizationServerArgs(gitHubConfiguration, "call-back-url");
 
-        assertThat(authorizationServerArgs).satisfies(args -> {
-            assertThat(args.url()).startsWith("http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.state(), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
-        });
+        assertThat(args.url())
+                .startsWith("http://enterprise.url/login/oauth/authorize?client_id=client-id&redirect_uri=call-back-url&response_type=code&scope=api&state=" + URLEncoder.encode(args.state(), StandardCharsets.UTF_8) + "&code_challenge_method=S256&code_challenge=");
     }
 }

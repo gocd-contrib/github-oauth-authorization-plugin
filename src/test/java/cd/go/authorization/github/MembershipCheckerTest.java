@@ -41,14 +41,13 @@ public class MembershipCheckerTest {
     private GitHub gitHub;
     private MembershipChecker membershipChecker;
     private AuthConfig authConfig;
-    private GitHubConfiguration gitHubConfiguration;
     private GHUser ghUser;
 
     @BeforeEach
     public void setUp() throws IOException {
         gitHub = mock(GitHub.class);
         authConfig = mock(AuthConfig.class);
-        gitHubConfiguration = mock(GitHubConfiguration.class);
+        GitHubConfiguration gitHubConfiguration = mock(GitHubConfiguration.class);
         ghUser = mock(GHUser.class);
         final GitHubClientBuilder clientBuilder = mock(GitHubClientBuilder.class);
 
@@ -118,7 +117,7 @@ public class MembershipCheckerTest {
         when(teamX.hasMember(ghUser)).thenReturn(false);
 
         when(teamY.getName()).thenReturn("TeamY");
-        when(teamX.hasMember(ghUser)).thenReturn(true);;
+        when(teamX.hasMember(ghUser)).thenReturn(true);
 
         final boolean aMemberOfAtLeastOneTeamOfOrganization = membershipChecker.isAMemberOfAtLeastOneTeamOfOrganization(ghUser, authConfig, singletonMap("organization-foo", List.of("TeamX")));
 

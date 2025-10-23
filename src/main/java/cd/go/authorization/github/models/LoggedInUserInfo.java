@@ -22,18 +22,12 @@ import org.kohsuke.github.GitHub;
 import java.io.IOException;
 
 public class LoggedInUserInfo {
-    private final GitHub gitHub;
     private final GHMyself gitHubUser;
     private final User user;
 
     public LoggedInUserInfo(GitHub gitHub) throws IOException {
-        this.gitHub = gitHub;
         gitHubUser = gitHub.getMyself();
         user = new User(gitHubUser.getLogin(), gitHubUser.getName(), gitHubUser.getEmail());
-    }
-
-    public GitHub getGitHub() {
-        return gitHub;
     }
 
     public GHMyself getGitHubUser() {

@@ -19,6 +19,8 @@ package cd.go.authorization.github.annotation;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 public class ValidationError {
     @Expose
     @SerializedName("key")
@@ -42,19 +44,13 @@ public class ValidationError {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ValidationError that = (ValidationError) o;
-
-        if (key != null ? !key.equals(that.key) : that.key != null) return false;
-        return message != null ? message.equals(that.message) : that.message == null;
+        return Objects.equals(key, that.key) && Objects.equals(message, that.message);
     }
 
     @Override
     public int hashCode() {
-        int result = key != null ? key.hashCode() : 0;
-        result = 31 * result + (message != null ? message.hashCode() : 0);
-        return result;
+        return Objects.hash(key, message);
     }
 }

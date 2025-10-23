@@ -19,6 +19,8 @@ package cd.go.authorization.github.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 public class User {
     @Expose
     @SerializedName("username")
@@ -44,21 +46,13 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         User user = (User) o;
-
-        if (username != null ? !username.equals(user.username) : user.username != null) return false;
-        if (displayName != null ? !displayName.equals(user.displayName) : user.displayName != null) return false;
-        return emailId != null ? emailId.equals(user.emailId) : user.emailId == null;
+        return Objects.equals(username, user.username) && Objects.equals(displayName, user.displayName) && Objects.equals(emailId, user.emailId);
     }
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
-        result = 31 * result + (emailId != null ? emailId.hashCode() : 0);
-        return result;
+        return Objects.hash(username, displayName, emailId);
     }
 }

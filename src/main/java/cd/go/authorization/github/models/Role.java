@@ -19,6 +19,8 @@ package cd.go.authorization.github.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 import static cd.go.authorization.github.utils.Util.GSON;
 
 public class Role {
@@ -48,18 +50,14 @@ public class Role {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Role that = (Role) o;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return configuration != null ? configuration.equals(that.configuration) : that.configuration == null;
+        Role role = (Role) o;
+        return Objects.equals(name, role.name) && Objects.equals(configuration, role.configuration);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (configuration != null ? configuration.hashCode() : 0);
-        return result;
+        return Objects.hash(name, configuration);
     }
 
     public static Role fromJSON(String json) {

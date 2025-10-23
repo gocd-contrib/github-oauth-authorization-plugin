@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GetAuthConfigMetadataRequestExecutorTest {
 
     @Test
-    public void shouldSerializeAllFields() throws Exception {
+    public void shouldSerializeAllFields() {
         GoPluginApiResponse response = new GetAuthConfigMetadataRequestExecutor().execute();
         List<AuthConfig> list = GSON.fromJson(response.responseBody(), new TypeToken<>() {}.getType());
         assertThat(list).hasSameSizeAs(MetadataHelper.getMetadata(GitHubConfiguration.class));

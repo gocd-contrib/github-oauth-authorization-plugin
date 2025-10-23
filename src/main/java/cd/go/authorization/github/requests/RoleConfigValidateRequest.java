@@ -36,7 +36,7 @@ public class RoleConfigValidateRequest extends Request {
         return gitHubRoleConfiguration;
     }
 
-    public static final RoleConfigValidateRequest from(GoPluginApiRequest apiRequest) {
+    public static RoleConfigValidateRequest from(GoPluginApiRequest apiRequest) {
         return new RoleConfigValidateRequest(GitHubRoleConfiguration.fromJSON(apiRequest.requestBody()));
     }
 

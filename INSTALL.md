@@ -47,9 +47,9 @@ on Windows.
     1. Specify `id` for auth config
     2. Select `GitHub authorization plugin for GoCD` for **_Plugin id_**
     3. Choose `GitHub` or `GitHub Enterprise` for `Authenticate with`.
-    5. Specify **_Client ID_** and **_Client Secret_**
-    6. Specify **_Personal access token_**
-    7. Save your configuration
+    4. Specify **_Client ID_** and **_Client Secret_**
+    5. Specify **_Personal access token_**
+    6. Save your configuration
     
 ### Create Role Configuration
 

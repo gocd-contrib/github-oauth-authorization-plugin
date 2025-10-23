@@ -29,12 +29,9 @@ public class FieldMetadata implements Metadata {
     @SerializedName("secure")
     private boolean secure;
 
-    private FieldType type;
-
-    public FieldMetadata(boolean required, boolean secure, FieldType type) {
+    public FieldMetadata(boolean required, boolean secure) {
         this.required = required;
         this.secure = secure;
-        this.type = type;
     }
 
     @Override
@@ -45,10 +42,5 @@ public class FieldMetadata implements Metadata {
     @Override
     public boolean isSecure() {
         return secure;
-    }
-
-    @Override
-    public FieldType getType() {
-        return type;
     }
 }

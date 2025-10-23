@@ -29,7 +29,7 @@ public class MetadataHelper {
         for (Field field : fields) {
             ProfileField profileField = field.getAnnotation(ProfileField.class);
             if (profileField != null) {
-                final FieldMetadata fieldMetadata = new FieldMetadata(profileField.required(), profileField.secure(), profileField.type());
+                final FieldMetadata fieldMetadata = new FieldMetadata(profileField.required(), profileField.secure());
                 final ProfileMetadata<FieldMetadata> profileMetadata = new ProfileMetadata<>(profileField.key(), fieldMetadata);
                 metadata.add(profileMetadata);
             }

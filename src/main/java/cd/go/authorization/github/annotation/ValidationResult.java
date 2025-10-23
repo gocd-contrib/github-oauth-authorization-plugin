@@ -18,7 +18,10 @@ package cd.go.authorization.github.annotation;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static cd.go.authorization.github.utils.Util.GSON;
 
@@ -53,6 +56,6 @@ public class ValidationResult {
     }
 
     public List<ValidationError> errors() {
-        return Collections.unmodifiableList(new ArrayList<>(errors));
+        return List.copyOf(errors);
     }
 }

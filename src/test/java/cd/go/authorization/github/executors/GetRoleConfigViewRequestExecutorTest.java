@@ -58,7 +58,7 @@ public class GetRoleConfigViewRequestExecutorTest {
     }
 
     @Test
-    public void shouldRenderTheTemplateInJSON() throws Exception {
+    public void shouldRenderTheTemplateInJSON() {
         GoPluginApiResponse response = new GetRoleConfigViewRequestExecutor().execute();
         assertThat(response.responseCode()).isEqualTo(200);
         Map<String, String> result = GSON.fromJson(response.responseBody(), new TypeToken<>() {}.getType());
