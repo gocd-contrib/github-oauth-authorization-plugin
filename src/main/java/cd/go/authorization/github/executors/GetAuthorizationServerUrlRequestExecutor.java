@@ -50,6 +50,8 @@ public class GetAuthorizationServerUrlRequestExecutor implements RequestExecutor
 
         AuthorizationServerArgs result = gitHubClientBuilder.authorizationServerArgs(gitHubConfiguration, request.callbackUrl());
 
+        LOG.info("[%s] Initiating GitHub OAuth authentication from auth config `{}`", getClass().getSimpleName(), authConfig.getId());
+
         return DefaultGoPluginApiResponse.success(GSON.toJson(Map.of(
                 "authorization_server_url", result.url(),
                 "auth_session", Map.of(Constants.AUTH_SESSION_STATE, result.state(), Constants.AUTH_CODE_VERIFIER_ENCODED, result.codeVerifierEncoded())
