@@ -70,7 +70,7 @@ dependencies {
     compileOnly project.deps.gocdPluginApi
     implementation 'com.google.code.gson:gson:2.13.2'
     implementation 'org.kohsuke:github-api:1.330'
-    implementation 'com.squareup.okhttp3:okhttp:5.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
     implementation platform('org.slf4j:slf4j-bom:2.0.17')
     implementation 'org.slf4j:jul-to-slf4j'
 
@@ -84,7 +84,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.20.0'
     testImplementation 'org.skyscreamer:jsonassert:1.5.3'
     testImplementation 'org.jsoup:jsoup:1.21.2'
-    testImplementation 'com.squareup.okhttp3:mockwebserver3-junit5:5.3.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver3-junit5:5.3.2'
 }
 
 test {
