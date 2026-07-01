@@ -72,6 +72,7 @@ dependencies {
         exclude(module: 'error_prone_annotations') // Not needed at runtime
     }
     implementation 'org.kohsuke:github-api:1.330'
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.4') // Use latest LTS version within org.kohsuke:github-api
     implementation 'com.squareup.okhttp3:okhttp:5.4.0'
     implementation platform('org.slf4j:slf4j-bom:2.0.18')
     implementation 'org.slf4j:jul-to-slf4j'
