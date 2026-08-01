@@ -60,7 +60,7 @@ repositories {
 
 ext {
     deps = [
-        gocdPluginApi: 'cd.go.plugin:go-plugin-api:25.4.0',
+        gocdPluginApi: 'cd.go.plugin:go-plugin-api:26.1.0',
     ]
 
     versions = project.ext.deps.collectEntries { lib, libGav -> [lib, libGav.split(':').last()] }
@@ -72,13 +72,13 @@ dependencies {
         exclude(module: 'error_prone_annotations') // Not needed at runtime
     }
     implementation 'org.kohsuke:github-api:1.330'
-    implementation platform('com.fasterxml.jackson:jackson-bom:2.21.4') // Use latest LTS version within org.kohsuke:github-api
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.22.1') // Use latest LTS version within org.kohsuke:github-api
     implementation 'com.squareup.okhttp3:okhttp:5.4.0'
     implementation platform('org.slf4j:slf4j-bom:2.0.18')
     implementation 'org.slf4j:jul-to-slf4j'
 
     testImplementation project.deps.gocdPluginApi
-    testImplementation platform('org.junit:junit-bom:6.1.1')
+    testImplementation platform('org.junit:junit-bom:6.1.2')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
