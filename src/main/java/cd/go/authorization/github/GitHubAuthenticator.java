@@ -21,6 +21,7 @@ import cd.go.authorization.github.models.AuthConfig;
 import cd.go.authorization.github.models.LoggedInUserInfo;
 import cd.go.authorization.github.models.OAuthTokenInfo;
 import com.thoughtworks.go.plugin.api.logging.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class GitHubAuthenticator {
         this.gitHubClientBuilder = gitHubClientBuilder;
     }
 
-    public LoggedInUserInfo authenticate(OAuthTokenInfo tokenInfo, AuthConfig authConfig) throws IOException {
+    public @Nullable LoggedInUserInfo authenticate(OAuthTokenInfo tokenInfo, AuthConfig authConfig) throws IOException {
         final GitHub gitHub = gitHubClientBuilder.fromUserOAuthAccessToken(tokenInfo.oauthAccessToken(),authConfig.gitHubConfiguration());
         final List<String> allowedOrganizations = authConfig.gitHubConfiguration().organizationsAllowed();
         final LoggedInUserInfo loggedInUserInfo = new LoggedInUserInfo(gitHub);
@@ -54,6 +55,7 @@ public class GitHubAuthenticator {
             return loggedInUserInfo;
         }
 
+        LOG.info("User `{}` is not a member of any allowed organisations `{}`. Authentication denied.", loggedInUserInfo.getUser().username(), allowedOrganizations);
         return null;
     }
 

@@ -24,7 +24,7 @@ import cd.go.authorization.github.requests.UserAuthenticationRequest;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import static cd.go.authorization.github.utils.Util.GSON;
@@ -49,11 +49,13 @@ public class UserAuthenticationRequestExecutor implements RequestExecutor {
         final AuthConfig authConfig = request.firstAuthConfig();
         final LoggedInUserInfo loggedInUserInfo = gitHubAuthenticator.authenticate(request.oauthTokenInfo(), authConfig);
 
-        Map<String, Object> userMap = new HashMap<>();
-        if (loggedInUserInfo != null) {
-            userMap.put("user", loggedInUserInfo.getUser());
-            userMap.put("roles", gitHubAuthorizer.authorize(loggedInUserInfo.getGitHubUser(), authConfig, request.roles()));
-        }
+        final Map<String, Object> userMap = loggedInUserInfo == null
+                ? Collections.emptyMap() // Authentication failed.
+                : Map.of(
+                "user", loggedInUserInfo.getUser(),
+                "roles", gitHubAuthorizer.authorize(loggedInUserInfo.getGitHubUser(), authConfig, request.roles()
+                )
+        );
 
         return DefaultGoPluginApiResponse.success(GSON.toJson(userMap));
     }
