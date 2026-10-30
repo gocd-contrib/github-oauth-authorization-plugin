@@ -68,12 +68,12 @@ ext {
 
 dependencies {
     compileOnly project.deps.gocdPluginApi
-    implementation('com.google.code.gson:gson:2.14.0') {
+    implementation('com.google.code.gson:gson:2.15.0') {
         exclude(module: 'error_prone_annotations') // Not needed at runtime
     }
     implementation 'org.kohsuke:github-api:1.330'
     implementation platform('com.fasterxml.jackson:jackson-bom:2.22.4') // Use latest LTS version within org.kohsuke:github-api
-    implementation 'com.squareup.okhttp3:okhttp:5.5.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.5.1'
     implementation platform('org.slf4j:slf4j-bom:2.0.20')
     implementation 'org.slf4j:jul-to-slf4j'
 
@@ -87,7 +87,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.24.0'
     testImplementation 'org.skyscreamer:jsonassert:1.5.3'
     testImplementation 'org.jsoup:jsoup:1.23.2'
-    testImplementation 'com.squareup.okhttp3:mockwebserver3-junit5:5.5.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver3-junit5:5.5.1'
 }
 
 test {
